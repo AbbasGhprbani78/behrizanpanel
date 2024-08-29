@@ -1,0 +1,24 @@
+.notifItemwrapper {
+    border-bottom: 1px solid #dddddf;
+    padding-top: 10px;
+    background-color:white;
+    z-index: 3;
+}
+
+.notifItem {
+    background-color: white;
+    padding-bottom: 10px;
+}
+
+.notiftitle {
+    margin-right: 10px;
+    font-weight: 400;
+}
+
+.notiftext {
+    margin-top: 10px;
+    font-size: .9rem;
+    font-weight: 400;
+    padding-bottom: 7px;
+    margin-bottom: 0;
+}

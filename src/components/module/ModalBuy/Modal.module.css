@@ -1,0 +1,179 @@
+.modalcontainer {
+    position: fixed;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 4;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s ease-in;
+}
+
+.showmodal {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modalhide {
+    position: fixed;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 5;
+}
+
+.modalwrapper {
+    box-shadow: 0px 2px 4px 0px #00000040;
+    border-radius: 10px;
+    background-color: #fff;
+    z-index: 6;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+}
+
+.modalheader {
+    background-color: var(--color-1);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    font-size: .9rem;
+    align-items: center;
+}
+
+.model {
+    margin-left: 2rem;
+}
+
+.name {}
+
+.modalcontent {
+    padding: 5px 20px 15px 25px;
+}
+
+.modaldetail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: space-between;
+    font-size: .9rem;
+    font-weight: bold;
+    position: relative;
+}
+
+.iconinfo {
+    cursor: pointer;
+}
+
+.unit {
+    margin-right: 15px;
+    font-size: .7rem;
+}
+
+.btnconfirm {
+    border: none;
+    background-color: var(--color-3);
+    color: var(--color-1);
+    padding: 6px 20px;
+    border-radius: 8px;
+}
+
+.dropvalue_wrapper {
+    border: 1px solid #9a9a9a;
+    border-radius: 5px;
+    position: relative;
+    padding: 2px;
+}
+
+.dropvalue {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 5.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.labledrop {
+    position: absolute;
+    background-color: #fff;
+    top: -12px;
+    right: 10px;
+    padding: 0 10px;
+    font-size: calc(.7rem + .1vw);
+
+}
+
+.count_product_modal {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.infoProduct {
+    position: absolute;
+    top: 10%;
+    width: 60%;
+    background-color: var(--color-1);
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    opacity: 1;
+    visibility: visible;
+    transition: all .3s ease-in;
+    z-index: 7;
+    right: 5%;
+}
+
+.iconinfo:hover .infoProduct {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+@media (max-width:1025px) {
+
+    .modalwrapper {
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+@media (max-width:850px) {
+    .modalwrapper {
+        width: 70%;
+    }
+}
+
+
+
+@media (max-width:600px) {
+    .modalwrapper {
+        display: flex;
+        width: 90%;
+    }
+
+    .infoProduct {
+        width: 90%;
+    }
+
+}
+
+
+@media (max-width:500px) {
+    .modaldetail {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .detailtext {
+        display: flex;
+        margin-top: 1.3rem;
+        justify-content: end;
+        width: 100%;
+    }
+}

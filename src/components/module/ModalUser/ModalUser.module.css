@@ -1,0 +1,127 @@
+.modalcontainer {
+    position: fixed;
+    width: 100vw;
+    min-height: 100vh;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: opacity 0.3s ease-in, visibility 0.5s ease-in;
+    opacity: 0;
+    visibility: hidden;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.modalcontainer.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modalclose {
+    position: fixed;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 11;
+}
+
+.modalwrappper {
+    z-index: 12;
+    width: 27%;
+    box-shadow: 0px 2px 4px 0px #9A9A9A;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 35px 45px 35px;
+}
+
+.modalheader {
+    border-bottom: 1px solid #d9d9d9;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.infotextm {
+    margin-right: 10px;
+}
+
+.btsmodal {
+    margin-top: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btnconfirm {
+    border: none;
+    background-color: var(--color-3);
+    color: var(--color-1);
+    border-radius: 8px;
+    padding: 7.5px 25px;
+    text-align: center;
+}
+
+.btncancel {
+    border: none;
+    background-color: #9a9a9a;
+    color: #fff;
+    border-radius: 8px;
+    padding: 5px 55px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.errorinput {
+    color: rgb(204, 22, 22);
+    margin-top: 15px;
+    font-size: .8rem;
+}
+
+
+@media (max-width:1347px) {
+    .modalwrappper {
+        width: 33%;
+    }
+}
+
+
+@media (max-width:1109px) {
+    .modalwrappper {
+        width: 45%;
+    }
+}
+
+@media (max-width:823px) {
+    .modalwrappper {
+        width: 57%;
+    }
+}
+
+@media (max-width:646px) {
+    .modalwrappper {
+        width: 67%;
+    }
+}
+
+@media (max-width:545px) {
+    .modalwrappper {
+        width: 90%;
+    }
+
+    .btsmodal {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btnconfirm,
+    .btncancel {
+        width: 100%;
+    }
+
+    .btncancel {
+        margin-top: 1rem;
+    }
+}

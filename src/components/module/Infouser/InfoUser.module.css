@@ -1,0 +1,89 @@
+.infouserwrapper {
+    border-radius: 10px;
+    box-shadow: 0px 2px 15px 0px #E9E9E9;
+    padding: 20px 25px;
+    background-color: #ffffff;
+    height: 100%;
+    max-height: 428px;
+    overflow-y: scroll;
+
+}
+
+.infouserwrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.infouserwrapper {
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.infouserwrapper::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+}
+
+.infousertop {
+    display: flex;
+    align-items: center;
+}
+
+.iconwrapper {
+    background-color: var(--color-1);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconuser {
+    font-size: 1.5rem;
+}
+
+.userfullname {
+    margin-bottom: 0px;
+    margin-right: 10px;
+}
+
+.userabout {
+    margin-top: 1.3rem;
+}
+
+.useraboutitem {
+    margin-bottom: 12px;
+}
+
+.userabouttitle {
+    color: #9a9a9a;
+    font-weight: bold;
+    font-size: .9rem;
+}
+
+.useraboutsub {
+    margin-right: 10px;
+    color: var(--color-1);
+}
+
+.btnwrapper {
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.btnedituser {
+    border: none;
+    border-radius: 8px;
+    padding: 7px 30px;
+    color: #9a9a9a;
+}
+
+@media (max-width:992px) {
+    .btnwrapper {
+        margin-top: .5rem;
+    }
+}

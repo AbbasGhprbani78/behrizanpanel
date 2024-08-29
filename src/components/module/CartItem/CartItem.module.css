@@ -1,0 +1,36 @@
+.cartItemwrappper {
+    background-color: #fff;
+    padding: 10px 0;
+    border-radius: 10px;
+    color: var(--color-1) !important;
+    margin-bottom: 1.3rem;
+}
+
+.itemhead {
+    font-size: .9rem !important;
+    color: var(--color-1);
+}
+
+.deleteicon,
+.editicon {
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-top: 15px;
+}
+
+.bodyitem {
+    padding-top: 25px !important;
+}
+
+.bodyitemimage>img {
+    width: 70px;
+    padding-top: 0 !important;
+}
+
+@media (max-width:768px) {
+
+    .itemhead,
+    .bodyitem {
+        font-size: .8rem !important;
+    }
+}

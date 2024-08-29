@@ -1,0 +1,239 @@
+.number {
+    margin-left: 1rem;
+}
+
+.imagecart {
+    width: 100%;
+    height: 200px;
+}
+
+.imagecart>img {
+    width: 100%;
+    height: 100%;
+}
+
+.product_des {
+    margin-top: 1.3rem;
+}
+
+@media (min-width:650px) {
+    .ProductItem2 {
+        display: none;
+    }
+
+    .ProductItem1 {
+        background-color: #fff;
+        width: 100%;
+        padding: 10px 0;
+        margin: 1.3rem 0;
+        border-radius: 10px;
+
+    }
+
+    .image {
+        width: 70px;
+
+    }
+
+    .imageBox {
+        border: none;
+        border-style: none;
+        border-width: 0px;
+    }
+
+    .Button {
+        width: max-content;
+        display: flex;
+        height: 30px;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        margin-right: 30px;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    .Td {
+        padding-top: 25px !important;
+        border: none;
+        border-style: none;
+        border-width: 0px;
+        color: var(--color-1) !important;
+    }
+
+    .Tr {
+        border: none;
+        border-style: none;
+        border-width: 0px;
+    }
+
+    .thead {
+        border-color: #d9d9d9;
+
+    }
+
+    .Th {
+        color: var(--color-1) !important;
+    }
+
+    .text {
+
+        font-size: .7rem;
+
+        padding: 9px 20px 9px 20px;
+        background-color: var(--color-1);
+
+        color: #fff;
+    }
+
+    .icon1 {
+        font-size: .7rem;
+        padding: 9px 13px;
+        background-color: var(--color-3);
+        color: #fff;
+    }
+
+    .iconNone {
+        display: none;
+    }
+
+    .icon2 {
+        font-size: .7rem;
+        padding: 9px 13px;
+        background-color: var(--color-1);
+        color: #72E14D;
+
+    }
+
+}
+
+@media (max-width:768px) {
+
+    .Td,
+    .Th {
+        font-size: .8rem;
+    }
+}
+
+@media (max-width:650px) {
+    .ProductItem1 {
+        display: none;
+    }
+
+    .ProductItem2 {
+        background-color: #fff;
+        width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.5rem;
+    }
+
+    .Box1 {
+        width: 100%;
+        margin: 10px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--color-1);
+        padding-bottom: 10px;
+    }
+
+    .TitleBox {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .TitleDetailes {
+        font-weight: 700;
+    }
+
+    .detailes {
+        font-size: .9rem;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    .imageBox img {
+        width: 70px;
+        padding-top: 0 !important;
+    }
+
+    .Box2 {
+        width: 100%;
+        height: 200px;
+        margin: 2px auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .LineBox {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        font-weight: bold;
+
+    }
+
+    .Box3 {
+        width: 100%;
+        height: 40px;
+        margin: 10px auto;
+
+    }
+
+    .Button {
+        width: 100%;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+    }
+
+    .text {
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 85%;
+        height: 100%;
+        background-color: var(--color-1);
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .iconF {
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 15%;
+        height: 100%;
+        background-color: var(--color-3);
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .iconT {
+        color: #72E14D;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 15%;
+        height: 100%;
+        background-color: var(--color-1);
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .iconNone {
+        display: none;
+    }
+
+    .Th {
+        font-size: .9rem !important;
+    }
+}
