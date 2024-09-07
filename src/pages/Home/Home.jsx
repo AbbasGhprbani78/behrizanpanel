@@ -66,7 +66,6 @@ export default function Home() {
                                 <StatusLastProduct product={product} />
                             </div>
                         }
-
                     </div>
                 </div>
             </div>

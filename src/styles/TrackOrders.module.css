@@ -32,6 +32,7 @@
 .maincontent::-webkit-scrollbar {
     display: none;
 }
+
 .maincontent {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
@@ -67,6 +68,7 @@
 @media (max-width:600px) {
     .topsec {
         flex-direction: column;
+        align-items: start;
     }
 
     .filtercontainer {

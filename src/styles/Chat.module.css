@@ -13,6 +13,13 @@
     opacity: 0;
     visibility: hidden;
     overflow: hidden;
+   
+}
+
+.openchat{
+display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .chat_container_active {
@@ -66,14 +73,14 @@
 .chatbody_admin,
 .chatbody_ai {
     position: relative;
-    height: 100%;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 
 
 .action {
-    position: absolute;
-    bottom: 50px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
@@ -106,7 +113,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(100% - 50px);
+    height: 100%;
     overflow-y: scroll;
     padding-bottom: 60px;
 }

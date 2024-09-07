@@ -37,7 +37,7 @@ export function CountProvaider({ children }) {
                 }
             }
         } else {
-            navigate("/login")
+            // navigate("/login")
         }
 
 

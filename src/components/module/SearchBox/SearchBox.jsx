@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './SearchBox.module.css'
 import { RiSearch2Line } from "react-icons/ri";
-export default function SearchBox({ value, onChange }) {
+export default function SearchBox({ value, onChange, placeholder }) {
     return (
         <div className={styles.searchboxwrapper}>
             <div className={styles.searchboxcontant}>
@@ -10,7 +10,7 @@ export default function SearchBox({ value, onChange }) {
                     className={styles.inputsearch}
                     name='search'
                     onChange={onChange}
-                    placeholder='جستوجوی محصول'
+                    placeholder={placeholder}
                     autoComplete='off'
                 />
                 <div className={styles.searhiconwrapper}>

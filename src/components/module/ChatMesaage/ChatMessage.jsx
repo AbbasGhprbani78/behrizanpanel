@@ -1,18 +1,29 @@
 import React from 'react'
 import styles from './ChatMessage.module.css'
 
-export default function ChatMessage({ isSender }) {
+export default function ChatMessage({ message }) {
+
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
     return (
-        <div className={`${styles.chat_row} ${isSender ? styles.content_sender : styles.content_receiver}`}>
-            <div className={`${styles.message_wrapper} ${!isSender && styles.time_receiver}`}>
+        <div className={`${styles.chat_row} ${message?.sender_is_admin ? styles.content_receiver : styles.content_sender}`}>
+            <div className={`${styles.message_wrapper} ${message?.sender_is_admin && styles.time_receiver}`}>
                 <div
-                    className={`${styles.message_contnet} ${isSender ? styles.message_sender : styles.message_receiver}`}>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio quidem vel incidunt aut ad aliquid impedit fugiat nulla quae placeat quas quis consequatur voluptate, quibusdam nobis totam! Deserunt, perspiciatis possimus?
+                    className={`${styles.message_contnet} ${message?.sender_is_admin ? styles.message_receiver : styles.message_sender}`}>
+                    {
+                        message?.content
+                    }
                 </div>
                 <div className={styles.message_time}>
-                    <span>6:15</span>
+                    <span>{formatTime(message.timestamp)}</span>
                 </div>
             </div>
         </div>
     )
 }
+
+

@@ -1,14 +1,17 @@
 import React from 'react'
 import styles from './Filter.module.css'
-export default function Filter({ value, onChange }) {
+import { IoIosArrowDown } from "react-icons/io";
+export default function Filter({ setOpenmodal, all }) {
     return (
         <div className={styles.filterwrapper}>
-            <select className={styles.filterselect} value={value} onChange={onChange}>
-                <option value="-1" selected>فیلتر</option>
-                <option value={"name"}>اسم سفارش</option>
-                <option value={"number"}>شماره درخواست</option>
-                <option value={"date"}>تاریخ سفارشات</option>
-            </select>
+            فیلتر بر اساس
+            <IoIosArrowDown className={styles.arrow_icon} />
+            <div className={`${styles.item_filter} ${styles.item_first}`} onClick={() => {
+                all()
+                setOpenmodal(false)
+            }}>همه</div>
+            <div className={`${styles.item_filter} ${styles.item_second}`} onClick={() => setOpenmodal(true)}>تاریخ</div>
+
         </div>
 
     )

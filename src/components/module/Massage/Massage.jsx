@@ -12,6 +12,8 @@ export default function Massage({ tikectmsg }) {
         });
     };
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     return (
         <div className={`${tikectmsg?.is_admin ? styles.message_wrapper_snder : styles.message_wrapper_receiver}`}>
             {tikectmsg?.message && (
@@ -30,7 +32,7 @@ export default function Massage({ tikectmsg }) {
                 <div className={`${styles.message_content} ${tikectmsg?.is_admin ? styles.file_sender : ''} mb-4`}>
                     <a
                         className='place'
-                        href={tikectmsg?.file.startsWith('blob:') ? tikectmsg?.file : `${tikectmsg?.file}`}
+                        href={tikectmsg?.file.startsWith('blob:') ? tikectmsg?.file : `${apiUrl}${tikectmsg?.file}`}
                         target='_blank'
                         rel='noopener noreferrer'
                         download

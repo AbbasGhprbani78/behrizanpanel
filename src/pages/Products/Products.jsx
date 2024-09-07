@@ -160,7 +160,6 @@ export default function Products() {
   };
 
 
-
   return (
     <>
 
@@ -195,6 +194,7 @@ export default function Products() {
               <SearchBox
                 value={search}
                 onChange={searchHandler}
+                placeholder={"جستوجو براساس کدکالا , شرح محصول"}
               />
             </div>
             <div className={styles.ProductsPage}>

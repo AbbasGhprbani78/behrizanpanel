@@ -9,11 +9,14 @@ import Filter from '../../components/module/Filter/Filter'
 import axios from 'axios'
 import NoneSearch from '../../components/module/NoneSearch/NoneSearch'
 import EmptyProduct from '../../components/module/EmptyProduct/EmptyProduct'
+import ModalFilter from '../../components/module/ModalFilter/ModalFilter'
+
 
 export default function TrackOrders() {
     const [search, setSearch] = useState("")
     const [filterValue, setFilterValue] = useState([])
     const [allOrders, setAllorders] = useState([])
+    const [openModal, setOpenmodal] = useState(false)
     const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -24,7 +27,7 @@ export default function TrackOrders() {
             Authorization: `Bearer ${access}`
         };
         try {
-            const response = await axios.get(`http://5.9.108.174:9500/app/get-cart-detail/`, {
+            const response = await axios.get(`${apiUrl}/app/get-cart-detail/`, {
                 headers,
             })
 
@@ -40,19 +43,33 @@ export default function TrackOrders() {
 
 
     const searchHandler = (e) => {
-
         const searchTerm = e.target.value.toLowerCase();
         setSearch(searchTerm);
 
-        const filterProducts = allOrders.filter(
-            (product) =>
+        const filterProducts = allOrders.filter((product) => {
+            const totalNumberSold = product.order_details?.reduce(
+                (prev, current) => prev + current.number_sold,
+                0
+            );
+
+            return (
                 product.cart_id.toString().includes(searchTerm) ||
-                product.order_details[0].number_sold.toString().includes(searchTerm)
-        );
+                totalNumberSold.toString().includes(searchTerm)
+            );
+        });
 
         setFilterValue(filterProducts);
     }
 
+
+    const filterOrdersByDate = (startDate, endDate) => {
+        const filteredOrders = allOrders.filter(order => {
+            const orderDate = new Date(order.date_time);
+            return (!startDate || orderDate >= new Date(startDate)) &&
+                (!endDate || orderDate <= new Date(endDate));
+        });
+        setFilterValue(filteredOrders);
+    };
 
     useEffect(() => {
         getAllOrders()
@@ -73,7 +90,10 @@ export default function TrackOrders() {
                                     <SearchBox
                                         value={search}
                                         onChange={searchHandler}
+                                        placeholder={"جستوجو براساس شماره درخواست , تعداد سفارش"}
+
                                     />
+                                    <Filter setOpenmodal={setOpenmodal} all={() => setFilterValue(allOrders)} />
                                 </div>
                                 {
                                     filterValue.length > 0 ?
@@ -95,10 +115,13 @@ export default function TrackOrders() {
                             </>
                     }
                 </div>
+                <ModalFilter
+                    openModal={openModal}
+                    setOpenmodal={setOpenmodal}
+                    filterOrdersByDate={filterOrdersByDate}
+                />
             </div>
         </div>
     )
 }
-
-
 

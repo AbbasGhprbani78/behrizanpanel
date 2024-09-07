@@ -81,6 +81,8 @@ export default function Orders() {
                                 <SearchBox
                                     value={search}
                                     onChange={searchHandler}
+                                    placeholder={"جستوجو براساس کد کالا , شرح , تعداد , واحد"}
+
                                 />
                             </div>
                             <div className={styles.maincontent}>
