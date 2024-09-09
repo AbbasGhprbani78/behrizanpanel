@@ -36,24 +36,27 @@ export default function Cart() {
     const [propertName, setPropertName] = useState(null)
     const [filterProduct, setFilterProduct] = useState([])
     const [errorSelect, setErrorSelect] = useState(false)
+    const [loading, setLoading] = useState(false)
     const apiUrl = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const sendProduct = async () => {
-     
+
         const access = localStorage.getItem("access");
         const headers = {
             Authorization: `Bearer ${access}`
         };
 
+        setLoading(true)
         try {
             const response = await axios.post(`${apiUrl}/app/add-product/`, cart, {
                 headers,
             });
 
             if (response.status === 201) {
+                setLoading(false)
                 localStorage.removeItem("cart");
                 swal({
-                    title: "خرید با موفقیت انجام  شد",
+                    title: "سفارش با موفقیت ثبت شد",
                     icon: "success",
                     button: "باشه"
                 }).then(() => {
@@ -66,6 +69,8 @@ export default function Cart() {
             }
 
         } catch (e) {
+            console.log(e)
+            setLoading(false)
         }
 
     };
@@ -185,7 +190,7 @@ export default function Cart() {
                         setShowDeleteModal={setShowDeleteModal}
                         handleDelete={handleDelete}
                     />
-                    <Header title={"سبد خرید"} />
+                    <Header title={"سبد سفارش"} />
                     <div className={styles.maincontent}>
                         {
                             windowWidth < 600 ?
@@ -223,7 +228,10 @@ export default function Cart() {
 
                                                                 </div>
                                                                 <div className={styles.finalbtnwapper}>
-                                                                    <button className={`${isConfirmation ? styles.printbtn : styles.finalbtn}`} onClick={sendProduct}>
+                                                                    <button 
+                                                                        className={`${isConfirmation ? styles.printbtn : styles.finalbtn} ${loading ? styles.loading : ""}`} 
+                                                                    onClick={sendProduct} 
+                                                                    disabled={loading}>
                                                                         {
                                                                             isConfirmation ?
                                                                                 <span>چاپ درخواست</span> :
@@ -289,7 +297,11 @@ export default function Cart() {
                                                                     }
                                                                 </div>
                                                                 <div className={styles.finalbtnwapper}>
-                                                                    <button className={` ${isConfirmation ? styles.printbtn : styles.finalbtn}`} onClick={sendProduct}>
+                                                                    <button
+                                                                        className={` ${isConfirmation ? styles.printbtn : styles.finalbtn} ${loading ? styles.loading : ""}`}
+                                                                        onClick={sendProduct}
+                                                                        disabled={loading}
+                                                                    >
                                                                         {
                                                                             isConfirmation ?
                                                                                 <span>چاپ درخواست</span> :

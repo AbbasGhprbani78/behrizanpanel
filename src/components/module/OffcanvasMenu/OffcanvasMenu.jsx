@@ -97,7 +97,7 @@ export default function OffcanvasMenu({ setShowSideBar, showSideBar }) {
                     </li>
                     <Link to={"/cart"} className={`${styles.listitem} ${pathname === "/report" ? styles.active : ""}`}>
                         <FaShoppingCart className={styles.iconsidebar} />
-                        <span className={styles.listitemtext}>سبد خرید</span>
+                        <span className={styles.listitemtext}>سبد سفارش</span>
                     </Link>
                     <Link to={"/report"} className={`${styles.listitem}  ${pathname === "/cart" ? styles.active : ""}`}>
                         <FaBookmark className={styles.iconsidebar} />

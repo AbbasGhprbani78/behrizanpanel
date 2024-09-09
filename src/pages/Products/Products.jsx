@@ -81,7 +81,7 @@ export default function Products() {
           });
           localStorage.setItem("cart", JSON.stringify(cart));
           swal({
-            title: "به سبد خرید اضافه شد",
+            title: "به سبد سفارش اضافه شد",
             icon: "success",
             button: "باشه"
           })
@@ -104,7 +104,7 @@ export default function Products() {
           cart.push(cartItem);
           localStorage.setItem("cart", JSON.stringify(cart));
           swal({
-            title: "به سبد خرید اضافه شد",
+            title: "به سبد سفارش اضافه شد",
             icon: "success",
             buttons: "باشه"
           })
@@ -127,7 +127,7 @@ export default function Products() {
         cart.push(cartItem);
         localStorage.setItem("cart", JSON.stringify(cart));
         swal({
-          title: "به سبد خرید اضافه شد",
+          title: "به سبد سفارش اضافه شد",
           icon: "success",
           buttons: "باشه"
         })
@@ -184,7 +184,7 @@ export default function Products() {
           <div className={`${styles.modalcontainer} ${showmodal ? styles.show : ""}`}>
             <div className={styles.modalhide} onClick={() => setShowmodal(false)}></div>
             <div className={styles.modalcontent}>
-              <p>هنوز محصولی به سبدخرید اضافه نکرده اید</p>
+              <p>هنوز محصولی به سفارش اضافه نکرده اید</p>
               <button className={styles.modalbtn} onClick={() => setShowmodal(false)}>متوجه شدم</button>
             </div>
           </div>
