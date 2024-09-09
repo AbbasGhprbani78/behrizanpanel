@@ -76,7 +76,7 @@ export default function Orders() {
                             <div className={styles.ordertitlewrapper}>
                                 <div className={styles.detailorderwrapper}>
                                     <span>تاریخ سفارش :</span>
-                                    <span>{formatDate(orderDetails[0]?.product?.date)}</span>
+                                    <span>{formatDate(orderDetails[0]?.order_confirmation_time)}</span>
                                 </div>
                                 <SearchBox
                                     value={search}

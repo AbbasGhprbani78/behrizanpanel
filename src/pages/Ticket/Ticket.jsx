@@ -62,7 +62,7 @@ export default function Ticket() {
         title: "عنوان و متن پیام نمی‌توانند خالی باشند",
         icon: "error",
         button: "باشه"
-      });
+      })
       return;
     }
     SetDisable(true)
@@ -97,7 +97,9 @@ export default function Ticket() {
             text: "باشه",
             className: "swal-button-center",
           }
-        })
+        }).then(() => {
+          setTab(1)
+        });
 
         getAllTicket()
         SetTitle("")

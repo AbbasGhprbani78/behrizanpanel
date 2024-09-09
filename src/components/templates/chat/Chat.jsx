@@ -4,6 +4,7 @@ import styles from '../../../styles/Chat.module.css'
 import { IoSend } from "react-icons/io5";
 import ChatMessage from '../../module/ChatMesaage/ChatMessage'
 import axios from 'axios';
+import { IoCloseSharp } from "react-icons/io5";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -15,19 +16,15 @@ export default function Chat() {
     const [message, setMessage] = useState("");
     const access_token = localStorage.getItem("access");
     const socketRef = useRef(null);
-    const maxAttempts = 10;
-    const attemptDelay = 3000; 
-    const attemptRef = useRef(0);
-
 
     const socketUrl = `wss://behrizanpanel.ariisco.com/ws/chat/?token=${access_token}`;
 
-    const connectWebSocket = () => {
+    useEffect(() => {
+
         socketRef.current = new WebSocket(socketUrl);
 
         socketRef.current.onopen = (event) => {
             console.log('WebSocket connection opened:', event);
-            attemptRef.current = 0
         };
 
         socketRef.current.onmessage = (event) => {
@@ -41,21 +38,7 @@ export default function Chat() {
 
         socketRef.current.onclose = (event) => {
             console.log('WebSocket connection closed:', event.code, event.reason);
-            if (attemptRef.current < maxAttempts) {
-                const retryTimeout = attemptDelay * Math.pow(2, attemptRef.current);
-                attemptRef.current += 1;
-                setTimeout(() => {
-                    console.log(`Reconnecting... attempt ${attemptRef.current}`);
-                    connectWebSocket();
-                }, retryTimeout);
-            } else {
-                console.log('Max reconnection attempts reached');
-            }
         };
-    };
-
-    useEffect(() => {
-        connectWebSocket();
         return () => {
             if (socketRef.current) {
                 socketRef.current.close();
@@ -72,10 +55,7 @@ export default function Chat() {
             const response = await axios.get(`${apiUrl}/chat/get-message/`, { headers });
 
             if (response.status === 200) {
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    ...response.data,
-                ]);
+                setMessages(response.data)
             }
         } catch (e) {
             console.log(e);
@@ -107,7 +87,6 @@ export default function Chat() {
         getMessages();
     }, []);
 
-
     useEffect(() => {
         messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -118,7 +97,7 @@ export default function Chat() {
                 <div className={`${styles.chat_header} ${step !== 1 ? styles.arrowshow : ""}`}>
                     {
                         step === 1 ?
-                            <>
+                            <div className='d-flex'>
                                 <span style={{ marginRight: "25px" }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className={`bi bi-chat-left`} viewBox="0 0 16 16">
                                         <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
@@ -127,7 +106,7 @@ export default function Chat() {
                                 <p style={{ marginBottom: "0", marginRight: "25px" }}>
                                     نوع چت خود را انتخاب کنید
                                 </p>
-                            </> :
+                            </div> :
                             step == 2 ?
                                 <>
                                     <p style={{ marginBottom: "0", marginRight: "20px" }}>
@@ -140,10 +119,12 @@ export default function Chat() {
                                 </p>
                     }
                     {
-                        step !== 1 &&
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class={`bi bi-arrow-left `} viewBox="0 0 16 16" onClick={() => setStep(1)} style={{ cursor: "pointer" }}>
-                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-                        </svg>
+                        step === 1 ?
+                            <IoCloseSharp style={{ fontSize: "1.2rem", cursor: "pointer" }} onClick={() => setShowChat(false)} /> :
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class={`bi bi-arrow-left `} viewBox="0 0 16 16" onClick={() => setStep(1)} style={{ cursor: "pointer" }}>
+                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+                            </svg>
                     }
 
                 </div>
@@ -168,8 +149,8 @@ export default function Chat() {
                                 <div className={styles.chatbody_admin}>
                                     <div className={styles.chat_message_container}>
                                         {
-                                            dataMesaage.length > 0 &&
-                                            dataMesaage.map((message) => (
+                                            messages.length > 0 &&
+                                            messages.map((message) => (
                                                 <ChatMessage key={message.id} message={message} />
                                             ))
                                         }
@@ -197,9 +178,15 @@ export default function Chat() {
                 setStep(1)
             }
             } >
-                <svg xmlns="http://www.w3.org/2000/svg" width="50%" height="50%" fill="currentColor" className={`bi bi-chat-left ${styles.Chaticon}`} viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                </svg>
+                {
+                    showChat ?
+                        <IoCloseSharp className={styles.icon_chat_close} /> :
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50%" height="50%" fill="currentColor" className={`bi bi-chat-left ${styles.Chaticon}`} viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                        </svg>
+
+                }
+
             </div>
         </>
     )

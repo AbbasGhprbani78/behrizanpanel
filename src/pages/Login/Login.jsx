@@ -457,16 +457,15 @@ export default function Login() {
                                                                 className={`${styles.time} ${styles.againcode}`}
                                                                 onClick={() => {
                                                                     sendCodeAgainToEmail()
-                                                                    startTimer()
+                                                                    
                                                                 }}
                                                             >
                                                                 ارسال مجدد
                                                             </p>
                                                         </div>
                                                     ) : (
-                                                        <p className={styles.time}>
-                                                            {formatTime(timeLeft)}
-                                                        </p>
+                                                        // 
+                                                        null
                                                     )
                                                 }
 
@@ -797,16 +796,17 @@ export default function Login() {
                                                                     className={`${styles.time} ${styles.againcode}`}
                                                                     onClick={() => {
                                                                         sendCodeAgainToEmail()
-                                                                        startTimer()
+                                                                       
                                                                     }}
                                                                 >
                                                                     ارسال مجدد
                                                                 </p>
                                                             </div>
                                                         ) : (
-                                                            <p className={styles.time}>
-                                                                {formatTime(timeLeft)}
-                                                            </p>
+                                                            // <p className={styles.time}>
+                                                            //     {formatTime(timeLeft)}
+                                                            // </p>
+                                                            null
                                                         )}
                                                     </div>
                                                 </div>

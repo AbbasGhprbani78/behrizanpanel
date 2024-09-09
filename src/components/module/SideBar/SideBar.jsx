@@ -80,9 +80,9 @@ export default function SideBar() {
                             <FaHeadphones className={styles.iconsidebar} />
                             <span className={styles.listitemtext}>پشتیبانی</span>
                         </Link>
-                        <Link to={"#"} className={`${styles.listitem} ${styles.logoutsidebar}`}>
+                        <Link onClick={logoutHandler} className={`${styles.listitem} ${styles.logoutsidebar}`}>
                             <FiLogOut className={styles.iconsidebar} />
-                            <span className={styles.listitemtext} onClick={logoutHandler}>خروج</span>
+                            <span className={styles.listitemtext} >خروج</span>
                         </Link>
                     </ul>
                 </div>

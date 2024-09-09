@@ -13,38 +13,48 @@ import { AiOutlineFileDone } from "react-icons/ai"
 export default function StatusProduct({ style, product }) {
 
   const [currentStep, setCurrentStep] = useState(3);
+  const [latestItem, setLatestItem] = useState(null);
 
-  const statusName = product?.status_details[0]?.status_name
+  console.log(product)
+
+  useEffect(() => {
+
+    const latest = product?.status_details?.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+    setLatestItem(latest.status_name);
+  }, []);
+
+
 
 
   useEffect(() => {
-    switch (statusName) {
-      case 'Issuance of request':
+    switch (latestItem) {
+      case 1:
         setCurrentStep(1);
         break;
-      case 'Request confirmation':
+      case 2:
         setCurrentStep(2);
         break;
-      case 'Order issuance':
+      case 3:
         setCurrentStep(3);
         break;
-      case 'Sales confirmation':
+      case 4:
         setCurrentStep(4);
         break;
-      case 'Final approval':
+      case 5:
         setCurrentStep(5);
         break;
-      case 'Sending':
+      case 6:
         setCurrentStep(6);
         break;
-      case 'Complete sent':
+      case 7:
         setCurrentStep(7);
         break;
-      case 'Closed':
+      case 8:
         setCurrentStep(8);
         break;
     }
-  }, [statusName]);
+  }, [latestItem]);
 
 
   return (

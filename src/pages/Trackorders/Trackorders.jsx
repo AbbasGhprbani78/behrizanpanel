@@ -34,7 +34,6 @@ export default function TrackOrders() {
             if (response.status === 200) {
                 setAllorders(response.data)
                 setFilterValue(response.data)
-                console.log(response.data)
             }
 
         } catch (e) {
@@ -43,6 +42,7 @@ export default function TrackOrders() {
 
 
     const searchHandler = (e) => {
+
         const searchTerm = e.target.value.toLowerCase();
         setSearch(searchTerm);
 
@@ -62,12 +62,14 @@ export default function TrackOrders() {
     }
 
 
+
     const filterOrdersByDate = (startDate, endDate) => {
         const filteredOrders = allOrders.filter(order => {
             const orderDate = new Date(order.date_time);
             return (!startDate || orderDate >= new Date(startDate)) &&
                 (!endDate || orderDate <= new Date(endDate));
         });
+        
         setFilterValue(filteredOrders);
     };
 

@@ -14,41 +14,49 @@ import { Link } from 'react-router-dom';
 export default function OrderTrackItem({ order, number }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [allNumberSold, setAllNumberSold] = useState(0)
+    const [latestItem, setLatestItem] = useState(null);
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString("fa-IR");
     };
 
-    const statusName = order?.order_details[0]?.status_details[0]?.status_name;
+    useEffect(() => {
+        const latest = order?.order_details[0].status_details
+            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+        setLatestItem(latest.status_name);
+    }, []);
+
 
     useEffect(() => {
-        switch (statusName) {
-            case 'Issuance of request':
+        switch (latestItem) {
+            case 1:
                 setCurrentStep(1);
                 break;
-            case 'Request confirmation':
+            case 2:
                 setCurrentStep(2);
                 break;
-            case 'Order issuance':
+            case 3:
                 setCurrentStep(3);
                 break;
-            case 'Sales confirmation':
+            case 4:
                 setCurrentStep(4);
                 break;
-            case 'Final approval':
+            case 5:
                 setCurrentStep(5);
                 break;
-            case 'Sending':
+            case 6:
                 setCurrentStep(6);
                 break;
-            case 'Complete sent':
+            case 7:
                 setCurrentStep(7);
                 break;
-            case 'Closed':
+            case 8:
                 setCurrentStep(8);
                 break;
         }
-    }, [statusName]);
+    }, [latestItem]);
 
 
 
@@ -88,7 +96,7 @@ export default function OrderTrackItem({ order, number }) {
                     </div>
                     <div>
                         <span style={{ marginLeft: "15px" }}>تاریخ سفارش :</span>
-                        <span>{formatDate(order?.order_details[0]?.date)}</span>
+                        <span>{formatDate(order?.date_time)}</span>
                     </div>
                 </div>
             </div>

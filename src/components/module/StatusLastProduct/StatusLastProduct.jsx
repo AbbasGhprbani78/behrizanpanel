@@ -5,7 +5,7 @@ import StatusProduct from '../StatusProdcut/StatusProduct';
 import { Link } from 'react-router-dom';
 
 
-export default function StatusLastProduct({product}) {
+export default function StatusLastProduct({ product }) {
 
     const [allNumberSold, setAllNumberSold] = useState(0)
 
@@ -38,7 +38,7 @@ export default function StatusLastProduct({product}) {
             <div className={styles.statusproductbottom}>
                 <div className={styles.orderdeatil}>
                     <div className={styles.orderdetailitem}>
-                        <span className={styles.orderdetailtitle}>تعداد سفارش :</span>
+                        <span className={styles.orderdetailtitle}>تعداد اقلام :</span>
                         <span className={styles.orderdetailtext}>
                             {allNumberSold}
                         </span>

@@ -16,7 +16,7 @@ import axios from 'axios'
 import swal from 'sweetalert'
 import NoneSearch from '../../components/module/NoneSearch/NoneSearch'
 import EmptyProduct from '../../components/module/EmptyProduct/EmptyProduct'
-
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart() {
 
@@ -37,9 +37,9 @@ export default function Cart() {
     const [filterProduct, setFilterProduct] = useState([])
     const [errorSelect, setErrorSelect] = useState(false)
     const apiUrl = import.meta.env.VITE_API_URL;
-
+    const navigate = useNavigate();
     const sendProduct = async () => {
-
+     
         const access = localStorage.getItem("access");
         const headers = {
             Authorization: `Bearer ${access}`
@@ -56,6 +56,8 @@ export default function Cart() {
                     title: "خرید با موفقیت انجام  شد",
                     icon: "success",
                     button: "باشه"
+                }).then(() => {
+                    navigate('/');
                 });
 
                 setCart([]);
@@ -196,6 +198,7 @@ export default function Cart() {
                                                         <SearchBox
                                                             value={search}
                                                             onChange={searchHandler}
+                                                            placeholder={"جستوجو براساس کد کالا , شرح , تعداد , واحد"}
                                                         />
                                                     </div>
                                                     {
@@ -257,7 +260,7 @@ export default function Cart() {
                                                         <SearchBox
                                                             value={search}
                                                             onChange={searchHandler}
-                                                        />
+                                                            placeholder={"جستوجو براساس کد کالا , شرح , تعداد , واحد"} />
                                                     </div>
                                                     {
                                                         filterProduct.length > 0 ?

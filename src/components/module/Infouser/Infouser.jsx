@@ -10,6 +10,11 @@ export default function Infouser() {
     const [userInfo, setUserInfo] = useState("")
     const apiUrl = import.meta.env.VITE_API_URL;
 
+    function convertToPersianNumbers(number) {
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return number.toString().replace(/\d/g, (digit) => persianDigits[digit]);
+    }
+
 
     const getUserHandler = async () => {
         const access = localStorage.getItem("access");
@@ -51,7 +56,7 @@ export default function Infouser() {
                 <div className={styles.userabout}>
                     <div className={styles.useraboutitem}>
                         <span className={styles.userabouttitle}>شماره تماس :</span>
-                        <span className={styles.useraboutsub}>{userInfo?.phone_number}</span>
+                        <span className={styles.useraboutsub}>{userInfo?.phone_number ? convertToPersianNumbers(userInfo.phone_number) : ''}</span>
                     </div>
                     <div className={styles.useraboutitem}>
                         <span className={styles.userabouttitle}>ایمیل :</span>
