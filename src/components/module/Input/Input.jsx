@@ -12,7 +12,7 @@ const Input = forwardRef(({ label, value, onChange, name, type, icon: Icon, hand
                 autoComplete='off'
                 value={value}
                 onChange={onChange}
-                ref={ref} 
+                ref={ref}
             />
             {handleToggle ? (
                 Icon && <Icon className={styles.icon} onClick={handleToggle} />

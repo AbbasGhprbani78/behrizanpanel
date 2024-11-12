@@ -1,7 +1,16 @@
-.ordertrackitemwrappper {
+.ordertrackitemwrapper {
     margin-top: 1.4rem;
     border-bottom: 1px solid #d9d9d9;
-    padding: 0 20px 20px 20px
+    padding: 0 20px 20px 20px;
+    position: relative;
+}
+
+.wrap_table {
+    position: absolute;
+    top: 150%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
 }
 
 .ordertrackdetail {
@@ -15,10 +24,11 @@
 .leftdetail {
     display: flex;
     align-items: center;
-
 }
 
-.leftdetail {}
+.leftdetail {
+    gap: 20px;
+}
 
 .titlebold {
     font-weight: bold;
@@ -35,7 +45,7 @@
     color: #fff;
     background-color: var(--color-1);
     border-radius: 10px;
-    padding: 3px 30px;
+    padding: 3px 15px;
     cursor: pointer;
     width: max-content;
 }
@@ -118,6 +128,39 @@
     color: var(--color-1);
 }
 
+.wrap_icon {
+    cursor: pointer;
+}
+
+.wrap_detail_icon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+}
+
+.detail_orders_wrap {
+    margin-top: 1.5rem;
+    position: relative;
+}
+
+.bilLading_date_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.3rem;
+}
+
+.back_btn {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: var(--color-3);
+    font-size: 1.2rem;
+
+}
+
 @media (max-width:992px) {
     .progressc {
         margin-left: 30px;
@@ -133,18 +176,18 @@
         display: none;
     }
 
-        .wrapper {
-            overflow: -moz-scrollbars-none;
-            -ms-overflow-style: none;
-            /* Internet Explorer 10+ */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-    
-        .wrapper::-webkit-scrollbar {
-            display: none;
-            /* Safari and Chrome */
-        }
+    .wrapper {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    .wrapper::-webkit-scrollbar {
+        display: none;
+        /* Safari and Chrome */
+    }
 }
 
 @media (max-width:861px) {
@@ -157,8 +200,9 @@
         width: 95%;
     }
 
-    .detailbtn {
+    .wrap_detail_icon {
         margin-top: 1.4rem;
+        width: 100%;
     }
 }
 
@@ -169,7 +213,12 @@
 }
 
 @media (max-width:600px) {
+    
     .reqnumberwrapper {
         display: none;
+    }
+
+    .ordertrackitemwrapper {
+        margin-top: 0;
     }
 }

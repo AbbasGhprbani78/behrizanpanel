@@ -5,7 +5,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import jalaliday from 'jalaliday';
 
-dayjs.extend(jalaliday); // Extend dayjs with the Jalali plugin
+dayjs.extend(jalaliday); 
 
 function convertToPersianNumbers(number) {
     const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];

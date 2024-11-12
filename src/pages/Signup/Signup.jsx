@@ -181,6 +181,7 @@ export default function Signup() {
                                                     onChange={handleChange}
                                                     handleToggle={handleToggle}
                                                     type={isPrivate ? "password" : "text"}
+                                                    
                                                 />
                                                 {errors.password && touched.password && <span className={styles.errorinput}>{errors.password}</span>}
                                             </div>

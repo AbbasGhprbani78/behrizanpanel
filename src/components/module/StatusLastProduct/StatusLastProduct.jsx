@@ -7,24 +7,6 @@ import { Link } from 'react-router-dom';
 
 export default function StatusLastProduct({ product }) {
 
-    const [allNumberSold, setAllNumberSold] = useState(0)
-
-    const calcTotalNumberSold = () => {
-        let number = 0;
-        if (product) {
-            number = product[0]?.order_details?.reduce(
-                (prev, current) => prev + current.number_sold,
-                0
-            );
-            setAllNumberSold(number);
-        }
-
-        setAllNumberSold(number);
-    }
-
-    useEffect(() => {
-        calcTotalNumberSold()
-    }, [product])
 
 
     const formatDate = (dateString) => {
@@ -34,13 +16,13 @@ export default function StatusLastProduct({ product }) {
     return (
         <div className={styles.statusproduct}>
             <p className={styles.statustext}>وضعیت آخرین سفارش</p>
-            <StatusProduct product={product[0]?.order_details[0]} />
+            <StatusProduct status={product[0]?.status} />
             <div className={styles.statusproductbottom}>
                 <div className={styles.orderdeatil}>
                     <div className={styles.orderdetailitem}>
                         <span className={styles.orderdetailtitle}>تعداد اقلام :</span>
                         <span className={styles.orderdetailtext}>
-                            {allNumberSold}
+                            {product[0]?.order_details_count}
                         </span>
                     </div>
                     <div className={styles.orderdetailitem}>

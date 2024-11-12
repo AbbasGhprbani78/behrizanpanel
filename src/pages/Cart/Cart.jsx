@@ -39,6 +39,7 @@ export default function Cart() {
     const [loading, setLoading] = useState(false)
     const apiUrl = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
+
     const sendProduct = async () => {
 
         const access = localStorage.getItem("access");
@@ -228,10 +229,10 @@ export default function Cart() {
 
                                                                 </div>
                                                                 <div className={styles.finalbtnwapper}>
-                                                                    <button 
-                                                                        className={`${isConfirmation ? styles.printbtn : styles.finalbtn} ${loading ? styles.loading : ""}`} 
-                                                                    onClick={sendProduct} 
-                                                                    disabled={loading}>
+                                                                    <button
+                                                                        className={`${isConfirmation ? styles.printbtn : styles.finalbtn} ${loading ? styles.loading : ""}`}
+                                                                        onClick={sendProduct}
+                                                                        disabled={loading}>
                                                                         {
                                                                             isConfirmation ?
                                                                                 <span>چاپ درخواست</span> :

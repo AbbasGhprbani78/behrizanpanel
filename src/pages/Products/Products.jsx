@@ -12,10 +12,10 @@ import { CountContext } from '../../context/CartContext'
 import swal from 'sweetalert'
 import NoneSearch from '../../components/module/NoneSearch/NoneSearch'
 import { useNavigate } from 'react-router-dom'
-
+import Loading from '../../components/module/Loading/Loading'
 
 export default function Products() {
-
+  
   const [search, setSearch] = useState("")
   const [showmodal, setShowmodal] = useState(false)
   const [value, setValue] = useState(1)
@@ -28,6 +28,7 @@ export default function Products() {
   const [propertyValue, setPropertyValue] = useState(null)
   const [propertName, setPropertName] = useState(null)
   const { setCountProduct } = useContext(CountContext)
+  const [loading, SetLoading] = useState(false)
   const navigate = useNavigate()
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -35,9 +36,8 @@ export default function Products() {
     navigate("/cart")
   }
 
-
   const getAllProducts = async () => {
-
+    SetLoading(true)
     const access = localStorage.getItem("access")
     const headers = {
       Authorization: `Bearer ${access}`
@@ -48,11 +48,13 @@ export default function Products() {
       })
 
       if (response.status === 200) {
+        SetLoading(false)
         setProducts(response.data)
         setFilterProduct(response.data)
       }
 
     } catch (e) {
+      console.log(e)
     }
   }
 
@@ -190,41 +192,47 @@ export default function Products() {
           </div>
           <Header title={"محصولات"} />
           <div className={styles.maincontent}>
-            <div className={styles.wrapper}>
-              <SearchBox
-                value={search}
-                onChange={searchHandler}
-                placeholder={"جستوجو براساس کدکالا , شرح محصول"}
-              />
-            </div>
-            <div className={styles.ProductsPage}>
-              <div className={styles.ProductsBox}>
-                {
-                  filterProduct.length > 0 ?
-                    filterProduct.slice().reverse().map(product => (
-                      <ProductItem
-                        product={product}
-                        key={product.id}
-                        setShowModalBuy={setShowModalBuy}
-                        setMainProduct={setMainProduct}
-                      />
+            {
+              loading ?
+                <Loading /> :
+                <>
+                  <div className={styles.wrapper}>
+                    <SearchBox
+                      value={search}
+                      onChange={searchHandler}
+                      placeholder={"جستوجو براساس کدکالا , شرح محصول"}
+                    />
+                  </div>
+                  <div className={styles.ProductsPage}>
+                    <div className={styles.ProductsBox}>
+                      {
+                        filterProduct.length > 0 ?
+                          filterProduct.slice().reverse().map(product => (
+                            <ProductItem
+                              product={product}
+                              key={product.id}
+                              setShowModalBuy={setShowModalBuy}
+                              setMainProduct={setMainProduct}
+                            />
 
-                    )) :
-                    <>
-                      <NoneSearch />
-                    </>
-                }
+                          )) :
+                          <>
+                            <NoneSearch />
+                          </>
+                      }
 
-              </div>
+                    </div>
 
-              <div className={`${styles.wrapper_btn}`}>
-                <button className={styles.ButtonBox} onClick={gotocart}>
-                  <span>ادامه</span>
-                  <IoIosArrowBack />
-                </button>
-              </div>
+                    <div className={`${styles.wrapper_btn}`}>
+                      <button className={styles.ButtonBox} onClick={gotocart}>
+                        <span>ادامه</span>
+                        <IoIosArrowBack />
+                      </button>
+                    </div>
 
-            </div>
+                  </div>
+                </>
+            }
           </div>
         </div>
       </div >

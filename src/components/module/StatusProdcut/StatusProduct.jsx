@@ -10,25 +10,14 @@ import { BsBox2 } from "react-icons/bs";
 import { FaWpforms } from "react-icons/fa6";
 import { AiOutlineFileDone } from "react-icons/ai"
 
-export default function StatusProduct({ style, product }) {
+export default function StatusProduct({ style, status }) {
 
-  const [currentStep, setCurrentStep] = useState(3);
-  const [latestItem, setLatestItem] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
-  console.log(product)
-
-  useEffect(() => {
-
-    const latest = product?.status_details?.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-
-    setLatestItem(latest.status_name);
-  }, []);
-
-
-
+console.log(status)
 
   useEffect(() => {
-    switch (latestItem) {
+    switch (status) {
       case 1:
         setCurrentStep(1);
         break;
@@ -54,7 +43,7 @@ export default function StatusProduct({ style, product }) {
         setCurrentStep(8);
         break;
     }
-  }, [latestItem]);
+  }, [status]);
 
 
   return (

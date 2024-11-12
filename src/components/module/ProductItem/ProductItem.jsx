@@ -5,13 +5,11 @@ import { BsCart2 } from "react-icons/bs";
 
 export default function ProductItem({ setShowModalBuy, product, setMainProduct }) {
   const apiUrl = import.meta.env.VITE_API_URL;
-
-
   return (
     <>
 
       <div className={styles.ProductItem1}>
-        <table class="table text-center " >
+        <table className="table text-center " >
           <thead className={styles.thead}>
             <tr >
               <th scope="col" colspan="2"></th>

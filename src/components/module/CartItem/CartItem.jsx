@@ -15,6 +15,7 @@ export default function CartItem({ setShowModalBuy,
     const apiUrl = import.meta.env.VITE_API_URL;
 
     return (
+        
         <div className={styles.cartItemwrappper}>
             <Table className='text-center'>
                 <thead className={styles.headtable}>
@@ -32,7 +33,7 @@ export default function CartItem({ setShowModalBuy,
                         <th className={styles.itemhead}>شرح محصول</th>
                         <th className={styles.itemhead}>مقدار</th>
                         <th className={styles.itemhead}>واحد {`(${prodcut.property_name})`}</th>
-                        <th sclassName={styles.itemhead}></th>
+                        <th sclassName={styles.itemhead}>تصویر</th>
                     </tr>
                 </thead>
                 <tbody className={styles.bodytable}>
@@ -51,10 +52,10 @@ export default function CartItem({ setShowModalBuy,
                             </td>
                         }
 
-                        <td className={styles.bodyitem}>
+                        <td className={styles.bodyitem} style={{ width: "240px" }}>
                             {prodcut.item_code}
                         </td>
-                        <td className={styles.bodyitem}>
+                        <td className={styles.bodyitem} style={{ width: "280px" }}>
                             {prodcut.descriptions}
                         </td>
                         <td className={styles.bodyitem}>

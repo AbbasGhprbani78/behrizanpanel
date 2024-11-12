@@ -35,6 +35,7 @@ export default function Orders() {
             }
 
         } catch (e) {
+            console.log(e)
         }
     }
 

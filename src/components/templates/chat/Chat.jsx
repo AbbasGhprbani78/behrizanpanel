@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import styles from '../../../styles/Chat.module.css'
 import { IoSend } from "react-icons/io5";
 import ChatMessage from '../../module/ChatMesaage/ChatMessage'
@@ -20,7 +20,6 @@ export default function Chat() {
     const socketUrl = `wss://behrizanpanel.ariisco.com/ws/chat/?token=${access_token}`;
 
     useEffect(() => {
-
         socketRef.current = new WebSocket(socketUrl);
 
         socketRef.current.onopen = (event) => {
@@ -59,9 +58,8 @@ export default function Chat() {
             }
         } catch (e) {
             console.log(e);
-            if (e.response?.status === 401) {
-
-            }
+            // if (e.response?.status === 401) {
+            // }
         }
     };
 
@@ -150,8 +148,8 @@ export default function Chat() {
                                     <div className={styles.chat_message_container}>
                                         {
                                             messages.length > 0 &&
-                                            messages.map((message) => (
-                                                <ChatMessage key={message.id} message={message} />
+                                            messages.map((message, i) => (
+                                                <ChatMessage key={i} message={message} />
                                             ))
                                         }
                                         <div ref={messageEndRef} />

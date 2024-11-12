@@ -1,9 +1,5 @@
 .cartItemwrappper {
-    background-color: #fff;
-    padding: 10px 0;
-    border-radius: 10px;
     color: var(--color-1) !important;
-
 }
 
 .itemhead {

@@ -30,6 +30,8 @@ export default function Ticket() {
   const [textInput, setTextInput] = useState("")
   const [ticket, setTicket] = useState("")
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [userType, setUserType] = useState([])
+  const [typeTicket, setTypeTicket] = useState("")
   const messageEndRef = useRef(null);
   const [showfile, setShowFile] = useState(false)
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -55,18 +57,40 @@ export default function Ticket() {
       console.log(e)
     }
   }
+
+  const getUserType = async () => {
+
+    const access = localStorage.getItem("access")
+    const headers = {
+      Authorization: `Bearer ${access}`
+    };
+
+    try {
+      const response = await axios.get(`${apiUrl}/chat/get-user-type/`, {
+        headers,
+      })
+
+      if (response.status === 200) {
+        setUserType(response.data)
+      }
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   const sendTicket = async () => {
 
-    if (!title.trim() || !text.trim()) {
+    if (!title.trim() || !text.trim() || !typeTicket.trim()) {
       swal({
-        title: "عنوان و متن پیام نمی‌توانند خالی باشند",
+        title: "موضوع ,عنوان و متن پیام نمی‌توانند خالی باشند",
         icon: "error",
         button: "باشه"
       })
       return;
     }
-    SetDisable(true)
 
+    SetDisable(true)
     const access = localStorage.getItem("access")
     const headers = {
       Authorization: `Bearer ${access}`
@@ -75,7 +99,7 @@ export default function Ticket() {
     const formData = new FormData()
     formData.append("title", title)
     formData.append("message", text)
-
+    formData.append("type", typeTicket)
     if (file) {
       formData.append("file", file)
     }
@@ -115,7 +139,6 @@ export default function Ticket() {
       SetDisable(false)
     }
   }
-
 
   const getSelectedTicket = async (ticket) => {
     setTicket(ticket)
@@ -220,6 +243,7 @@ export default function Ticket() {
 
   useEffect(() => {
     getAllTicket()
+    getUserType()
   }, [])
 
 
@@ -309,6 +333,20 @@ export default function Ticket() {
                       <span>درخواست خود را به صورت یک تیکت مطرح کنید تا کارشناسان ما در اسرع وقت، به آن پاسخ دهند.</span>
                     </div>
                     <div>
+                      <div className={styles.wrapdrop}>
+                        <select className={styles.drop_content} onChange={e => setTypeTicket(e.target.value)}>
+                          <option
+                            selected
+                            disabled={true}
+                            value="-1"
+                            className={styles.one_option}>موضوع</option>
+                          {
+                            userType.length > 0 && userType.map(item => (
+                              <option key={item.id} value={item?.id}>{item?.type}</option>
+                            ))
+                          }
+                        </select>
+                      </div>
                       <div className={styles.InputTitle}>
                         <input
                           placeholder='عنوان'
@@ -355,7 +393,16 @@ export default function Ticket() {
                       </div>
                     </div>
                     <div className={styles.ButtonBox2}>
-                      <button className={styles.Button1} onClick={sendTicket}>ارسال تیکت</button>
+                      <button
+                        disabled={disable}
+                        className={`${styles.Button1}  ${disable && styles.disable}`}
+                        onClick={sendTicket}>
+                        {
+                          disable ?
+                            "درحال ارسال" :
+                            "ارسال تیکت"
+                        }
+                      </button>
                     </div>
                   </div>
 
@@ -460,6 +507,7 @@ export default function Ticket() {
 
                 </div>
               </> :
+              
               <>
                 <div className={styles.ButtonBox}>
                   <div className={`${styles.Button1} ${tab === 1 || tab === 3 ? styles.activetab : ""}`} onClick={() => setTab(1)}>
@@ -508,6 +556,20 @@ export default function Ticket() {
                       <span>درخواست خود را به صورت یک تیکت مطرح کنید تا کارشناسان ما در اسرع وقت، به آن پاسخ دهند.</span>
                     </div>
                     <div>
+                      <div className={styles.wrapdrop}>
+                        <select className={styles.drop_content} onChange={e => setTypeTicket(e.target.value)}>
+                          <option
+                            selected
+                            disabled={true}
+                            value="-1"
+                            className={styles.one_option}>موضوع</option>
+                          {
+                            userType.length > 0 && userType.map(item => (
+                              <option key={item.id} value={item?.id}>{item?.type}</option>
+                            ))
+                          }
+                        </select>
+                      </div>
                       <div className={styles.InputTitle}>
                         <input
                           placeholder='عنوان'
@@ -547,6 +609,7 @@ export default function Ticket() {
                               id="file"
                               style={{ display: "none" }}
                               onChange={e => setFile(e.target.files[0])}
+
                             />
                           </label>
                         </div>
@@ -555,9 +618,15 @@ export default function Ticket() {
                     <div className={styles.ButtonBox2} >
                       <button
                         disabled={disable}
-                        className={styles.Buttonsend}
+                        className={`${styles.Buttonsend} ${disable && styles.disable}`}
                         onClick={sendTicket}
-                      >ارسال تیکت</button>
+                      >
+                        {
+                          disable ?
+                            "درحال ارسال" :
+                            "ارسال تیکت"
+                        }
+                      </button>
                     </div>
                   </div>
                 </div>

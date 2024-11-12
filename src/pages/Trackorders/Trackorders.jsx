@@ -10,6 +10,7 @@ import axios from 'axios'
 import NoneSearch from '../../components/module/NoneSearch/NoneSearch'
 import EmptyProduct from '../../components/module/EmptyProduct/EmptyProduct'
 import ModalFilter from '../../components/module/ModalFilter/ModalFilter'
+import Loading from '../../components/module/Loading/Loading'
 
 
 export default function TrackOrders() {
@@ -17,11 +18,12 @@ export default function TrackOrders() {
     const [filterValue, setFilterValue] = useState([])
     const [allOrders, setAllorders] = useState([])
     const [openModal, setOpenmodal] = useState(false)
+    const [selectedOrderId, setSelectedOrderId] = useState(null)
+    const [loading, setLoading] = useState(false)
     const apiUrl = import.meta.env.VITE_API_URL;
 
-
     const getAllOrders = async () => {
-
+        setLoading(true)
         const access = localStorage.getItem("access")
         const headers = {
             Authorization: `Bearer ${access}`
@@ -34,33 +36,30 @@ export default function TrackOrders() {
             if (response.status === 200) {
                 setAllorders(response.data)
                 setFilterValue(response.data)
+                setLoading(false)
+
+                console.log(response.data)
             }
 
         } catch (e) {
+            console.log(e)
         }
     }
-
-
     const searchHandler = (e) => {
-
         const searchTerm = e.target.value.toLowerCase();
         setSearch(searchTerm);
 
-        const filterProducts = allOrders.filter((product) => {
-            const totalNumberSold = product.order_details?.reduce(
-                (prev, current) => prev + current.number_sold,
-                0
+        if (searchTerm === "") {
+            setFilterValue(allOrders);
+        } else {
+            const filterProducts = allOrders.filter(
+                (item) =>
+                    item.order_details_count.toString().toLowerCase() === searchTerm ||
+                    item.cart_id.toString().toLowerCase() === searchTerm
             );
-
-            return (
-                product.cart_id.toString().includes(searchTerm) ||
-                totalNumberSold.toString().includes(searchTerm)
-            );
-        });
-
-        setFilterValue(filterProducts);
-    }
-
+            setFilterValue(filterProducts);
+        }
+    };
 
 
     const filterOrdersByDate = (startDate, endDate) => {
@@ -69,7 +68,7 @@ export default function TrackOrders() {
             return (!startDate || orderDate >= new Date(startDate)) &&
                 (!endDate || orderDate <= new Date(endDate));
         });
-        
+
         setFilterValue(filteredOrders);
     };
 
@@ -86,36 +85,41 @@ export default function TrackOrders() {
                 <Header title={"پیگیری سفارشات"} />
                 <div className={styles.ordercontent}>
                     {
-                        allOrders.length > 0 ?
-                            <>
-                                <div className={styles.topsec}>
-                                    <SearchBox
-                                        value={search}
-                                        onChange={searchHandler}
-                                        placeholder={"جستوجو براساس شماره درخواست , تعداد سفارش"}
+                        loading ?
+                            <Loading /> :
+                            allOrders.length > 0 ?
+                                <>
+                                    <div className={styles.topsec}>
+                                        <SearchBox
+                                            value={search}
+                                            onChange={searchHandler}
+                                            placeholder={"جستوجو براساس شماره درخواست , تعداد اقلام"}
 
-                                    />
-                                    <Filter setOpenmodal={setOpenmodal} all={() => setFilterValue(allOrders)} />
-                                </div>
-                                {
-                                    filterValue.length > 0 ?
-                                        filterValue.slice().reverse().map((order, index) => (
-                                            <OrderTrackItem
-                                                key={order.cart_id}
-                                                order={order}
-                                                number={index}
-                                            />
-                                        )) :
-                                        <>
-                                            <NoneSearch />
-                                        </>
-                                }
-                            </>
-                            :
-                            <>
-                                <EmptyProduct />
-                            </>
+                                        />
+                                        <Filter setOpenmodal={setOpenmodal} all={() => setFilterValue(allOrders)} />
+                                    </div>
+                                    {
+                                        filterValue.length > 0 ? (
+                                            filterValue.slice().reverse().map((order, index) => (
+                                                selectedOrderId === order.cart_id || selectedOrderId === null ? (
+                                                    <OrderTrackItem
+                                                        key={order.cart_id}
+                                                        order={order}
+                                                        number={index}
+                                                        setSelectedOrderId={setSelectedOrderId}
+                                                        onDetailsClick={() => setSelectedOrderId(order.cart_id)}
+                                                    />
+                                                ) : null
+                                            ))
+                                        ) : <NoneSearch />
+                                    }
+                                </>
+                                :
+                                <>
+                                    <EmptyProduct />
+                                </>
                     }
+
                 </div>
                 <ModalFilter
                     openModal={openModal}

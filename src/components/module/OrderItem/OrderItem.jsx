@@ -1,7 +1,15 @@
 
 import React, { useEffect, useState } from 'react'
 import styles from './OrderItem.module.css'
-import { Table } from 'react-bootstrap'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material"
 export default function OrderItem({ item }) {
 
   const [windowWidth, setWindowWidth] = useState(0)
@@ -39,12 +47,17 @@ export default function OrderItem({ item }) {
                   <span> {item?.product?.item_code}</span>
                 </div>
                 <div className={styles.cartinfoitem}>
-                  <span className={styles.infoitem}>مقدار</span>
+                  <span className={styles.infoitem}>تعداد</span>
                   <span>{item?.number_sold}</span>
                 </div>
                 <div className={styles.cartinfoitem}>
-                  <span className={styles.infoitem}>واحد {`(${item?.product?.specifications[0]?.property_name})`}</span>
+                  <span className={styles.infoitem}>گنجایش {`(${item?.product?.specifications[0]?.property_name})`}</span>
                   <span> {item?.product?.specifications[0]?.value}</span>
+                </div>
+                <div className={styles.cartinfoitem}>
+                  {/* مقدار کل */}
+                  <span className={styles.infoitem}>مقدار کل</span>
+                  <span>{item?.product?.specifications[0]?.total_value}</span>
                 </div>
               </div>
             </div>
@@ -52,39 +65,33 @@ export default function OrderItem({ item }) {
           <>
             <div className='d-flex flex-column' style={{ marginBottom: "1.3rem" }}>
               <div className={styles.cartItemwrappper} >
-                <Table className='text-center'>
-                  <thead className={styles.headtable}>
-                    <tr>
-                      <th className={styles.itemhead}>کد کالا</th>
-                      <th className={styles.itemhead}>شرح محصول</th>
-                      <th className={styles.itemhead}>مقدار</th>
-                      <th className={styles.itemhead}>واحد {`(${item?.product?.specifications[0]?.property_name})`}</th>
-                      <th className={styles.itemhead}>تصویر</th>
-                    </tr>
-                  </thead>
-                  <tbody className={styles.bodytable}>
-                    <tr >
-                      <td className={styles.bodyitem}>
-                        {item?.product?.item_code}
-                      </td>
-                      <td className={styles.bodyitem}>
-                        {item?.product?.descriptions}
-                      </td>
-                      <td className={styles.bodyitem}>
-                        {item?.number_sold}
-                      </td>
-                      <td className={styles.bodyitem}>
-                        {item?.product?.specifications[0]?.value}
-                      </td>
-                      <td >
-                        <img src={`${apiUrl}${item?.product?.image}`} alt="" style={{ width: "70px", height: "auto" }} />
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <TableContainer component={Paper} style={{ maxHeight: 400 }}>
+                  <Table sx={{ minWidth: 750, typography: "inherit" }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>کد کالا</TableCell>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>شرح محصول</TableCell>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>تعداد</TableCell>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>گنجایش {`(${item?.product?.specifications[0]?.property_name})`}</TableCell>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>مقدار کل</TableCell>
+                        <TableCell align="center" style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}>تصویر</TableCell>
+
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow >
+                        <TableCell align="center" sx={{ width: "240px" }}>{item?.product?.item_code}</TableCell>
+                        <TableCell align="center" sx={{ width: "300px" }}>{item?.product?.descriptions}</TableCell>
+                        <TableCell align="center">{item?.number_sold}</TableCell>
+                        <TableCell align="center">{item?.product?.specifications[0]?.value}</TableCell>
+                        <TableCell align="center">{item?.product?.specifications[0]?.total_value}</TableCell>
+                        <TableCell align="center"><img src={`${apiUrl}${item?.product?.image}`} alt="" style={{ width: "70px", height: "70px" }} /></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div >
             </div>
-
           </>
       }
     </>
