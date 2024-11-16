@@ -15,17 +15,16 @@ import Loading from '../../components/module/Loading/Loading'
 export default function Home() {
 
     const [product, setProduct] = useState([]);
-    const [loading, setLoading] = useState(false);
+    
     const apiUrl = import.meta.env.VITE_API_URL;
 
 
     const getLastStatusProduct = async () => {
-        setLoading(true)
+       
         const access = localStorage.getItem("access");
         const headers = {
             Authorization: `Bearer ${access}`,
         };
-
         try {
             const response = await axios.get(`${apiUrl}/app/get-single-order-detail/`, {
                 headers,
@@ -33,7 +32,6 @@ export default function Home() {
 
             if (response.status === 200) {
                 setProduct(response.data);
-                setLoading(false)
             }
 
         } catch (e) {
@@ -53,10 +51,6 @@ export default function Home() {
                 <div className={styles.pagecontent}>
                     <Header title={"خانه"} />
                     <div className={styles.maincontent}>
-                        {
-                            loading ?
-                                <Loading /> :
-                                <>
                                     <div className={styles.hometop}>
                                         <div className={styles.item1}>
                                             <Notifications />
@@ -74,8 +68,6 @@ export default function Home() {
                                             <StatusLastProduct product={product} />
                                         </div>
                                     }
-                                </>
-                        }
                     </div>
                 </div>
             </div>

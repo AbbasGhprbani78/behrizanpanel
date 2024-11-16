@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react';
 import styles from './Input.module.css';
 
-const Input = forwardRef(({ label, value, onChange, name, type, icon: Icon, handleToggle }, ref) => {
+const Input = forwardRef(({ label, value, onChange, name, type, icon: Icon, handleToggle, style, disable }, ref) => {
     return (
-        <div className={`${styles.inputwrapper} mt-4`}>
+        <div className={`${styles.inputwrapper}  ${style && styles.style} ${disable && styles.disableInput}`}>
             <label className={styles.lableinput}>{label}</label>
             <input
                 name={name}
@@ -13,6 +13,7 @@ const Input = forwardRef(({ label, value, onChange, name, type, icon: Icon, hand
                 value={value}
                 onChange={onChange}
                 ref={ref}
+                disabled={disable}
             />
             {handleToggle ? (
                 Icon && <Icon className={styles.icon} onClick={handleToggle} />

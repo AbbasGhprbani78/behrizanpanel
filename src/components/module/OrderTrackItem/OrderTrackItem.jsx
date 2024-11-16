@@ -248,11 +248,11 @@ export default function OrderTrackItem({ order, number, onDetailsClick, setSelec
                                                     <div className={styles.wrap_icon} >
                                                         {openTableIndex === i ? <FaAngleUp /> : <FaAngleDown />}
                                                     </div>
-                                                    <span>بارنامه :</span>
+                                                    <span>بارنامه : </span>
                                                     <span>{item?.bill_code}</span>
                                                 </div>
-                                                <div>
-                                                    <span>تاریخ :</span>
+                                                <div className={styles.wrap_date_detail}>
+                                                    <span>تاریخ : </span>
                                                     <span>{formatDate(item?.date)}</span>
                                                 </div>
                                             </div>

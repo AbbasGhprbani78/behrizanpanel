@@ -19,9 +19,10 @@ import { useNavigate } from 'react-router-dom'
 export default function Login() {
 
     const [windowWidth, setWindowWidth] = useState(0)
+    const [disable,setIsdisable]=useState(false)
     const [step, setStep] = useState(1)
     const [isForget, setIsForget] = useState(false)
-    const [timeLeft, setTimeLeft] = useState(60);
+    // const [timeLeft, setTimeLeft] = useState(60);
     const [password, setPassword] = useState("");
     const [showResendMessage, setShowResendMessage] = useState(false);
     const [showFiledEmail, setShowEmail] = useState(false)
@@ -42,9 +43,7 @@ export default function Login() {
             const body = { email };
             try {
                 const response = await axios.post(`${apiUrl}/user/password-reset/`, body);
-                if (response.status === 200) {
-
-                }
+              
             } catch (error) {
                 toast.error(error.response?.data?.message || 'An error occurred', {
                     position: "top-left"
@@ -56,6 +55,7 @@ export default function Login() {
     };
 
     const handlePasswordSubmit = async (e) => {
+        setIsdisable(true)
         e.preventDefault();
         if (password.trim() && phone_number) {
             const body = { phone_number, password };
@@ -74,25 +74,27 @@ export default function Login() {
                     position: "top-left"
                 });
                 console.log(error);
+            }finally{
+                 setIsdisable(false)
             }
         }
     };
 
-    const startTimer = () => {
-        setTimeLeft(120)
-        setShowResendMessage(false);
+    // const startTimer = () => {
+    //     setTimeLeft(120)
+    //     setShowResendMessage(false);
 
-        const timer = setInterval(() => {
-            setTimeLeft((prevTime) => {
-                if (prevTime <= 1) {
-                    clearInterval(timer);
-                    setShowResendMessage(true);
-                    return 0;
-                }
-                return prevTime - 1;
-            });
-        }, 1000);
-    };
+    //     const timer = setInterval(() => {
+    //         setTimeLeft((prevTime) => {
+    //             if (prevTime <= 1) {
+    //                 clearInterval(timer);
+    //                 setShowResendMessage(true);
+    //                 return 0;
+    //             }
+    //             return prevTime - 1;
+    //         });
+    //     }, 1000);
+    // };
 
 
 
@@ -116,11 +118,11 @@ export default function Login() {
         };
     }, []);
 
-    const formatTime = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-    };
+    // const formatTime = (seconds) => {
+    //     const minutes = Math.floor(seconds / 60);
+    //     const remainingSeconds = seconds % 60;
+    //     return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    // };
 
     const handleToggle = () => {
         setIsPerivate((e) => !e);
@@ -651,8 +653,9 @@ export default function Login() {
 
                                                                         <div className='text-center mt-5'>
                                                                             <button
-                                                                                className={styles.btnphoneform}
+                                                                                className={`${styles.btnphoneform}  ${disable ? styles.disablebtn : ""}`}
                                                                                 type='submit'
+                                                                                 disabled={disable}
                                                                             >
                                                                                 ادامه
                                                                                 <FaArrowLeftLong className={styles.iconformphone} />

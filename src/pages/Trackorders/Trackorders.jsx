@@ -37,14 +37,13 @@ export default function TrackOrders() {
                 setAllorders(response.data)
                 setFilterValue(response.data)
                 setLoading(false)
-
-                console.log(response.data)
             }
 
         } catch (e) {
             console.log(e)
         }
     }
+
     const searchHandler = (e) => {
         const searchTerm = e.target.value.toLowerCase();
         setSearch(searchTerm);
@@ -61,16 +60,23 @@ export default function TrackOrders() {
         }
     };
 
-
     const filterOrdersByDate = (startDate, endDate) => {
+  
+        const start = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : null;
+        const end = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
+
         const filteredOrders = allOrders.filter(order => {
             const orderDate = new Date(order.date_time);
-            return (!startDate || orderDate >= new Date(startDate)) &&
-                (!endDate || orderDate <= new Date(endDate));
+
+            return (
+                (!start || orderDate >= start) &&
+                (!end || orderDate <= end)
+            );
         });
 
         setFilterValue(filteredOrders);
     };
+
 
     useEffect(() => {
         getAllOrders()

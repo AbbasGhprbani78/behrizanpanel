@@ -4,10 +4,12 @@ import styles from './InfoUser.module.css'
 import { CiUser } from "react-icons/ci";
 import ModalUser from '../ModalUser/ModalUser';
 import axios from 'axios';
+import Loading from '../Loading/Loading';
 export default function Infouser() {
 
     const [showModal, setShowModal] = useState(false)
     const [userInfo, setUserInfo] = useState("")
+    const [loading, setLoading] = useState(false);
     const apiUrl = import.meta.env.VITE_API_URL;
 
     function convertToPersianNumbers(number) {
@@ -17,6 +19,7 @@ export default function Infouser() {
 
 
     const getUserHandler = async () => {
+        setLoading(true)
         const access = localStorage.getItem("access");
         const headers = {
             Authorization: `Bearer ${access}`,
@@ -32,9 +35,11 @@ export default function Infouser() {
             }
 
         } catch (e) {
-            if (e.response && e.response.status === 401) {
-
-            }
+            console.log(e)
+        }
+        
+        finally {
+            setLoading(false)
         }
 
     };
@@ -45,7 +50,12 @@ export default function Infouser() {
 
     return (
         <>
-            <ModalUser setShowModal={setShowModal} showModal={showModal} userInfo={userInfo} getUserHandler={getUserHandler} />
+            <ModalUser
+                setShowModal={setShowModal}
+                showModal={showModal}
+                userInfo={userInfo}
+                getUserHandler={getUserHandler}
+            />
             <div className={styles.infouserwrapper}>
                 <div className={styles.infousertop}>
                     <div className={styles.iconwrapper}>
@@ -73,6 +83,11 @@ export default function Infouser() {
                     </button>
                 </div>
             </div>
+
+            {
+                loading &&
+                <Loading />
+            }
         </>
 
     )

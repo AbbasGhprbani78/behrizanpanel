@@ -14,7 +14,6 @@ export default function StatusProduct({ style, status }) {
 
   const [currentStep, setCurrentStep] = useState(1);
 
-console.log(status)
 
   useEffect(() => {
     switch (status) {

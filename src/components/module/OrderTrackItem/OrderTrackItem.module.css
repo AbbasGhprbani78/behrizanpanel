@@ -158,7 +158,10 @@
     background-color: transparent;
     color: var(--color-3);
     font-size: 1.2rem;
+}
 
+.wrap_date_detail {
+    width: 122px;
 }
 
 @media (max-width:992px) {
@@ -213,7 +216,7 @@
 }
 
 @media (max-width:600px) {
-    
+
     .reqnumberwrapper {
         display: none;
     }

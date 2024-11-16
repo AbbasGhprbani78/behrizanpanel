@@ -4,6 +4,10 @@
     border-radius: 5px;
 }
 
+.textarea::-webkit-scrollbar{
+display: none;
+}
+
 .labeltextarea {
     position: absolute;
     right: 10px;

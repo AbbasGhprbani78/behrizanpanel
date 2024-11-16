@@ -80,6 +80,26 @@
     font-size: .8rem;
 }
 
+.btn_send_code {
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    background-color: #9a9a9a;
+    color: #fff;
+    font-size: .8rem;
+    min-width: 105.29px;
+}
+
+.text_code {
+    color: #79747e;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.disabled_btn{
+    cursor: not-allowed;
+}
 
 @media (max-width:1347px) {
     .modalwrappper {

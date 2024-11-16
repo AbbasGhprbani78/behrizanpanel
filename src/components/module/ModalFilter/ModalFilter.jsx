@@ -25,28 +25,7 @@ export default function ModalFilter({
         }
     };
 
-    const renderCustomInput = ({ ref }) => (
-        <input
-            readOnly
-            ref={ref}
-            placeholder="Select a day range"
-            value={
-                selectedDayRange.from && selectedDayRange.to
-                    ? `از ${selectedDayRange.from.day}/${selectedDayRange.from.month}/${selectedDayRange.from.year} تا ${selectedDayRange.to.day}/${selectedDayRange.to.month}/${selectedDayRange.to.year}`
-                    : ""
-            }
-            style={{
-                textAlign: "center",
-                padding: "0.5rem 1rem",
-                fontSize: "1.1rem",
-                border: "1px solid #9c88ff",
-                borderRadius: "5px",
-                color: "#4a4a4a",
-                outline: "none",
-            }}
-        />
-    );
-
+   
 
     return (
         <div className={`${styles.modal_container} ${openModal ? styles.active : ""}`}>
