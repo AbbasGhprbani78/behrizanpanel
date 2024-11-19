@@ -51,12 +51,12 @@ export default function ModalUser({ setShowModal, showModal, userInfo, getUserHa
         };
         try {
             const response = await axios.post(
-                `${apiUrl}/user/send-code/`,
-                {},
-                { headers }
+              `${apiUrl}/user/send-code/`,
+              {},
+              { headers }
             );
             if (response.status === 200) {
-                 setCode(response.data.message);
+                console.log(response.data)
                 setStatusBtn(4)
             }
         } catch (error) {
@@ -75,7 +75,9 @@ export default function ModalUser({ setShowModal, showModal, userInfo, getUserHa
             code
         }
         try {
-            const response = await axios.post(`${apiUrl}/user/verify-code/`, body, { headers });
+            const response = await axios.post(`${apiUrl}/user/verify-code/`,body,
+              { headers }
+            );
             if (response.status === 200) {
                 setIsDisableNumber(false);
                 setStatusBtn(5)
@@ -161,7 +163,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo, getUserHa
                         setIsDisableNumber(true)
                         setStatusBtn(1)
                          swal({
-                                title: " ویرایش با موفقیت تایید انجام شد",
+                                title: "ویرایش با موفقیت انجام شد",
                                 icon: "success",
                                 button: "باشه"
                 })
@@ -214,9 +216,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo, getUserHa
                                             onChange={(e) => {
                                                 const newCode = e.target.value;
                                                 setCode(newCode);
-                                                console.log("Code value:", newCode);
                                                 setStatusBtn(newCode ? 4 : 1);
-                                                console.log("StatusBtn:", newCode ? 4 : 1);
                                             }}
                                             type="text"
                                             style="style"
