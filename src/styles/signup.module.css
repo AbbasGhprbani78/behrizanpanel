@@ -40,6 +40,7 @@
     margin: 1rem auto 0 auto;
     max-height: 70vh;
     overflow-y: scroll;
+    padding: 0 5px;
 }
 
 
@@ -106,21 +107,14 @@
     height: 78px;
 }
 
-.formcontent::-webkit-scrollbar {
+/* .formcontent::-webkit-scrollbar {
     display: none;
 }
 .formcontent {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
-    /* Internet Explorer 10+ */
     scrollbar-width: none;
-    /* Firefox */
-}
-
-.formcontent::-webkit-scrollbar {
-    display: none;
-    /* Safari and Chrome */
-}
+} */
 
 .linksignin {
     color: var(--color-1);

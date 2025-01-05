@@ -296,6 +296,12 @@
     .textpassword {
         font-size: .9rem;
     }
+
+   .wrapper_time_btn{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   }
 }
 
 @media (max-width:600px) {

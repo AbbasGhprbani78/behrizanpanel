@@ -450,6 +450,7 @@ thead {
 
 ::-webkit-scrollbar-track {
     background: #888;
+    border-radius: 6px;
 }
 
 
