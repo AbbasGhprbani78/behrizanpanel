@@ -206,9 +206,12 @@ export default function Login() {
                           </span>
                         )}
                         <div className="mt-3 d-flex justify-content-between align-items-center">
-                          <Link to="/signup" className={styles.linksignup}>
+                          <div
+                            className={styles.linksignup}
+                            onClick={() => setStep(7)}
+                          >
                             هنوز ثبت نام نکرده اید؟
-                          </Link>
+                          </div>
                           <span
                             className={styles.linksignup}
                             onClick={() => setStep(5)}
@@ -876,6 +879,164 @@ export default function Login() {
                   )}
                 </Formik>
               </div>
+            ) : step === 7 ? (
+              <div className={styles.passwordform}>
+                <div className={styles.formpasswordcontent}>
+                  <Formik
+                    validate={(values) => {
+                      const errors = {};
+                      const phoneRegex =
+                        /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+                      if (!values.phone_number) {
+                        errors.phone_number =
+                          "وارد کردن  شماره تلفن اجباری میباشد";
+                      } else if (!phoneRegex.test(values.phone_number)) {
+                        errors.phone_number = "شماره تلفن معتبر نیست";
+                      }
+                      return errors;
+                    }}
+                    initialValues={{
+                      phone_number: "",
+                    }}
+                    onSubmit={async (values, { setSubmitting }) => {
+                      localStorage.setItem("phone", values.phone_number);
+                      try {
+                        const response = await axios.post(
+                          `${apiUrl}/user/send-code-login/`,
+                          values
+                        );
+                        if (response.status === 200) {
+                          console.log(response.data);
+                          setStep(8);
+                        }
+                      } catch (error) {
+                        toast.error(error.response.data.message, {
+                          position: "top-left",
+                        });
+                        console.log(error);
+                        setSubmitting(false);
+                      }
+                    }}
+                  >
+                    {({
+                      values,
+                      handleChange,
+                      handleSubmit,
+                      errors,
+                      touched,
+                      isSubmitting,
+                    }) => (
+                      <form onSubmit={handleSubmit}>
+                        <div>
+                          <Input
+                            Input
+                            name="phone_number"
+                            label="شماره همراه"
+                            icon={MdEmail}
+                            value={values.phone_number}
+                            onChange={handleChange}
+                            type={"text"}
+                            ref={firstInputRef}
+                          />
+
+                          {errors.phone_number && touched.phone_number && (
+                            <span className={styles.errorinput}>
+                              {errors.phone_number}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-center mt-5">
+                          <button
+                            className={`${styles.btnphoneform} ${
+                              isSubmitting ? styles.disablebtn : ""
+                            }`}
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
+                            ارسال
+                            <FaArrowLeftLong className={styles.iconformphone} />
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </Formik>
+                </div>
+              </div>
+            ) : step === 8 ? (
+              <>
+                <div className={styles.phoneform}>
+                  <Formik
+                    initialValues={{
+                      phone_number: localStorage.getItem("phone"),
+                      code: "",
+                    }}
+                    onSubmit={async (values, { setSubmitting }) => {
+                      try {
+                        setLoading(true);
+                        const response = await axios.post(
+                          `${apiUrl}/user/verify-code-login/`,
+                          values
+                        );
+                        if (response.status === 200) {
+                          console.log(response.data);
+                          localStorage.setItem(
+                            "refresh",
+                            response.data.refresh_token
+                          );
+                          localStorage.setItem(
+                            "access",
+                            response.data.access_token
+                          );
+                          localStorage.removeItem("email");
+                          localStorage.removeItem("phone");
+                          navigate("/showInformation");
+                        }
+                      } catch (error) {
+                        toast.error(error.response.data.message, {
+                          position: "top-left",
+                        });
+                        setSubmitting(false);
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                  >
+                    {({ values, handleChange, handleSubmit }) => (
+                      <form onSubmit={handleSubmit}>
+                        <p className={styles.paneltext}>
+                          رمز یکبار مصرف به شماره زیر ارسال شده است
+                        </p>
+                        <p className={styles.wrap_phone}>
+                          {localStorage.getItem("phone")}
+                        </p>
+                        <InputsCodes
+                          onChange={handleChange}
+                          value={values.code}
+                          handleSubmit={handleSubmit}
+                        />
+                        <div className="d-flex justify-content-center">
+                          {loading ? (
+                            <span>درحال انتظار ...</span>
+                          ) : timeLeft > 0 ? (
+                            <p className={styles.timer}>00:{timeLeft}</p>
+                          ) : (
+                            <button
+                              type="button"
+                              className={styles.resendButton}
+                              onClick={() => {
+                                resetTimer();
+                                sendCodeAgainToNumber();
+                              }}
+                            >
+                              ارسال مجدد کد
+                            </button>
+                          )}
+                        </div>
+                      </form>
+                    )}
+                  </Formik>
+                </div>
+              </>
             ) : null}
             <p className={styles.textco}>Powered By ARIISCO</p>
           </div>
@@ -970,9 +1131,12 @@ export default function Login() {
                             </span>
                           )}
                           <div className="mt-3 d-flex justify-content-between align-items-center">
-                            <Link to="/signup" className={styles.linksignup}>
+                            <div
+                              className={styles.linksignup}
+                              onClick={() => setStep(7)}
+                            >
                               هنوز ثبت نام نکرده اید؟
-                            </Link>
+                            </div>
                             <span
                               className={styles.linksignup}
                               onClick={() => setStep(5)}
@@ -1647,6 +1811,166 @@ export default function Login() {
                     )}
                   </Formik>
                 </div>
+              ) : step === 7 ? (
+                <div className={styles.passwordform}>
+                  <div className={styles.formpasswordcontent}>
+                    <Formik
+                      validate={(values) => {
+                        const errors = {};
+                        const phoneRegex =
+                          /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+                        if (!values.phone_number) {
+                          errors.phone_number =
+                            "وارد کردن  شماره تلفن اجباری میباشد";
+                        } else if (!phoneRegex.test(values.phone_number)) {
+                          errors.phone_number = "شماره تلفن معتبر نیست";
+                        }
+                        return errors;
+                      }}
+                      initialValues={{
+                        phone_number: "",
+                      }}
+                      onSubmit={async (values, { setSubmitting }) => {
+                        localStorage.setItem("phone", values.phone_number);
+                        try {
+                          const response = await axios.post(
+                            `${apiUrl}/user/send-code-login/`,
+                            values
+                          );
+                          if (response.status === 200) {
+                            console.log(response.data);
+                            setStep(8);
+                          }
+                        } catch (error) {
+                          toast.error(error.response.data.message, {
+                            position: "top-left",
+                          });
+                          console.log(error);
+                          setSubmitting(false);
+                        }
+                      }}
+                    >
+                      {({
+                        values,
+                        handleChange,
+                        handleSubmit,
+                        errors,
+                        touched,
+                        isSubmitting,
+                      }) => (
+                        <form onSubmit={handleSubmit}>
+                          <div>
+                            <Input
+                              Input
+                              name="phone_number"
+                              label="شماره همراه"
+                              icon={MdEmail}
+                              value={values.phone_number}
+                              onChange={handleChange}
+                              type={"text"}
+                              ref={firstInputRef}
+                            />
+
+                            {errors.phone_number && touched.phone_number && (
+                              <span className={styles.errorinput}>
+                                {errors.phone_number}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-center mt-5">
+                            <button
+                              className={`${styles.btnphoneform} ${
+                                isSubmitting ? styles.disablebtn : ""
+                              }`}
+                              type="submit"
+                              disabled={isSubmitting}
+                            >
+                              ارسال
+                              <FaArrowLeftLong
+                                className={styles.iconformphone}
+                              />
+                            </button>
+                          </div>
+                        </form>
+                      )}
+                    </Formik>
+                  </div>
+                </div>
+              ) : step === 8 ? (
+                <>
+                  <div className={styles.phoneform}>
+                    <Formik
+                      initialValues={{
+                        phone_number: localStorage.getItem("phone"),
+                        code: "",
+                      }}
+                      onSubmit={async (values, { setSubmitting }) => {
+                        try {
+                          setLoading(true);
+                          const response = await axios.post(
+                            `${apiUrl}/user/verify-code-login/`,
+                            values
+                          );
+                          if (response.status === 200) {
+                            console.log(response.data);
+                            localStorage.setItem(
+                              "refresh",
+                              response.data.refresh_token
+                            );
+                            localStorage.setItem(
+                              "access",
+                              response.data.access_token
+                            );
+                            localStorage.removeItem("email");
+                            localStorage.removeItem("phone");
+                            navigate("/showInformation");
+                          }
+                        } catch (error) {
+                          toast.error(error.response.data.message, {
+                            position: "top-left",
+                          });
+                          setSubmitting(false);
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                    >
+                      {({ values, handleChange, handleSubmit }) => (
+                        <form onSubmit={handleSubmit}>
+                          <p className={styles.paneltext}>
+                            رمز یکبار مصرف به شماره زیر ارسال شده است
+                          </p>
+                          <p className={styles.wrap_phone}>
+                            {localStorage.getItem("phone")}
+                          </p>
+                          <InputsCodes
+                            onChange={handleChange}
+                            value={values.code}
+                            handleSubmit={handleSubmit}
+                          />
+                          <div className="d-flex justify-content-center">
+                            {loading ? (
+                              <span>درحال انتظار ...</span>
+                            ) : timeLeft > 0 ? (
+                              <p className={styles.timer}>00:{timeLeft}</p>
+                            ) : (
+                              <button
+                                type="button"
+                                className={styles.resendButton}
+                                onClick={() => {
+                                  resetTimer();
+                                  sendCodeAgainToNumber();
+                                }}
+                              >
+                                ارسال مجدد کد
+                              </button>
+                            )}
+                          </div>
+                        </form>
+                      )}
+                    </Formik>
+                  </div>
+                </>
               ) : null}
             </Col>
             <Col md={6} className={styles.logocontainer}>

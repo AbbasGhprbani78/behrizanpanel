@@ -1,3 +1,8 @@
 .swal-footer {
     text-align: center !important;
 }
+
+.disable {
+    opacity: .5;
+    cursor: not-allowed;
+}

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useContext } from 'react'
+import  { useEffect, useState, useContext } from 'react'
 import styles from "../../styles/Products.module.CSS"
 import SideBar from '../../components/module/SideBar/SideBar'
 import Header from '../../components/module/Header/Header'

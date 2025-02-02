@@ -97,8 +97,93 @@
     margin-top: 5px;
 }
 
-.disabled_btn{
+.disabled_btn {
     cursor: not-allowed;
+}
+
+
+
+.header_tab {
+    display: flex;
+    position: relative;
+    border-bottom: 2px solid #ccc;
+}
+
+.header_tab button {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    color: #555;
+    transition: color 0.3s ease-in-out;
+}
+
+.header_tab button:hover {
+    color: black;
+}
+
+.header_tab button.active {
+    font-weight: bold;
+    color: black;
+}
+
+.header_tab div {
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+    background: gold;
+    transition: left 0.3s ease-in-out;
+}
+
+.addadress {
+    width: 50%;
+    margin: 10px auto 30px auto;
+    padding: 5px 0;
+}
+
+.address_container {
+    max-height: 200px;
+    overflow: auto;
+    padding-left: 10px;
+}
+
+.wrap_address_item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.loc_icon {}
+
+.text_address {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    display: block;
+    margin-bottom: 0;
+
+}
+
+.actions_address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit_address {
+    cursor: pointer;
+}
+
+.delete_address {
+    cursor: pointer;
 }
 
 @media (max-width:1347px) {
