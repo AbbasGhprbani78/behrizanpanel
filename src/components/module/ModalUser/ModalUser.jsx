@@ -28,12 +28,14 @@ export default function ModalUser({
     full_name: "",
     phone_number: "",
     email: "",
+    zipcode: "",
+    address: "",
   });
 
   const [profileInfo, setProfileInfo] = useState({
     full_name: userInfo?.full_name || "",
     phone_number: userInfo?.phone_number || "",
-    email: userInfo?.email || ""
+    email: userInfo?.email || "",
   });
   const [allAddress, setAllAddress] = useState([]);
   const [address, setAddress] = useState({
@@ -123,7 +125,7 @@ export default function ModalUser({
     }));
   };
 
-  const validateInputs = () => {
+  const validateInputsProfile = () => {
     let isValid = true;
     let newErrors = { full_name: "", phone_number: "", email: "" };
 
@@ -149,6 +151,29 @@ export default function ModalUser({
       newErrors.email = "ایمیل معتبر نیست";
       isValid = false;
     }
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const validateInputsAddress = () => {
+    let isValid = true;
+    let newErrors = { zipcode: "", address: "" };
+
+    if (!address.zipcode.trim()) {
+      newErrors.zipcode = "کد پستی نباید خالی باشد.";
+      isValid = false;
+    } else if (!/^\d{10}$/.test(address.zipcode)) {
+      newErrors.zipcode = "کد پستی باید ۱۰ رقم و فقط شامل اعداد باشد.";
+      isValid = false;
+    }
+
+    if (!address.address.trim()) {
+      newErrors.address = "آدرس نباید خالی باشد.";
+      isValid = false;
+    } else if (address.address.length < 5) {
+      newErrors.address = "آدرس باید حداقل ۵ کاراکتر باشد.";
+      isValid = false;
+    }
 
     setErrors(newErrors);
     return isValid;
@@ -164,7 +189,6 @@ export default function ModalUser({
     });
     try {
       if (response.status === 200) {
-        console.log(response.data);
         setAllAddress(response.data[0].user_details);
       }
     } catch (error) {
@@ -185,7 +209,7 @@ export default function ModalUser({
   };
 
   const updateProfile = async () => {
-    if (!validateInputs()) {
+    if (!validateInputsProfile()) {
       return;
     }
     setLoading(true);
@@ -227,6 +251,9 @@ export default function ModalUser({
   };
 
   const addNewAddress = async () => {
+    if (!validateInputsAddress()) {
+      return;
+    }
     setLoading(true);
     const access = localStorage.getItem("access");
     const headers = {
@@ -262,6 +289,9 @@ export default function ModalUser({
   };
 
   const updateAddress = async () => {
+    if (!validateInputsAddress()) {
+      return;
+    }
     setLoading(true);
     const access = localStorage.getItem("access");
     const headers = {
@@ -289,7 +319,6 @@ export default function ModalUser({
       setLoading(false);
     }
   };
-
   const deleteAddress = async (id) => {
     setLoading(true);
     const access = localStorage.getItem("access");
@@ -298,11 +327,9 @@ export default function ModalUser({
     };
 
     try {
-      const response = await axios.delete(
-        `${apiUrl}/user/user-detail/${id}`,
-        address,
-        { headers }
-      );
+      const response = await axios.delete(`${apiUrl}/user/user-detail/${id}`, {
+        headers,
+      });
 
       if (response.status === 200) {
         getAddress();
@@ -350,7 +377,6 @@ export default function ModalUser({
     return () => clearInterval(countdown);
   }, [statusBtn]);
 
-  console.log(code);
   return (
     <div className={`${styles.modalcontainer} ${showModal ? styles.show : ""}`}>
       <div className={styles.modalclose} onClick={""}></div>
@@ -531,6 +557,9 @@ export default function ModalUser({
                   onChange={handleChangeAddress}
                   type={"text"}
                 />
+                {errors.zipcode && (
+                  <span className={styles.errorinput}>{errors.zipcode}</span>
+                )}
               </div>
               <div>
                 <Input
@@ -559,6 +588,9 @@ export default function ModalUser({
                   onChange={handleChangeAddress}
                   label={"آدرس"}
                 />
+                {errors.address && (
+                  <span className={styles.errorinput}>{errors.address}</span>
+                )}
               </div>
             </>
           )}

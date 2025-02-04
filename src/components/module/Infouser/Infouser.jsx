@@ -32,7 +32,6 @@ export default function Infouser() {
 
       if (response.status === 200) {
         setUserInfo(response.data[0]);
-        console.log(response.data[0]);
       }
     } catch (e) {
       console.log(e);

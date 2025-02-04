@@ -8,7 +8,6 @@ import Chart from "../../components/module/Chart/Chart";
 import StatusLastProduct from "../../components/module/StatusLastProduct/StatusLastProduct";
 import axios from "axios";
 import Chat from "../../components/templates/chat/Chat";
-import Loading from "../../components/module/Loading/Loading";
 
 export default function Home() {
   const [product, setProduct] = useState([]);
