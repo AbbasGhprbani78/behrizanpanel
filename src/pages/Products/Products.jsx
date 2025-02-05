@@ -23,7 +23,6 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [filterProduct, setFilterProduct] = useState([]);
   const [propetyId, setPropetyId] = useState(null);
-  const [errorSelect, setErrorSelect] = useState(false);
   const [propertyValue, setPropertyValue] = useState(null);
   const [propertName, setPropertName] = useState(null);
   const { setCountProduct } = useContext(CountContext);
@@ -38,81 +37,66 @@ export default function Products() {
     navigate("/cart");
   };
   const addToCartHandler = () => {
-    if (!propetyId) {
-      setErrorSelect(true);
-      return false;
-    } else {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-      if (cart.length) {
-        const isInCart = cart.some((item) => item.id == mainProduct.id);
-
-        if (isInCart) {
-          cart.forEach((item) => {
-            if (item.id == mainProduct.id) {
-              item.count = Number(item.count) + Number(value);
-              item.property_id = propetyId;
-              (item.properties = mainProduct.properties),
-                (item.property_value = propertyValue),
-                (item.property_name = propertName);
-            }
-          });
-          localStorage.setItem("cart", JSON.stringify(cart));
-          swal({
-            title: "به سبد سفارش اضافه شد",
-            icon: "success",
-            button: "باشه",
-          });
-        } else {
-          const cartItem = {
-            id: mainProduct.id,
-            item_code: mainProduct.item_code,
-            count: Number(value),
-            descriptions: mainProduct.descriptions,
-            img: mainProduct.image,
-            property_id: propetyId,
-            properties: mainProduct.properties,
-            property_value: propertyValue,
-            property_name: propertName,
-          };
-
-          cart.push(cartItem);
-          localStorage.setItem("cart", JSON.stringify(cart));
-          swal({
-            title: "به سبد سفارش اضافه شد",
-            icon: "success",
-            buttons: "باشه",
-          });
-        }
+    if (cart.length) {
+      const isInCart = cart.some(
+        (item) => item.item_code == mainProduct.item_code
+      );
+      if (isInCart) {
+        cart.forEach((item) => {
+          if (item.item_code == mainProduct.item_code) {
+            item.count = Number(item.count) + Number(value);
+          }
+        });
+        localStorage.setItem("cart", JSON.stringify(cart));
+        swal({
+          title: "به سبد سفارش اضافه شد",
+          icon: "success",
+          button: "باشه",
+        });
       } else {
         const cartItem = {
-          id: mainProduct.id,
           item_code: mainProduct.item_code,
           count: Number(value),
           descriptions: mainProduct.descriptions,
           img: mainProduct.image,
-          property_id: propetyId,
-          properties: mainProduct.properties,
-          property_value: propertyValue,
-          property_name: propertName,
+          unitdesc: mainProduct.unitdesc,
         };
 
         cart.push(cartItem);
         localStorage.setItem("cart", JSON.stringify(cart));
+        setValue(1);
         swal({
           title: "به سبد سفارش اضافه شد",
           icon: "success",
           buttons: "باشه",
         });
       }
+    } else {
+      const cartItem = {
+        item_code: mainProduct.item_code,
+        count: Number(value),
+        descriptions: mainProduct.descriptions,
+        img: mainProduct.image,
+        unitdesc: mainProduct.unitdesc,
+      };
 
-      const countproduct = JSON.parse(localStorage.getItem("cart")).length;
-      setCountProduct(countproduct);
-      setShowModalBuy(false);
+      cart.push(cartItem);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      swal({
+        title: "به سبد سفارش اضافه شد",
+        icon: "success",
+        buttons: "باشه",
+      });
     }
+
+    const countproduct = JSON.parse(localStorage.getItem("cart")).length;
+    setCountProduct(countproduct);
+    setShowModalBuy(false);
   };
 
-  const getAllProducts = async (page = 1, page_size = 10) => {
+  const getAllProducts = async (page = 1, page_size = 50) => {
     if (page === 1) setLoading(true);
 
     const access = localStorage.getItem("access");
@@ -125,6 +109,7 @@ export default function Products() {
       });
 
       if (response.status === 200) {
+        console.log(response.data);
         setProducts((prev) => [...prev, ...response.data.results]);
         setFilterProduct((prev) => [...prev, ...response.data.results]);
         setPage((prev) => prev + 1);
@@ -140,40 +125,43 @@ export default function Products() {
     }
   };
 
-const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
-  if (page === 1) setLoading(true);
+  const fetchFilteredProducts = async (query, page = 1, page_size = 50) => {
+    if (page === 1) setLoading(true);
 
-  try {
-    const response = await axios.get(`${apiUrl}/app/search/`, {
-      params: { query, page, page_size },
-    });
+    try {
+      const response = await axios.get(`${apiUrl}/app/search/`, {
+        params: { query, page, page_size },
+      });
 
-    if (response.status === 200) {
-      setFilterProduct((prev) =>
-        page === 1 ? response.data : [...prev, ...response.data]
-      );
-      setPage((prev) => prev + 1);
+      if (response.status === 200) {
+        setFilterProduct((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+        setPage((prev) => prev + 1);
 
-      if (response.data.length < page_size) {
-        setHasMore(false);
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        }
       }
+    } catch (error) {
+      console.error("خطا در دریافت محصولات فیلتر شده:", error);
+    } finally {
+      setLoading(false);
+      if (firstLoad) setFirstLoad(false);
     }
-  } catch (error) {
-    console.error("خطا در دریافت محصولات فیلتر شده:", error);
-  } finally {
-    setLoading(false);
-    if (firstLoad) setFirstLoad(false);
-  }
-};
+  };
 
   useEffect(() => {
     if (search.trim() === "") {
       setFilterProduct(products);
-      setPage(1)
+      setPage(1);
+      setHasMore(true);
       return;
     }
     const delayDebounceFn = setTimeout(() => {
-      fetchFilteredProducts(search);
+      fetchFilteredProducts(search, 1);
     }, 1500);
 
     return () => clearTimeout(delayDebounceFn);
@@ -196,8 +184,6 @@ const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
             addToCartHandler={addToCartHandler}
             mainProduct={mainProduct}
             setPropetyId={setPropetyId}
-            errorSelect={errorSelect}
-            setErrorSelect={setErrorSelect}
             propertyValue={propertyValue}
             setPropertyValue={setPropertyValue}
             setPropertName={setPropertName}
@@ -237,7 +223,13 @@ const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
                 <>
                   <InfiniteScroll
                     dataLength={filterProduct?.length}
-                    next={() => getAllProducts(page)}
+                    next={() => {
+                      if (search.trim()) {
+                        fetchFilteredProducts(search, page);
+                      } else {
+                        getAllProducts(page);
+                      }
+                    }}
                     hasMore={hasMore}
                     scrollableTarget="ProductsBox"
                   >
@@ -249,7 +241,7 @@ const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
                           .map((product) => (
                             <ProductItem
                               product={product}
-                              key={product.id}
+                              key={product.item_code}
                               setShowModalBuy={setShowModalBuy}
                               setMainProduct={setMainProduct}
                             />

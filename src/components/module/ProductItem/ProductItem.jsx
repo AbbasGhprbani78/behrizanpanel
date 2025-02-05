@@ -7,6 +7,7 @@ export default function ProductItem({
   setMainProduct,
 }) {
   const apiUrl = import.meta.env.VITE_API_URL;
+
   return (
     <>
       <div className={styles.ProductItem1}>
@@ -49,7 +50,11 @@ export default function ProductItem({
               </td>
               <td style={{ width: "25%" }} className={styles.imageBox}>
                 <img
-                  src={`${apiUrl}${product.image}`}
+                  src={`${
+                    product.image
+                      ? `${apiUrl}${product.image}`
+                      : "/public/images/image1.png"
+                  }`}
                   className={styles.image}
                 />
               </td>
@@ -57,10 +62,17 @@ export default function ProductItem({
           </tbody>
         </table>
       </div>
-
       <div className={styles.ProductItem2}>
         <div className={styles.imagecart}>
-          <img src={`${apiUrl}${product.image}`} alt="product" />
+          <img
+            src={`${
+              product.image
+                ? `${apiUrl}${product.image}`
+                : "/public/images/image1.png"
+            }`}
+            alt="product"
+            className={!product.image  && styles.image_mobile}
+          />
         </div>
         <div className="d-flex align-items-center justify-content-between mt-3">
           <span>کد کالا</span>

@@ -34,6 +34,7 @@ const Input = forwardRef(
           ref={ref}
           disabled={disable}
           placeholder={placeholder}
+          maxLength={200}
         />
         {handleToggle
           ? Icon && <Icon className={styles.icon} onClick={handleToggle} />

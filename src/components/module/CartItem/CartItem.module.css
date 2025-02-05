@@ -25,6 +25,7 @@
 .bodyitemimage>img {
     width: 70px;
     padding-top: 0 !important;
+    object-fit: cover;
 }
 
 @media (max-width:768px) {

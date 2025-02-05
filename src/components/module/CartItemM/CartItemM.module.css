@@ -88,6 +88,16 @@
 }
 
 
+.imagecart {
+    display: flex;
+    justify-content: center;
+}
+
+.imagecart>img {
+    width: auto;
+
+}
+
 @media (max-width:600px) {
     .CartItemmwrapper {
         width: 100%;
