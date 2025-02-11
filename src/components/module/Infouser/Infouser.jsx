@@ -4,45 +4,42 @@ import { CiUser } from "react-icons/ci";
 import ModalUser from "../ModalUser/ModalUser";
 import axios from "axios";
 import Loading from "../Loading/Loading";
+import useSWR from "swr";
+const apiUrl = import.meta.env.VITE_API_URL;
+
+const fetcher = async (url) => {
+  const access = localStorage.getItem("access");
+
+  const headers = {
+    Authorization: `Bearer ${access}`,
+  };
+  const response = await axios.get(url, {
+    headers,
+  });
+  if (response.status === 200) {
+    return response.data[0];
+  }
+};
+
+import { convertToPersianNumbers, goToLogin } from "../../../utils/helper";
 export default function Infouser() {
   const [showModal, setShowModal] = useState(false);
-  const [userInfo, setUserInfo] = useState("");
-  const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL;
 
-  function convertToPersianNumbers(number) {
-    const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-    return number.toString().replace(/\d/g, (digit) => persianDigits[digit]);
-  }
-
-  const getUserHandler = async () => {
-    setLoading(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-
-    try {
-      const response = await axios.get(
-        `${apiUrl}/user/get-user-informations/`,
-        {
-          headers,
-        }
-      );
-
-      if (response.status === 200) {
-        setUserInfo(response.data[0]);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: userInfo,
+    error,
+    isLoading,
+  } = useSWR(`${apiUrl}/user/get-user-informations/`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 15 * 60 * 1000,
+  });
 
   useEffect(() => {
-    getUserHandler();
-  }, []);
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("access");
+      goToLogin();
+    }
+  }, [error]);
 
   return (
     <>
@@ -50,7 +47,7 @@ export default function Infouser() {
         setShowModal={setShowModal}
         showModal={showModal}
         userInfo={userInfo}
-        getUserHandler={getUserHandler}
+        
       />
       <div className={styles.infouserwrapper}>
         <div className={styles.infousertop}>
@@ -75,7 +72,7 @@ export default function Infouser() {
           <div className={styles.useraboutitem}>
             <span className={styles.userabouttitle}>آدرس :</span>
             <span className={styles.useraboutsub}>
-              {userInfo.user_details && userInfo?.user_details[0]?.address}
+              {userInfo?.user_details && userInfo?.user_details[0]?.address}
             </span>
           </div>
         </div>
@@ -89,7 +86,7 @@ export default function Infouser() {
         </div>
       </div>
 
-      {loading && <Loading />}
+      {isLoading && <Loading />}
     </>
   );
 }

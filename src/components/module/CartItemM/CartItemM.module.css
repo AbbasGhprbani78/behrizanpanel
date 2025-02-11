@@ -98,6 +98,17 @@
 
 }
 
+
+ .imagecart>img {
+     width: auto;
+     object-fit: cover;
+ }
+
+ .image_mobile>img {
+     width: 100% !important;
+     object-fit: cover;
+ }
+
 @media (max-width:600px) {
     .CartItemmwrapper {
         width: 100%;

@@ -250,4 +250,9 @@
         width: auto;
         object-fit: cover;
     }
+
+    .image_mobile>img {
+        width: 100% !important;
+        object-fit: cover;
+    }
 }

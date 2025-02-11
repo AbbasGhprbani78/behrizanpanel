@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../../components/module/Input/Input";
 import styles from "../../styles/Login.module.css";
 import { Col } from "react-bootstrap";
@@ -9,7 +9,6 @@ import { IoEyeSharp } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import axios from "axios";
 import { MdOutlineMail } from "react-icons/md";
-import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { MdEmail } from "react-icons/md";
 import "react-toastify/dist/ReactToastify.css";
@@ -617,7 +616,8 @@ export default function Login() {
                           setStep(1);
                         }
                       } catch (error) {
-                        toast.error(error.response.data.message, {
+                       
+                        toast.error(error.response.data.non_field_errors[0], {
                           position: "top-left",
                         });
                         setSubmitting(false);
@@ -1548,7 +1548,8 @@ export default function Login() {
                             setStep(1);
                           }
                         } catch (error) {
-                          toast.error(error.response.data.message, {
+                         
+                          toast.error(error.response.data.non_field_errors[0], {
                             position: "top-left",
                           });
                           setSubmitting(false);
@@ -1764,7 +1765,7 @@ export default function Login() {
                           );
                           localStorage.removeItem("email");
                           localStorage.removeItem("phone");
-                          // navigate("/");
+                          navigate("/");
                         }
                       } catch (error) {
                         toast.error(error.response.data.message, {

@@ -1,7 +1,7 @@
 .logincontainer {
     display: flex;
     justify-content: space-between;
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .formcontainer {
@@ -72,7 +72,7 @@
 }
 
 .disablebtn {
-    opacity: .9;
+    opacity: .5;
     cursor: not-allowed;
 }
 
@@ -208,7 +208,7 @@
 /* mobile */
 
 .logincontainerm {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;

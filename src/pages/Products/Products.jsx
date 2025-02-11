@@ -13,6 +13,7 @@ import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/module/Loading/Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { goToLogin } from "../../utils/helper";
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -32,6 +33,7 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [firstLoad, setFirstLoad] = useState(true);
+  const [isSearch, setIsSearch] = useState(false);
 
   const gotocart = () => {
     navigate("/cart");
@@ -96,8 +98,8 @@ export default function Products() {
     setShowModalBuy(false);
   };
 
-  const getAllProducts = async (page = 1, page_size = 50) => {
-    if (page === 1) setLoading(true);
+  const getAllProducts = async (page = 1, page_size = 10) => {
+    if (page === 1 && firstLoad) setLoading(true);
 
     const access = localStorage.getItem("access");
     const headers = { Authorization: `Bearer ${access}` };
@@ -109,24 +111,33 @@ export default function Products() {
       });
 
       if (response.status === 200) {
-        console.log(response.data);
-        setProducts((prev) => [...prev, ...response.data.results]);
-        setFilterProduct((prev) => [...prev, ...response.data.results]);
+        setProducts((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+        setFilterProduct((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+
+        setHasMore(response.data.results.length === page_size);
         setPage((prev) => prev + 1);
-        if (response.data.results.length < page_size) {
-          setHasMore(false);
-        }
       }
     } catch (e) {
-      console.log(e);
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     } finally {
       setLoading(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
 
-  const fetchFilteredProducts = async (query, page = 1, page_size = 50) => {
-    if (page === 1) setLoading(true);
+  const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
+    if (page === 1) setIsSearch(true);
 
     try {
       const response = await axios.get(`${apiUrl}/app/search/`, {
@@ -139,16 +150,14 @@ export default function Products() {
             ? response.data.results
             : [...prev, ...response.data.results]
         );
-        setPage((prev) => prev + 1);
 
-        if (response.data.results.length < page_size) {
-          setHasMore(false);
-        }
+        setHasMore(response.data.results.length === page_size);
+        setPage((prev) => prev + 1);
       }
     } catch (error) {
       console.error("خطا در دریافت محصولات فیلتر شده:", error);
     } finally {
-      setLoading(false);
+      setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
@@ -160,8 +169,12 @@ export default function Products() {
       setHasMore(true);
       return;
     }
+
+    setPage(1);
+    setHasMore(true);
+
     const delayDebounceFn = setTimeout(() => {
-      fetchFilteredProducts(search, 1);
+      fetchFilteredProducts(search.trim(), 1);
     }, 1500);
 
     return () => clearTimeout(delayDebounceFn);
@@ -208,59 +221,63 @@ export default function Products() {
             </div>
           </div>
           <Header title={"محصولات"} />
-          <div className={styles.maincontent}>
-            <div className={styles.wrapper}>
-              <SearchBox
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={"جستوجو براساس کدکالا , شرح محصول"}
-              />
-            </div>
-            <div className={styles.ProductsPage}>
-              {loading ? (
-                <Loading />
-              ) : (
-                <>
-                  <InfiniteScroll
-                    dataLength={filterProduct?.length}
-                    next={() => {
-                      if (search.trim()) {
-                        fetchFilteredProducts(search, page);
-                      } else {
-                        getAllProducts(page);
-                      }
-                    }}
-                    hasMore={hasMore}
-                    scrollableTarget="ProductsBox"
-                  >
-                    <div className={styles.ProductsBox} id="ProductsBox">
-                      {filterProduct?.length > 0 ? (
-                        filterProduct
-                          .slice()
-                          .reverse()
-                          .map((product) => (
-                            <ProductItem
-                              product={product}
-                              key={product.item_code}
-                              setShowModalBuy={setShowModalBuy}
-                              setMainProduct={setMainProduct}
-                            />
-                          ))
-                      ) : (
-                        <NoneSearch />
-                      )}
+          {loading ? (
+            <Loading />
+          ) : (
+            <div className={styles.maincontent}>
+              <div className={styles.wrapper}>
+                <SearchBox
+                  value={search}
+                  onChange={setSearch}
+                  placeholder={"جستوجو براساس کدکالا , شرح محصول"}
+                />
+              </div>
+              <div className={styles.ProductsPage}>
+                {isSearch ? (
+                  <p className="text-search">در حال جستوجو ...</p>
+                ) : (
+                  <>
+                    <InfiniteScroll
+                      dataLength={filterProduct?.length}
+                      next={() => {
+                        if (search.trim()) {
+                          fetchFilteredProducts(search, page);
+                        } else {
+                          getAllProducts(page);
+                        }
+                      }}
+                      hasMore={hasMore}
+                      scrollableTarget="ProductsBox"
+                    >
+                      <div className={styles.ProductsBox} id="ProductsBox">
+                        {filterProduct?.length > 0 ? (
+                          filterProduct
+                            .slice()
+                            .reverse()
+                            .map((product) => (
+                              <ProductItem
+                                product={product}
+                                key={product.item_code}
+                                setShowModalBuy={setShowModalBuy}
+                                setMainProduct={setMainProduct}
+                              />
+                            ))
+                        ) : (
+                          <NoneSearch />
+                        )}
+                      </div>
+                    </InfiniteScroll>
+                    <div className={styles.wrapper_btn}>
+                      <button className={styles.ButtonBox} onClick={gotocart}>
+                        <span>ادامه</span>
+                        <IoIosArrowBack />
+                      </button>
                     </div>
-                  </InfiniteScroll>
-                  <div className={styles.wrapper_btn}>
-                    <button className={styles.ButtonBox} onClick={gotocart}>
-                      <span>ادامه</span>
-                      <IoIosArrowBack />
-                    </button>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

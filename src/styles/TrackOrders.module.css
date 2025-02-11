@@ -36,14 +36,25 @@
 .maincontent {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
-    /* Internet Explorer 10+ */
     scrollbar-width: none;
-    /* Firefox */
+
 }
 
 .maincontent::-webkit-scrollbar {
     display: none;
-    /* Safari and Chrome */
+
+}
+
+.wrapp_orders {
+    height: calc(100dvh - 190px);
+    overflow-y: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.wrapp_orders::-webkit-scrollbar {
+    display: none;
 }
 
 @media (max-width:1025px) {

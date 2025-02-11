@@ -1,7 +1,7 @@
-import React from "react";
 import styles from "./CartItemM.module.css";
 import { IoCloseSharp } from "react-icons/io5";
 import { MdModeEditOutline } from "react-icons/md";
+import { convertToPersianNumbers } from "../../../utils/helper";
 export default function CartItemM({
   setShowDeleteModal,
   isConfirmation,
@@ -24,7 +24,11 @@ export default function CartItemM({
         />
       )}
 
-      <div className={styles.imagecart}>
+      <div
+        className={`${styles.imagecart} ${
+          prodcut?.image && styles.image_mobile
+        }`}
+      >
         <img
           src={`${
             prodcut?.img
@@ -32,24 +36,25 @@ export default function CartItemM({
               : "/public/images/image1.png"
           }`}
           alt="product"
-          className={!prodcut.image && styles.image_mobile}
         />
       </div>
       <div className={`${styles.cart_item_content} mt-3`}>
-        <p className={`${styles.carttext} mb-4`}>{prodcut.descriptions}</p>
+        <p className={`${styles.carttext} mb-4`}>
+          {convertToPersianNumbers(prodcut.descriptions)}
+        </p>
         <div className="d-flex align-items-center justify-content-between">
           <span className={styles.infoitem}>کد کالا</span>
-          <span>{prodcut.item_code}</span>
+          <span>{convertToPersianNumbers(prodcut?.item_code)}</span>
         </div>
         <div
           className={`${styles.cartinfoitem} align-items-center justify-content-between  mb-4`}
         >
           <span className={styles.infoitem}>تعداد</span>
-          <div>{prodcut.count}</div>
+          <div>{convertToPersianNumbers(prodcut.count)}</div>
         </div>
         <div className="d-flex align-items-center justify-content-between">
           <span className={styles.infoitem}>واحد</span>
-          <span>{prodcut.unitdesc}</span>
+          <span>{convertToPersianNumbers(prodcut.unitdesc)}</span>
         </div>
       </div>
 

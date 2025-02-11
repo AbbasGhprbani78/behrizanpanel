@@ -99,6 +99,7 @@
 
 .disabled_btn {
     cursor: not-allowed;
+    opacity: .5;
 }
 
 

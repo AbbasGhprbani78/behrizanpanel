@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -11,53 +11,52 @@ import styles from "./Chart.module.css";
 import axios from "axios";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
-dayjs.extend(jalaliday);
+import { convertToPersianNumbers, goToLogin } from "../../../utils/helper";
+import useSWR from "swr"; 
 
-function convertToPersianNumbers(number) {
-  const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-  return number.toString().replace(/\d/g, (digit) => persianDigits[digit]);
-}
+dayjs.extend(jalaliday);
 
 function convertToPersianDate(date) {
   return dayjs(date).calendar("jalali").format("YYYY/MM");
 }
 
+// fetcher function
+const fetcher = async (url) => {
+  const access = localStorage.getItem("access");
+  const headers = {
+    Authorization: `Bearer ${access}`,
+  };
+  const response = await axios.get(url, { headers });
+  return response.data;
+};
+
 export default function Chart() {
-  const [data, setData] = useState([]);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const getDataChart = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-
-    try {
-      const response = await axios.get(`${apiUrl}/app/orders-per-month/`, {
-        headers,
-      });
-
-      if (response.status === 200) {
-        const formattedData = response.data.map((item) => ({
-          ...item,
-          month: convertToPersianDate(item.month),
-        }));
-        setData(formattedData);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const { data, error } = useSWR(`${apiUrl}/app/orders-per-month/`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 15 * 60 * 1000,
+  });
 
   useEffect(() => {
-    getDataChart();
-  }, []);
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("access");
+      goToLogin();
+    }
+  }, [error]);
+
+  const formattedData = data
+    ? data.map((item) => ({
+        ...item,
+        month: convertToPersianDate(item.month),
+      }))
+    : [];
 
   return (
     <div className={styles.chartcontainer}>
       <p className={styles.titlesole}>فروش در هر ماه</p>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
+        <BarChart data={formattedData}>
           <XAxis dataKey="month" tickFormatter={convertToPersianNumbers} />
           <YAxis
             tickFormatter={(tick) => convertToPersianNumbers(tick)}

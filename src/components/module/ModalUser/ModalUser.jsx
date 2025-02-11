@@ -10,13 +10,10 @@ import swal from "sweetalert";
 import { FiEdit2 } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
+import { goToLogin } from "../../../utils/helper";
+
 const tabs = ["اطلاعات من", "آدرس‌ها"];
-export default function ModalUser({
-  setShowModal,
-  showModal,
-  userInfo,
-  getUserHandler,
-}) {
+export default function ModalUser({ setShowModal, showModal, userInfo }) {
   const [loading, setLoading] = useState(false);
   const [isDisableNumber, setIsDisableNumber] = useState(true);
   const [statusBtn, setStatusBtn] = useState(1);
@@ -61,11 +58,13 @@ export default function ModalUser({
         { headers }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setStatusBtn(4);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     }
   };
 
@@ -92,15 +91,18 @@ export default function ModalUser({
           button: "باشه",
         });
       }
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
+    } catch (e) {
+      if (e.response && e.response.status === 400) {
         swal({
           title: "کد وارد شده نادرست است و یا منقضی شده",
           icon: "error",
           button: "باشه",
         });
-      } else {
-        console.log(error);
+
+        if (e.response?.status === 401) {
+          localStorage.removeItem("access");
+          goToLogin();
+        }
       }
     } finally {
       setIsDisable(false);
@@ -191,8 +193,11 @@ export default function ModalUser({
       if (response.status === 200) {
         setAllAddress(response.data[0].user_details);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     }
   };
 
@@ -231,7 +236,6 @@ export default function ModalUser({
       );
 
       if (response.status === 200) {
-        getUserHandler();
         setShowModal(false);
         setCode("");
         setIsDisableNumber(true);
@@ -241,10 +245,15 @@ export default function ModalUser({
           title: "ویرایش با موفقیت انجام شد",
           icon: "success",
           button: "باشه",
+        }).then(() => {
+          window.location.reload();
         });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     } finally {
       setLoading(false);
     }
@@ -281,8 +290,11 @@ export default function ModalUser({
           button: "باشه",
         });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     } finally {
       setLoading(false);
     }
@@ -313,8 +325,11 @@ export default function ModalUser({
           button: "باشه",
         });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     } finally {
       setLoading(false);
     }
@@ -340,8 +355,11 @@ export default function ModalUser({
         });
         setActiveTab("آدرس‌ها");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
     } finally {
       setLoading(false);
     }

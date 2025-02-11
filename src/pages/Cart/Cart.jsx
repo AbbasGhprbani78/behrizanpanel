@@ -15,6 +15,7 @@ import swal from "sweetalert";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import EmptyProduct from "../../components/module/EmptyProduct/EmptyProduct";
 import { useNavigate } from "react-router-dom";
+import {goToLogin} from "../../utils/helper";
 
 export default function Cart() {
   const [showModalBuy, setShowModalBuy] = useState(false);
@@ -64,7 +65,10 @@ export default function Cart() {
         setCountProduct(null);
       }
     } catch (e) {
-      console.log(e);
+     if (e.response?.status === 401) {
+       localStorage.removeItem("access");
+       goToLogin();
+     }
       setLoading(false);
     }
   };
@@ -99,7 +103,6 @@ export default function Cart() {
   };
 
   const handleDelete = () => {
-    console.log("hello");
     if (cart.length === 1) {
       localStorage.removeItem("cart");
       setShowDeleteModal(false);
@@ -121,8 +124,8 @@ export default function Cart() {
     }
   };
 
-  const searchHandler = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
+  const searchHandler = (value) => {
+    const searchTerm = value.toLowerCase();
     setSearch(searchTerm);
 
     const filterProducts = cart.filter(
@@ -130,7 +133,7 @@ export default function Cart() {
         product.item_code.includes(searchTerm) ||
         product.descriptions.toLowerCase().includes(searchTerm) ||
         product.count.toString().includes(searchTerm) ||
-        product.property_name.includes(searchTerm)
+        product.unitdesc.includes(searchTerm)
     );
 
     setFilterProduct(filterProducts);
@@ -271,7 +274,7 @@ export default function Cart() {
                           <div className={styles.finalbtnwapper}>
                             <button
                               className={` ${styles.finalbtn} ${
-                                loading ? styles.loading : ""
+                                loading ? "disable" : ""
                               }`}
                               onClick={sendProduct}
                               disabled={loading}

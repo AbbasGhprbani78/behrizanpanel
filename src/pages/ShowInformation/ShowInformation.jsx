@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
+import {goToLogin} from "../../utils/helper";
 
 export default function showInformation() {
   const [initialValues, setInitialValues] = useState({
@@ -57,8 +58,11 @@ export default function showInformation() {
           email: response.data[0]?.email || "",
         }));
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+     if (e.response?.status === 401) {
+       localStorage.removeItem("access");
+       goToLogin();
+     }
     }
   };
 

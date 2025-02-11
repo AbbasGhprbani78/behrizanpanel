@@ -32,7 +32,8 @@
     "react-router-dom": "^6.26.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "swr": "^2.3.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

@@ -50,6 +50,10 @@
 }
 
 
+.active{
+    background-color: var(--color-3);
+    color: #ffff;
+}
 
 @media (max-width:600px) {
     .filterwrapper {

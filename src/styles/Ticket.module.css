@@ -114,7 +114,7 @@
 }
 
 .none_ticket {
-    height: 80vh;
+    height: calc(80vh - 30px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -201,7 +201,6 @@
 }
 
 .lockicon {
-    color: red;
     font-size: 1.3rem;
     margin-right: 1rem;
 }

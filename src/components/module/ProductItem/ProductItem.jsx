@@ -1,3 +1,4 @@
+import { convertToPersianNumbers } from "../../../utils/helper";
 import styles from "./ProductItem.module.css";
 import { BsCart2 } from "react-icons/bs";
 
@@ -43,10 +44,10 @@ export default function ProductItem({
                 </div>
               </td>
               <td style={{ width: "10%" }} className={styles.Td}>
-                {product.item_code}
+                {convertToPersianNumbers(product.item_code)}
               </td>
               <td style={{ width: "40%" }} className={styles.Td}>
-                {product.descriptions}
+                {convertToPersianNumbers(product.descriptions)}
               </td>
               <td style={{ width: "25%" }} className={styles.imageBox}>
                 <img
@@ -63,7 +64,11 @@ export default function ProductItem({
         </table>
       </div>
       <div className={styles.ProductItem2}>
-        <div className={styles.imagecart}>
+        <div
+          className={`${styles.imagecart} ${
+            product.image && styles.image_mobile
+          }`}
+        >
           <img
             src={`${
               product.image
@@ -71,14 +76,15 @@ export default function ProductItem({
                 : "/public/images/image1.png"
             }`}
             alt="product"
-            className={!product.image  && styles.image_mobile}
           />
         </div>
         <div className="d-flex align-items-center justify-content-between mt-3">
           <span>کد کالا</span>
-          <span>{product.item_code}</span>
+          <span>{convertToPersianNumbers(product.item_code)}</span>
         </div>
-        <p className={styles.product_des}>{product.descriptions}</p>
+        <p className={styles.product_des}>
+          {convertToPersianNumbers(product.descriptions)}
+        </p>
         <div className={styles.Box3}>
           <div
             className={styles.Button}

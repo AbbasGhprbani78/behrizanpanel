@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './StatusProduct.module.css'
 import { IoBagAddOutline } from "react-icons/io5";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
@@ -17,28 +17,28 @@ export default function StatusProduct({ style, status }) {
 
   useEffect(() => {
     switch (status) {
-      case 1:
+      case "7":
         setCurrentStep(1);
         break;
-      case 2:
+      case "8":
         setCurrentStep(2);
         break;
-      case 3:
+      case "1":
         setCurrentStep(3);
         break;
-      case 4:
+      case "2":
         setCurrentStep(4);
         break;
-      case 5:
+      case "3":
         setCurrentStep(5);
         break;
-      case 6:
+      case "4":
         setCurrentStep(6);
         break;
-      case 7:
+      case "5":
         setCurrentStep(7);
         break;
-      case 8:
+      case "6":
         setCurrentStep(8);
         break;
     }
