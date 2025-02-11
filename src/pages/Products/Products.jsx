@@ -17,7 +17,6 @@ import { goToLogin } from "../../utils/helper";
 
 export default function Products() {
   const [search, setSearch] = useState("");
-  const [showmodal, setShowmodal] = useState(false);
   const [value, setValue] = useState(1);
   const [showModalBuy, setShowModalBuy] = useState(false);
   const [mainProduct, setMainProduct] = useState("");
@@ -38,6 +37,7 @@ export default function Products() {
   const gotocart = () => {
     navigate("/cart");
   };
+  
   const addToCartHandler = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -98,7 +98,7 @@ export default function Products() {
     setShowModalBuy(false);
   };
 
-  const getAllProducts = async (page = 1, page_size = 10) => {
+  const getAllProducts = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
 
     const access = localStorage.getItem("access");
@@ -136,7 +136,7 @@ export default function Products() {
     }
   };
 
-  const fetchFilteredProducts = async (query, page = 1, page_size = 10) => {
+  const fetchFilteredProducts = async (query, page = 1, page_size = 25) => {
     if (page === 1) setIsSearch(true);
 
     try {
@@ -201,25 +201,6 @@ export default function Products() {
             setPropertyValue={setPropertyValue}
             setPropertName={setPropertName}
           />
-          <div
-            className={`${styles.modalcontainer} ${
-              showmodal ? styles.show : ""
-            }`}
-          >
-            <div
-              className={styles.modalhide}
-              onClick={() => setShowmodal(false)}
-            ></div>
-            <div className={styles.modalcontent}>
-              <p>هنوز محصولی به سفارش اضافه نکرده اید</p>
-              <button
-                className={styles.modalbtn}
-                onClick={() => setShowmodal(false)}
-              >
-                متوجه شدم
-              </button>
-            </div>
-          </div>
           <Header title={"محصولات"} />
           {loading ? (
             <Loading />
@@ -252,8 +233,6 @@ export default function Products() {
                       <div className={styles.ProductsBox} id="ProductsBox">
                         {filterProduct?.length > 0 ? (
                           filterProduct
-                            .slice()
-                            .reverse()
                             .map((product) => (
                               <ProductItem
                                 product={product}

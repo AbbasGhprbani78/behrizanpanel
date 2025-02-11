@@ -5,13 +5,7 @@
     position: relative;
 }
 
-.wrap_table {
-    position: absolute;
-    top: 150%;
-    left: 0;
-    width: 100%;
-    z-index: 10;
-}
+
 
 .ordertrackdetail {
     display: flex;
@@ -140,18 +134,6 @@
 
 }
 
-.detail_orders_wrap {
-    margin-top: 1.5rem;
-    position: relative;
-}
-
-.bilLading_date_wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 1.3rem;
-}
-
 .back_btn {
     border: none;
     outline: none;
@@ -160,9 +142,6 @@
     font-size: 1.2rem;
 }
 
-.wrap_date_detail {
-    width: 122px;
-}
 
 @media (max-width:992px) {
     .progressc {

@@ -27,7 +27,7 @@ export default function TrackOrders() {
   const [isSearch, setIsSearch] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
 
-  const getAllOrders = async (page = 1, page_size = 10) => {
+  const getAllOrders = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
 
     const access = localStorage.getItem("access");
@@ -118,7 +118,7 @@ export default function TrackOrders() {
     }
   };
 
-  const searchOrders = async (query, page = 1, page_size = 10) => {
+  const searchOrders = async (query, page = 1, page_size = 25) => {
     if (!query.trim()) return;
 
     const access = localStorage.getItem("access");
@@ -152,6 +152,7 @@ export default function TrackOrders() {
       if (firstLoad) setFirstLoad(false);
     }
   };
+  
   const resetOrders = () => {
     setFilterValue(allOrders);
     setPage(1);
@@ -213,8 +214,6 @@ export default function TrackOrders() {
                       <div className={styles.wrapp_orders} id="wrapp_orders">
                         {filterValue?.length > 0 ? (
                           filterValue
-                            .slice()
-                            .reverse()
                             .map((order, index) =>
                               selectedOrderId === order.id ||
                               selectedOrderId === null ? (

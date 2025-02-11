@@ -28,6 +28,7 @@
 .orderitemcontainer::-webkit-scrollbar {
     display: none;
 }
+
 .orderitemcontainer {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
@@ -48,8 +49,33 @@
     margin: 2rem 0;
 }
 
-/*  */
+.detail_orders_wrap {
+    margin-top: 1.5rem;
+    position: relative;
+}
 
+.bilLading_date_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.3rem;
+}
+
+.wrap_icon {
+    cursor: pointer;
+}
+
+.wrap_date_detail {
+    width: 122px;
+}
+
+.wrap_table {
+    position: absolute;
+    top: 150%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
 
 @media (max-width:1025px) {
     .pagecontent {
