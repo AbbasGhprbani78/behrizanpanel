@@ -39,7 +39,10 @@
     position: absolute;
     right: 0;
     z-index: 2;
+    transition: all .3 ease;
 }
+
+
 
 .item_first {
     top: 130%;
@@ -50,7 +53,7 @@
 }
 
 
-.active{
+.active {
     background-color: var(--color-3);
     color: #ffff;
 }

@@ -20,7 +20,7 @@ let routes = [
 
   { path: "/trackorders", element: <Trackorders /> },
   { path: "/ticket", element: <Ticket /> },
-  { path: "/report", element: <Report /> },
+  // { path: "/report", element: <Report /> },
   { path: "*", element: <Notfound /> },
 ];
 

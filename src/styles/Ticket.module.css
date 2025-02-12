@@ -15,7 +15,7 @@
 .maincontent {
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 63px);
+    max-height: calc(100vh - 100px);
 }
 
 .file {

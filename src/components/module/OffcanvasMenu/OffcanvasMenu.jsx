@@ -99,10 +99,10 @@ export default function OffcanvasMenu({ setShowSideBar, showSideBar }) {
                         <FaShoppingCart className={styles.iconsidebar} />
                         <span className={styles.listitemtext}>سبد سفارش</span>
                     </Link>
-                    <Link to={"/report"} className={`${styles.listitem}  ${pathname === "/cart" ? styles.active : ""}`}>
+                    {/* <Link to={"/report"} className={`${styles.listitem}  ${pathname === "/cart" ? styles.active : ""}`}>
                         <FaBookmark className={styles.iconsidebar} />
                         <span className={styles.listitemtext}>گزارشات</span>
-                    </Link>
+                    </Link> */}
                     <Link to={"/ticket"} className={`${styles.listitem} ${pathname === "/ticket" ? styles.active : ""}`}>
                         <FaHeadphones className={styles.iconsidebar} />
                         <span className={styles.listitemtext}>پشتیبانی</span>

@@ -18,25 +18,10 @@
 .carts {
     margin-top: 2rem;
     max-height: 65vh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    padding-left: 10px;
 }
 
-.carts::-webkit-scrollbar {
-    display: none;
-}
-
-.carts {
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
-    /* Internet Explorer 10+ */
-    scrollbar-width: none;
-    /* Firefox */
-}
-
-.carts::-webkit-scrollbar {
-    display: none;
-    /* Safari and Chrome */
-}
 
 .finalbtnwapper {}
 
@@ -148,8 +133,8 @@
 .cartItemMwrapper {}
 
 .scrollitem {
-    max-height: 65vh;
-    overflow-y: scroll;
+    max-height: calc(100dvh - 150px);
+    overflow-y: auto;
 }
 
 .scrollitem::-webkit-scrollbar {
@@ -264,6 +249,20 @@
 
 
 @media (max-width:600px) {
+
+    .carts::-webkit-scrollbar {
+        display: none;
+    }
+
+    .carts {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .carts::-webkit-scrollbar {
+        display: none;
+    }
 
     .finalbtnwapper {
         display: flex;

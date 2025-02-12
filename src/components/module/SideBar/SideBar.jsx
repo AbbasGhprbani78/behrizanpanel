@@ -72,10 +72,10 @@ export default function SideBar() {
                                 </ul>
                             )}
                         </li>
-                        <Link to={"/report"} className={`${styles.listitem} ${pathname === "/report" ? styles.active : ""}`}>
+                        {/* <Link to={"/report"} className={`${styles.listitem} ${pathname === "/report" ? styles.active : ""}`}>
                             <FaBookmark className={styles.iconsidebar} />
                             <span className={styles.listitemtext}>گزارشات</span>
-                        </Link>
+                        </Link> */}
                         <Link to={"/ticket"} className={`${styles.listitem} ${pathname === "/ticket" ? styles.active : ""}`}>
                             <FaHeadphones className={styles.iconsidebar} />
                             <span className={styles.listitemtext}>پشتیبانی</span>

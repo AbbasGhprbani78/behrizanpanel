@@ -48,14 +48,14 @@
 .wrapp_orders {
     height: calc(100dvh - 190px);
     overflow-y: auto;
-    overflow: -moz-scrollbars-none;
+    /* overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: none; */
 }
 
-.wrapp_orders::-webkit-scrollbar {
+/* .wrapp_orders::-webkit-scrollbar {
     display: none;
-}
+} */
 
 @media (max-width:1025px) {
     .pagecontent {
@@ -77,6 +77,17 @@
 
 
 @media (max-width:600px) {
+
+    .wrapp_orders {
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .wrapp_orders::-webkit-scrollbar {
+        display: none;
+    }
+
     .topsec {
         flex-direction: column;
         align-items: start;

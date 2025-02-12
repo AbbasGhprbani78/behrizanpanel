@@ -36,7 +36,7 @@ export default function Ticket() {
   const [title, SetTitle] = useState("");
   const [text, setText] = useState("");
   const [file, setFile] = useState("");
-  const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(0);
   const [disable, SetDisable] = useState(false);
   const [openTicket, setOpenTicket] = useState(0);
   const [selectedTicket, setSelectedTicket] = useState([]);
@@ -52,7 +52,7 @@ export default function Ticket() {
     data: allTickets,
     error,
     mutate,
-  } = useSWR(`${apiUrl}/app/chat/get-ticket/`, fetcher, {
+  } = useSWR(`${apiUrl}/chat/get-ticket/`, fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 15 * 60 * 1000,
   });
@@ -70,7 +70,7 @@ export default function Ticket() {
 
       if (response.status === 200) {
         console.log(response.data);
-        setUserType(response.data);
+        setUserType(response?.data);
       }
     } catch (e) {
       if (e.response?.status === 401) {
@@ -131,7 +131,7 @@ export default function Ticket() {
         SetTitle("");
         setText("");
         setFile("");
-        setCheck(false);
+        setCheck(0);
         SetDisable(false);
         mutate();
       }
@@ -289,7 +289,7 @@ export default function Ticket() {
     }
   }, [error]);
 
-  console.log(file);
+
 
   return (
     <div className={styles.wrapperpage}>
@@ -380,7 +380,7 @@ export default function Ticket() {
                         {userType.length > 0 &&
                           userType.map((item) => (
                             <option key={item.id} value={item?.id}>
-                              {item?.type}
+                              {item?.name}
                             </option>
                           ))}
                       </select>
@@ -405,8 +405,8 @@ export default function Ticket() {
                         <div className={`${styles.checkbox} my-4`}>
                           <input
                             type="checkbox"
-                            checked={check}
-                            onChange={(e) => setCheck(e.target.checked)}
+                            checked={check === 1}
+                            onChange={(e) => setCheck(e.target.checked ? 1 : 0)}
                           />
                           <span>هنگام پاسخ من را از طریق پیامک مطلع کن.</span>
                         </div>
@@ -516,7 +516,21 @@ export default function Ticket() {
                         <input
                           type="file"
                           id="file"
-                          onChange={(e) => sendFile(e)}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 1024 * 1024) {
+                                swal(
+                                  "خطا!",
+                                  "حجم فایل نباید بیشتر از 1 مگابایت باشد.",
+                                  "error"
+                                );
+                                e.target.value = "";
+                                return;
+                              }
+                              setFile(file);
+                            }
+                          }}
                           className={styles.input_tick}
                         />
                       </div>
@@ -532,7 +546,7 @@ export default function Ticket() {
                           onClick={sendmessage}
                         />
                       </div>
-                    </div>{" "}
+                    </div>
                     <div className={styles.wrapinpt_m}>
                       <div className={styles.file_wrapper}>
                         <label htmlFor="file" className={styles.labelfile}>
@@ -541,7 +555,21 @@ export default function Ticket() {
                         <input
                           type="file"
                           id="file"
-                          onChange={(e) => sendFile(e)}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 1024 * 1024) {
+                                swal(
+                                  "خطا!",
+                                  "حجم فایل نباید بیشتر از 1 مگابایت باشد.",
+                                  "error"
+                                );
+                                e.target.value = "";
+                                return;
+                              }
+                              setFile(file);
+                            }
+                          }}
                           className={styles.input_tick}
                         />
                       </div>
@@ -641,7 +669,7 @@ export default function Ticket() {
                         {userType.length > 0 &&
                           userType.map((item) => (
                             <option key={item.id} value={item?.id}>
-                              {item?.type}
+                              {item?.name}
                             </option>
                           ))}
                       </select>
@@ -667,8 +695,8 @@ export default function Ticket() {
                         <div className={`${styles.checkbox} mt-4`}>
                           <input
                             type="checkbox"
-                            checked={check}
-                            onChange={(e) => setCheck(e.target.checked)}
+                            checked={check === 1}
+                            onChange={(e) => setCheck(e.target.checked ? 1 : 0)}
                           />
                           <span>هنگام پاسخ من را از طریق پیامک مطلع کن.</span>
                         </div>
@@ -776,7 +804,21 @@ export default function Ticket() {
                         <input
                           type="file"
                           id="file"
-                          onChange={(e) => sendFile(e)}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 1024 * 1024) {
+                                swal(
+                                  "خطا!",
+                                  "حجم فایل نباید بیشتر از 1 مگابایت باشد.",
+                                  "error"
+                                );
+                                e.target.value = "";
+                                return;
+                              }
+                              setFile(file);
+                            }
+                          }}
                           className={styles.input_tick}
                         />
                       </div>

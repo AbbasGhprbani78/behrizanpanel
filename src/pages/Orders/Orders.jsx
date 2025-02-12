@@ -47,6 +47,7 @@ const StyledTableContainer = styled(TableContainer)({
 });
 
 export default function Orders() {
+  const [tab, setTab] = useState(1);
   const [search, setSearch] = useState("");
   const [filterProduct, setFilterProduct] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
@@ -164,201 +165,241 @@ export default function Orders() {
           <Loading />
         ) : orderDetails.length > 0 ? (
           <>
-            <div className={styles.ordertitlewrapper}>
-              <div className={styles.detailorderwrapper}>
-                <span> تاریخ درخواست : </span>
-                <span>
-                  {convertToPersianNumbers(
-                    addSlashesToDate(orderDetails[0]?.request_date)
-                  )}
-                </span>
-              </div>
-              <SearchBox
-                value={search}
-                onChange={setSearch}
-                placeholder={"جستوجو براساس کد کالا , شرح , تعداد"}
-              />
+            <div className={styles.wrap_tabs_btns}>
+              <button
+                className={`${styles.btn_tab} ${tab === 1 && styles.activetab}`}
+                onClick={() => setTab(1)}
+              >
+                سفارشات
+              </button>
+              <button
+                className={`${styles.btn_tab} ${tab === 2 && styles.activetab}`}
+                onClick={() => setTab(2)}
+              >
+                بارنامه
+              </button>
             </div>
-            <div className={styles.maincontent}>
-              {isSearch ? (
-                <p className="text-search">درحال جستوجو ...</p>
-              ) : (
-                <div className={styles.orderitemcontainer}>
-                  {filterProduct.length > 0 ? (
-                    filterProduct.map((item) => (
-                      <OrderItem key={item.item_code} item={item} />
-                    ))
-                  ) : (
-                    <>
-                      <NoneSearch />
-                    </>
-                  )}
+            {tab === 1 ? (
+              <>
+                <div className={styles.ordertitlewrapper}>
+                  <div className={styles.detailorderwrapper}>
+                    <span> تاریخ درخواست : </span>
+                    <span>
+                      {convertToPersianNumbers(
+                        addSlashesToDate(orderDetails[0]?.request_date)
+                      )}
+                    </span>
+                  </div>
+                  <SearchBox
+                    value={search}
+                    onChange={setSearch}
+                    placeholder={"جستوجو براساس کد کالا , شرح , تعداد"}
+                  />
                 </div>
-              )}
-            </div>
+                <div className={styles.maincontent}>
+                  <>
+                    {isSearch ? (
+                      <p className="text-search">درحال جستوجو ...</p>
+                    ) : (
+                      <div className={styles.orderitemcontainer}>
+                        {filterProduct.length > 0 ? (
+                          filterProduct.map((item) => (
+                            <OrderItem key={item.item_code} item={item} />
+                          ))
+                        ) : (
+                          <>
+                            <NoneSearch />
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </>
+                </div>
+              </>
+            ) : (
+              <div className={styles.maincontent}>
+                <p className={styles.bill_title}>لیست بارنامه ها</p>
+                <p className="mt-4">وضعیت ارسال ها :</p>
+                <div
+                  style={{ height: "calc(100dvh - 250px)", overflow: "auto" }}
+                >
+                  {detailProduct?.length > 0 &&
+                    detailProduct.map((item, i) => (
+                      <div
+                        className={styles.detail_orders_wrap}
+                        key={item.bill}
+                      >
+                        <div className={styles.status_send}>
+                          <div className={styles.bilLading_date_wrap}>
+                            <div
+                              style={{ cursor: "pointer" }}
+                              className="d-flex align-items-center gap-2 cursour"
+                              onClick={() => toggleTable(i)}
+                            >
+                              <div className={styles.wrap_icon}>
+                                {openTableIndex === i ? (
+                                  <FaAngleUp />
+                                ) : (
+                                  <FaAngleDown />
+                                )}
+                              </div>
+                              <span>بارنامه : </span>
+                              <span>{convertToPersianNumbers(item?.bill)}</span>
+                            </div>
+                            <div className={styles.wrap_date_detail}>
+                              <span>تاریخ : </span>
+                              <span>{formatDate(item?.deliver_date)}</span>
+                            </div>
+                          </div>
+                        </div>
+                        {openTableIndex === i && (
+                          <div className={styles.wrap_table}>
+                            <StyledTableContainer component={Paper}>
+                              <Table
+                                stickyHeader
+                                aria-label="sticky table"
+                                sx={{ minWidth: 750, typography: "inherit" }}
+                              >
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell
+                                      align="center"
+                                      style={{
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#fff",
+                                        fontFamily: "iranYekan",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      کد کالا
+                                    </TableCell>
+                                    <TableCell
+                                      align="center"
+                                      style={{
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#fff",
+                                        fontFamily: "iranYekan",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      شرح محصول
+                                    </TableCell>
+                                    <TableCell
+                                      align="center"
+                                      style={{
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#fff",
+                                        fontFamily: "iranYekan",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      تعداد
+                                    </TableCell>
+                                    <TableCell
+                                      align="center"
+                                      style={{
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#fff",
+                                        fontFamily: "iranYekan",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      گنجایش واحد
+                                    </TableCell>
+                                    <TableCell
+                                      align="center"
+                                      style={{
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#fff",
+                                        fontFamily: "iranYekan",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      مقدار کل
+                                    </TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {item?.products.map((rowDetail, j) => (
+                                    <TableRow key={j}>
+                                      <TableCell
+                                        align="center"
+                                        sx={{
+                                          fontFamily: "iranYekan",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {convertToPersianNumbers(
+                                          rowDetail?.item_code
+                                        )}
+                                      </TableCell>
+                                      <TableCell
+                                        align="center"
+                                        sx={{
+                                          fontFamily: "iranYekan",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {convertToPersianNumbers(
+                                          rowDetail?.descriptions
+                                        )}
+                                      </TableCell>
+                                      <TableCell
+                                        align="center"
+                                        sx={{
+                                          fontFamily: "iranYekan",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {convertToPersianNumbers(
+                                          rowDetail?.box_qty
+                                        )}
+                                      </TableCell>
+                                      <TableCell
+                                        align="center"
+                                        sx={{
+                                          fontFamily: "iranYekan",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {convertToPersianNumbers(
+                                          rowDetail?.box_cap
+                                        )}
+                                      </TableCell>
+                                      <TableCell
+                                        align="center"
+                                        sx={{
+                                          fontFamily: "iranYekan",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {convertToPersianNumbers(
+                                          rowDetail?.qty
+                                        )}
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </StyledTableContainer>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <>
             <EmptyProduct />
           </>
         )}
-        <>
-          <p className="mt-4">وضعیت ارسال ها :</p>
-
-          {detailProduct?.length > 0 &&
-            detailProduct.map((item, i) => (
-              <div className={styles.detail_orders_wrap} key={item.bill}>
-                <div className={styles.status_send}>
-                  <div className={styles.bilLading_date_wrap}>
-                    <div
-                      style={{ cursor: "pointer" }}
-                      className="d-flex align-items-center gap-2 cursour"
-                      onClick={() => toggleTable(i)}
-                    >
-                      <div className={styles.wrap_icon}>
-                        {openTableIndex === i ? <FaAngleUp /> : <FaAngleDown />}
-                      </div>
-                      <span>بارنامه : </span>
-                      <span>{convertToPersianNumbers(item?.bill)}</span>
-                    </div>
-                    <div className={styles.wrap_date_detail}>
-                      <span>تاریخ : </span>
-                      <span>{formatDate(item?.deliver_date)}</span>
-                    </div>
-                  </div>
-                </div>
-                {openTableIndex === i && (
-                  <div className={styles.wrap_table}>
-                    <StyledTableContainer component={Paper}>
-                      <Table
-                        stickyHeader
-                        aria-label="sticky table"
-                        sx={{ minWidth: 750, typography: "inherit" }}
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <TableCell
-                              align="center"
-                              style={{
-                                position: "sticky",
-                                top: 0,
-                                backgroundColor: "#fff",
-                                fontFamily: "iranYekan",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              کد کالا
-                            </TableCell>
-                            <TableCell
-                              align="center"
-                              style={{
-                                position: "sticky",
-                                top: 0,
-                                backgroundColor: "#fff",
-                                fontFamily: "iranYekan",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              شرح محصول
-                            </TableCell>
-                            <TableCell
-                              align="center"
-                              style={{
-                                position: "sticky",
-                                top: 0,
-                                backgroundColor: "#fff",
-                                fontFamily: "iranYekan",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              تعداد
-                            </TableCell>
-                            <TableCell
-                              align="center"
-                              style={{
-                                position: "sticky",
-                                top: 0,
-                                backgroundColor: "#fff",
-                                fontFamily: "iranYekan",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              گنجایش واحد
-                            </TableCell>
-                            <TableCell
-                              align="center"
-                              style={{
-                                position: "sticky",
-                                top: 0,
-                                backgroundColor: "#fff",
-                                fontFamily: "iranYekan",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              مقدار کل
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {item?.products.map((rowDetail, j) => (
-                            <TableRow key={j}>
-                              <TableCell
-                                align="center"
-                                sx={{
-                                  fontFamily: "iranYekan",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {convertToPersianNumbers(rowDetail?.item_code)}
-                              </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{
-                                  fontFamily: "iranYekan",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {convertToPersianNumbers(
-                                  rowDetail?.descriptions
-                                )}
-                              </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{
-                                  fontFamily: "iranYekan",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {convertToPersianNumbers(rowDetail?.box_qty)}
-                              </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{
-                                  fontFamily: "iranYekan",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {convertToPersianNumbers(rowDetail?.box_cap)}
-                              </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{
-                                  fontFamily: "iranYekan",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {convertToPersianNumbers(rowDetail?.qty)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </StyledTableContainer>
-                  </div>
-                )}
-              </div>
-            ))}
-        </>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Texteara.module.css";
 export default function Texteara({ name, value, onChange, label }) {
   return (
@@ -9,7 +8,7 @@ export default function Texteara({ name, value, onChange, label }) {
         name={name}
         value={value}
         onChange={onChange}
-        maxLength={1000}
+        maxLength={2000}
       ></textarea>
     </div>
   );
