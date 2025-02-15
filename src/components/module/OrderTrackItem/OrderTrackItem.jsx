@@ -92,12 +92,11 @@ export default function OrderTrackItem({
       <div className={styles.ordertrackitemwrapper}>
         <div className={styles.ordertrackdetail}>
           <div className={styles.rightdetail}>
-            <span className={styles.titlebold}>
+            <span className={`${styles.titlebold} ${styles.number_order}`}>
               سفارش {convertToPersianNumbers(number + 1)}
             </span>
             <div
               className={styles.reqnumberwrapper}
-              style={{ marginRight: "30px" }}
             >
               <span className={styles.titlebold}>شماره درخواست :</span>
               <span style={{ marginRight: "10px" }}>

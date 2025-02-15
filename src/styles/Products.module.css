@@ -118,6 +118,17 @@
 }
 
 @media (max-width:650px) {
+
+
+    .ProductsBox {
+        width: 100%;
+        height: calc(100dvh - 210px);
+        margin: 30px auto;
+        overflow-y: scroll;
+        margin-top: 1rem;
+        padding-left: 10px;
+    }
+
     .ProductsBox::-webkit-scrollbar {
         display: none;
     }
@@ -151,7 +162,5 @@
         padding: 7px 0;
     }
 
-    .ProductsBo {
-        max-height: 72vh;
-    }
+
 }

@@ -397,7 +397,10 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
 
   return (
     <div className={`${styles.modalcontainer} ${showModal ? styles.show : ""}`}>
-      <div className={styles.modalclose} onClick={""}></div>
+      <div
+        className={styles.modalclose}
+        onClick={() => setShowModal(false)}
+      ></div>
       <div className={styles.modalwrappper}>
         <div className={styles.modalheader}>
           <FaUser />

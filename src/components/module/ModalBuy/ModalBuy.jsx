@@ -103,15 +103,7 @@ export default function ModalBuy({
               <div style={{ width: "95%", margin: "0 auto" }}>
                 <div className={`${styles.dropvalue_wrapper} mt-4`}>
                   <label className={styles.labledrop}>واحد</label>
-                  <select
-                    className={styles.dropvalue}
-                    onChange={handleChangeUnit}
-                    value={mainProduct?.unitdesc}
-                  >
-                    <option value="" disabled selected>
                       {mainProduct?.unitdesc}
-                    </option>
-                  </select>
                 </div>
               </div>
             </Col>

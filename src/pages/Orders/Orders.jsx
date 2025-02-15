@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "../../styles/Orders.module.css";
 import SideBar from "../../components/module/SideBar/SideBar";
 import Header from "../../components/module/Header/Header";
@@ -66,7 +66,6 @@ export default function Orders() {
   };
 
   const getDetails = async () => {
-    // setLoading(true);
     const access = localStorage.getItem("access");
     const headers = {
       Authorization: `Bearer ${access}`,
@@ -79,7 +78,6 @@ export default function Orders() {
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setDetailProduct(response.data);
       }
     } catch (e) {
@@ -113,37 +111,27 @@ export default function Orders() {
     dedupingInterval: 15 * 60 * 1000,
   });
 
-  const fetchFilteredProducts = async (query) => {
-    setIsSearch(true);
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
-    try {
-      const response = await axios.get(`${apiUrl}/app/order-search/`, {
-        params: { query },
-        headers,
-      });
-
-      if (response.status === 200) {
-        setFilterProduct(response.data);
+  const searchHandler = useCallback(
+    (value) => {
+      setSearch(value);
+      if (!value) {
+        setFilterProduct(orderDetails);
+      } else {
+        const filterSearch = orderDetails.filter(
+          (item) =>
+            item?.product?.item_code
+              ?.toLowerCase()
+              .includes(value.toLowerCase()) ||
+            item?.product?.descriptions
+              ?.toLowerCase()
+              .includes(value.toLowerCase()) ||
+            String(item?.qty).includes(value)
+        );
+        setFilterProduct(filterSearch);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsSearch(false);
-    }
-  };
-
-  useEffect(() => {
-    if (search.trim() === "") {
-      setFilterProduct(orderDetails);
-      return;
-    }
-    const delayDebounceFn = setTimeout(() => {
-      fetchFilteredProducts(search.trim());
-    }, 1500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search]);
+    },
+    [orderDetails]
+  );
 
   useEffect(() => {
     if (error?.response?.status === 401) {
@@ -155,6 +143,13 @@ export default function Orders() {
   useEffect(() => {
     getDetails();
   }, []);
+
+  useEffect(() => {
+    if (tab === 1) {
+      setSearch("");
+      setFilterProduct(orderDetails);
+    }
+  }, [tab, orderDetails]);
 
   return (
     <div className={styles.wrapperpage}>
@@ -192,17 +187,17 @@ export default function Orders() {
                   </div>
                   <SearchBox
                     value={search}
-                    onChange={setSearch}
+                    onChange={searchHandler}
                     placeholder={"جستوجو براساس کد کالا , شرح , تعداد"}
                   />
                 </div>
-                <div className={styles.maincontent}>
+                <div className={`${styles.maincontent}`}>
                   <>
                     {isSearch ? (
                       <p className="text-search">درحال جستوجو ...</p>
                     ) : (
                       <div className={styles.orderitemcontainer}>
-                        {filterProduct.length > 0 ? (
+                        {filterProduct?.length > 0 ? (
                           filterProduct.map((item) => (
                             <OrderItem key={item.item_code} item={item} />
                           ))
@@ -216,8 +211,12 @@ export default function Orders() {
                   </>
                 </div>
               </>
-            ) : (
-              <div className={styles.maincontent}>
+            ) : detailProduct?.length > 0 ? (
+              <div
+                className={`${styles.maincontent} ${
+                  tab === 2 && styles.tab2_style
+                }`}
+              >
                 <p className={styles.bill_title}>لیست بارنامه ها</p>
                 <p className="mt-4">وضعیت ارسال ها :</p>
                 <div
@@ -393,6 +392,10 @@ export default function Orders() {
                     ))}
                 </div>
               </div>
+            ) : (
+              <>
+                <NoneSearch />
+              </>
             )}
           </>
         ) : (
@@ -404,3 +407,35 @@ export default function Orders() {
     </div>
   );
 }
+
+// const fetchFilteredProducts = async (query) => {
+//   setIsSearch(true);
+//   const access = localStorage.getItem("access");
+//   const headers = { Authorization: `Bearer ${access}` };
+//   try {
+//     const response = await axios.get(`${apiUrl}/app/order-search/`, {
+//       params: { query },
+//       headers,
+//     });
+
+//     if (response.status === 200) {
+//       setFilterProduct(response.data);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   } finally {
+//     setIsSearch(false);
+//   }
+// };
+
+// useEffect(() => {
+//   if (search.trim() === "") {
+//     setFilterProduct(orderDetails);
+//     return;
+//   }
+//   const delayDebounceFn = setTimeout(() => {
+//     fetchFilteredProducts(search.trim());
+//   }, 1500);
+
+//   return () => clearTimeout(delayDebounceFn);
+// }, [search]);

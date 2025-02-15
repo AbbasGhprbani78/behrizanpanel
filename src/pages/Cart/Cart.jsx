@@ -15,7 +15,7 @@ import swal from "sweetalert";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import EmptyProduct from "../../components/module/EmptyProduct/EmptyProduct";
 import { useNavigate } from "react-router-dom";
-import {goToLogin} from "../../utils/helper";
+import { goToLogin } from "../../utils/helper";
 
 export default function Cart() {
   const [showModalBuy, setShowModalBuy] = useState(false);
@@ -57,7 +57,7 @@ export default function Cart() {
           icon: "success",
           button: "باشه",
         }).then(() => {
-          navigate("/");
+          navigate("/trackorders");
         });
 
         setCart([]);
@@ -65,10 +65,10 @@ export default function Cart() {
         setCountProduct(null);
       }
     } catch (e) {
-     if (e.response?.status === 401) {
-       localStorage.removeItem("access");
-       goToLogin();
-     }
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
       setLoading(false);
     }
   };
@@ -199,11 +199,11 @@ export default function Cart() {
                           }
                         />
                       </div>
-                      {filterProduct.length > 0 ? (
+                      {filterProduct?.length > 0 ? (
                         <>
                           <div className={`${styles.scrollitem}`}>
-                            {cart.length > 0 &&
-                              cart.map((item) => (
+                            {filterProduct.length > 0 &&
+                              filterProduct.map((item) => (
                                 <CartItemM
                                   key={item.id}
                                   setShowModalBuy={setShowModalBuy}

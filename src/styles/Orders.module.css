@@ -103,8 +103,12 @@
     }
 
     .maincontent {
-        margin-top: 180px;
+        margin-top: 250px;
         padding: 0 20px;
+    }
+
+    .tab2_style {
+        margin-top: 150px;
     }
 
     .maincontent2 {
@@ -114,16 +118,20 @@
 
     .ordertitlewrapper {
         position: fixed;
-
         width: 100%;
-        margin-top: 6rem;
+        margin-top: 10rem;
         padding: 0 20px;
         background-color: #f5f5f5;
     }
 
+    .wrap_tabs_btns {
+        position: fixed;
+        margin-top: 6rem;
+        padding: 0 20px;
+    }
+
     .detailorderwrapper {
         margin: 1rem 0;
-
     }
 }
 
@@ -140,18 +148,18 @@
     .orderitemcontainer::-webkit-scrollbar {
         display: none;
     }
-    
+
     .orderitemcontainer {
         padding-left: 0;
         overflow: -moz-scrollbars-none;
         -ms-overflow-style: none;
         scrollbar-width: none;
-        
+
     }
-    
+
     .orderitemcontainer::-webkit-scrollbar {
         display: none;
-      
+
     }
 
     .pagecontent {

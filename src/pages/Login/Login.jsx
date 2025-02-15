@@ -242,7 +242,7 @@ export default function Login() {
                                 </span>
                               </button>
                             </div>
-                            <div className="text-center">
+                            {/* <div className="text-center">
                               <button
                                 className={styles.sendcodebtn}
                                 type="button"
@@ -256,7 +256,7 @@ export default function Login() {
                                   ارسال کد یکبار مصرف به ایمیل
                                 </span>
                               </button>
-                            </div>
+                            </div> */}
                           </>
                         )}
                       </div>
@@ -1168,7 +1168,7 @@ export default function Login() {
                                   </span>
                                 </button>
                               </div>
-                              <div className="text-center">
+                              {/* <div className="text-center">
                                 <button
                                   className={styles.sendcodebtn}
                                   type="button"
@@ -1182,7 +1182,7 @@ export default function Login() {
                                     ارسال کد یکبار مصرف به ایمیل
                                   </span>
                                 </button>
-                              </div>
+                              </div> */}
                             </>
                           )}
                         </div>

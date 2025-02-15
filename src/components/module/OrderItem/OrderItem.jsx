@@ -118,7 +118,7 @@ export default function OrderItem({ item }) {
                           top: 0,
                           backgroundColor: "#fff",
                           fontFamily: "iranYekan",
-                          fontWeight:"bold"
+                          fontWeight: "bold",
                         }}
                       >
                         تعداد
@@ -181,7 +181,7 @@ export default function OrderItem({ item }) {
                           fontWeight: "bold",
                         }}
                       >
-                        {item?.product?.descriptions}
+                        {convertToPersianNumbers(item?.product?.descriptions)}
                       </TableCell>
                       <TableCell
                         align="center"
