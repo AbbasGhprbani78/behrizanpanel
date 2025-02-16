@@ -19,6 +19,8 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
   const [statusBtn, setStatusBtn] = useState(1);
   const [timer, setTimer] = useState(59);
   const [code, setCode] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [isDisable, setIsDisable] = useState(false);
   const [activeTab, setActiveTab] = useState("اطلاعات من");
   const [errors, setErrors] = useState({
@@ -27,6 +29,8 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
     email: "",
     zipcode: "",
     address: "",
+    pastPassword: "",
+    password: "",
   });
 
   const [profileInfo, setProfileInfo] = useState({
@@ -225,7 +229,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
 
     const updatedProfileInfo = {
       ...profileInfo,
-      ...(isDisableNumber === false && { code }),
+      ...(isDisableNumber === false && { code, old_password:oldPassword, new_password:newPassword }),
     };
 
     try {
@@ -250,10 +254,19 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
+      console.log(e)
       if (e.response?.status === 401) {
         localStorage.removeItem("access");
         goToLogin();
       }
+
+       if (e.response && e.response.status === 400) {
+        
+        swal({
+          title: e.response.data.old_password,
+          icon: "error",
+          button: "باشه",
+        });}
     } finally {
       setLoading(false);
     }
@@ -421,200 +434,229 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
               }}
             />
           </div>
-          {activeTab === "اطلاعات من" ? (
-            <>
-              <div>
-                <Input
-                  name="full_name"
-                  label="نام و نام خانوادگی"
-                  icon={FaUser}
-                  value={profileInfo.full_name}
-                  onChange={handleChangeProfileInfo}
-                  type={"text"}
-                />
-                {errors.full_name && (
-                  <span className={styles.errorinput}>{errors.full_name}</span>
-                )}
-              </div>
-              <div>
-                <Input
-                  name="phone_number"
-                  label="شماره تماس"
-                  icon={FaPhone}
-                  value={profileInfo.phone_number}
-                  onChange={handleChangeProfileInfo}
-                  type={"text"}
-                  disable={isDisableNumber}
-                />
-              </div>
-              <div>
-                <div className="d-flex align-items-center justify-content-between mt-4">
+          <div className={styles.wrap_inputs_formu}>
+            {activeTab === "اطلاعات من" ? (
+              <>
+                <div>
                   <Input
-                    name="code"
-                    label="کد امنیتی"
-                    value={code}
-                    onChange={(e) => {
-                      const newCode = e.target.value;
-                      setCode(newCode);
-                      setStatusBtn(newCode ? 4 : 1);
-                    }}
-                    type="text"
-                    style="style"
+                    name="full_name"
+                    label="نام و نام خانوادگی"
+                    icon={FaUser}
+                    value={profileInfo.full_name}
+                    onChange={handleChangeProfileInfo}
+                    type={"text"}
                   />
-                  <button
-                    type="button"
-                    disabled={isDisable || statusBtn === 5}
-                    className={`${styles.btn_send_code} ${
-                      isDisable && styles.disabled_btn
-                    }`}
-                    onClick={() => {
-                      statusBtn === 1 || statusBtn === 3
-                        ? getSecurityCode()
-                        : statusBtn === 4
-                        ? chackSecurityCode()
-                        : null;
-                    }}
-                  >
-                    {statusBtn === 1
-                      ? "ارسال کد امنیتی"
-                      : statusBtn === 2
-                      ? `${Math.floor(timer / 60)}:${
-                          timer % 60 < 10 ? "0" : ""
-                        }${timer % 60}`
-                      : statusBtn === 3
-                      ? "ارسال مجدد"
-                      : statusBtn === 4
-                      ? "ثبت"
-                      : "ثبت شد"}
-                  </button>
+                  {errors.full_name && (
+                    <span className={styles.errorinput}>
+                      {errors.full_name}
+                    </span>
+                  )}
                 </div>
-                <p className={styles.text_code}>
-                  کد امنیتی را وارد کنید تا دسترسی برای ویرایش شماره تماس ایجاد
-                  شود. با کلیک روی دکمه کد امنیتی به ایمیل شما ارسال می شود
-                </p>
-              </div>
-              <div>
-                <Input
-                  name="email"
-                  label="ایمیل"
-                  icon={MdEmail}
-                  value={profileInfo.email}
-                  onChange={handleChangeProfileInfo}
-                  type={"text"}
-                />
-                {errors.email && (
-                  <span className={styles.errorinput}>{errors.email}</span>
-                )}
-              </div>
-            </>
-          ) : activeTab === "آدرس‌ها" ? (
-            <>
-              <div
-                className={`${styles.btncancel} ${styles.addadress}`}
-                onClick={() => {
-                  setAddress(() => ({
-                    zipcode: "",
-                    phone1: "",
-                    phone2: "",
-                    address: "",
-                  }));
-                  setActiveTab("آدرس جدید");
-                }}
-              >
-                افزودن آدرس جدید
-              </div>
-              <div className={styles.address_container}>
-                {allAddress?.length > 0 ? (
-                  allAddress.map((item) => (
-                    <>
-                      <div className={styles.wrap_address_item} key={item.id}>
-                        <div className="d-flex align-items-center gap-2">
-                          <div className={styles.loc_icon}>
-                            <IoLocationOutline />
-                          </div>
-                          <p className={styles.text_address}>{item.address}</p>
-                        </div>
-                        <div className={styles.actions_address}>
-                          <div
-                            className={styles.edit_address}
-                            onClick={() => editAddress(item)}
-                          >
-                            <FiEdit2 />
-                          </div>
-                          <div
-                            className={styles.delete_address}
-                            onClick={() => {
-                              swal({
-                                title: "آیا از حذف آدرس اطمینان دارید؟",
-                                icon: "warning",
-                                buttons: ["خیر", "بله"],
-                              }).then((willDelete) => {
-                                if (willDelete) {
-                                  deleteAddress(item.id);
-                                }
-                              });
-                            }}
-                          >
-                            <MdDeleteOutline />
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  ))
-                ) : (
-                  <p style={{ width: "100%", textAlign: "center" }}>
-                    آدرسی وجود ندارد
+                <div>
+                  <Input
+                    name="phone_number"
+                    label="شماره تماس"
+                    icon={FaPhone}
+                    value={profileInfo.phone_number}
+                    onChange={handleChangeProfileInfo}
+                    type={"text"}
+                    disable={isDisableNumber}
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="old_password"
+                    label="رمز قبلی"
+                    icon={FaPhone}
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    type={"text"}
+                    disable={isDisableNumber}
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="new_password"
+                    label="رمز جدید"
+                    icon={FaPhone}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    type={"text"}
+                    disable={isDisableNumber}
+                  />
+                </div>
+                <div>
+                  <div className="d-flex align-items-center justify-content-between mt-4">
+                    <Input
+                      name="code"
+                      label="کد امنیتی"
+                      value={code}
+                      onChange={(e) => {
+                        const newCode = e.target.value;
+                        setCode(newCode);
+                        setStatusBtn(newCode ? 4 : 1);
+                      }}
+                      type="text"
+                      style="style"
+                    />
+                    <button
+                      type="button"
+                      disabled={isDisable || statusBtn === 5}
+                      className={`${styles.btn_send_code} ${
+                        isDisable && styles.disabled_btn
+                      }`}
+                      onClick={() => {
+                        statusBtn === 1 || statusBtn === 3
+                          ? getSecurityCode()
+                          : statusBtn === 4
+                          ? chackSecurityCode()
+                          : null;
+                      }}
+                    >
+                      {statusBtn === 1
+                        ? "ارسال کد امنیتی"
+                        : statusBtn === 2
+                        ? `${Math.floor(timer / 60)}:${
+                            timer % 60 < 10 ? "0" : ""
+                          }${timer % 60}`
+                        : statusBtn === 3
+                        ? "ارسال مجدد"
+                        : statusBtn === 4
+                        ? "ثبت"
+                        : "ثبت شد"}
+                    </button>
+                  </div>
+                  <p className={styles.text_code}>
+                    کد امنیتی را وارد کنید تا دسترسی برای ویرایش شماره تماس
+                    ایجاد شود. با کلیک روی دکمه کد امنیتی به ایمیل شما ارسال می
+                    شود
                   </p>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <Input
-                  name="zipcode"
-                  label="کدپستی"
-                  value={address.zipcode}
-                  onChange={handleChangeAddress}
-                  type={"text"}
-                />
-                {errors.zipcode && (
-                  <span className={styles.errorinput}>{errors.zipcode}</span>
-                )}
-              </div>
-              <div>
-                <Input
-                  name="phone1"
-                  label="شماره تماس اول"
-                  value={address.phone1}
-                  onChange={handleChangeAddress}
-                  type={"text"}
-                  placeholder={"اختیاری"}
-                />
-              </div>
-              <div>
-                <Input
-                  name="phone2"
-                  label="شماره تماس دوم"
-                  value={address.phone2}
-                  onChange={handleChangeAddress}
-                  type={"text"}
-                  placeholder={"اختیاری"}
-                />
-              </div>
-              <div>
-                <Texteara
-                  name={"address"}
-                  value={address.address}
-                  onChange={handleChangeAddress}
-                  label={"آدرس"}
-                />
-                {errors.address && (
-                  <span className={styles.errorinput}>{errors.address}</span>
-                )}
-              </div>
-            </>
-          )}
+                </div>
+                <div>
+                  <Input
+                    name="email"
+                    label="ایمیل"
+                    icon={MdEmail}
+                    value={profileInfo.email}
+                    onChange={handleChangeProfileInfo}
+                    type={"text"}
+                  />
+                  {errors.email && (
+                    <span className={styles.errorinput}>{errors.email}</span>
+                  )}
+                </div>
+              </>
+            ) : activeTab === "آدرس‌ها" ? (
+              <>
+                <div
+                  className={`${styles.btncancel} ${styles.addadress}`}
+                  onClick={() => {
+                    setAddress(() => ({
+                      zipcode: "",
+                      phone1: "",
+                      phone2: "",
+                      address: "",
+                    }));
+                    setActiveTab("آدرس جدید");
+                  }}
+                >
+                  افزودن آدرس جدید
+                </div>
+                <div className={styles.address_container}>
+                  {allAddress?.length > 0 ? (
+                    allAddress.map((item) => (
+                      <>
+                        <div className={styles.wrap_address_item} key={item.id}>
+                          <div className="d-flex align-items-center gap-2">
+                            <div className={styles.loc_icon}>
+                              <IoLocationOutline />
+                            </div>
+                            <p className={styles.text_address}>
+                              {item.address}
+                            </p>
+                          </div>
+                          <div className={styles.actions_address}>
+                            <div
+                              className={styles.edit_address}
+                              onClick={() => editAddress(item)}
+                            >
+                              <FiEdit2 />
+                            </div>
+                            <div
+                              className={styles.delete_address}
+                              onClick={() => {
+                                swal({
+                                  title: "آیا از حذف آدرس اطمینان دارید؟",
+                                  icon: "warning",
+                                  buttons: ["خیر", "بله"],
+                                }).then((willDelete) => {
+                                  if (willDelete) {
+                                    deleteAddress(item.id);
+                                  }
+                                });
+                              }}
+                            >
+                              <MdDeleteOutline />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ))
+                  ) : (
+                    <p style={{ width: "100%", textAlign: "center" }}>
+                      آدرسی وجود ندارد
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Input
+                    name="zipcode"
+                    label="کدپستی"
+                    value={address.zipcode}
+                    onChange={handleChangeAddress}
+                    type={"text"}
+                  />
+                  {errors.zipcode && (
+                    <span className={styles.errorinput}>{errors.zipcode}</span>
+                  )}
+                </div>
+                <div>
+                  <Input
+                    name="phone1"
+                    label="شماره تماس اول"
+                    value={address.phone1}
+                    onChange={handleChangeAddress}
+                    type={"text"}
+                    placeholder={"اختیاری"}
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="phone2"
+                    label="شماره تماس دوم"
+                    value={address.phone2}
+                    onChange={handleChangeAddress}
+                    type={"text"}
+                    placeholder={"اختیاری"}
+                  />
+                </div>
+                <div>
+                  <Texteara
+                    name={"address"}
+                    value={address.address}
+                    onChange={handleChangeAddress}
+                    label={"آدرس"}
+                  />
+                  {errors.address && (
+                    <span className={styles.errorinput}>{errors.address}</span>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
         <div className={styles.btsmodal}>
           <button

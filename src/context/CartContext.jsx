@@ -8,6 +8,7 @@ export const CountContext = createContext();
 export function CountProvaider({ children }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [countProduct, setCountProduct] = useState(0);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,7 +46,9 @@ export function CountProvaider({ children }) {
   }, []);
 
   return (
-    <CountContext.Provider value={{ countProduct, setCountProduct }}>
+    <CountContext.Provider
+      value={{ countProduct, setCountProduct, setIsSubMenuOpen, isSubMenuOpen }}
+    >
       {children}
     </CountContext.Provider>
   );

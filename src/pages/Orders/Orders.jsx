@@ -151,6 +151,8 @@ export default function Orders() {
     }
   }, [tab, orderDetails]);
 
+  console.log(orderDetails)
+
   return (
     <div className={styles.wrapperpage}>
       <SideBar />
@@ -171,7 +173,7 @@ export default function Orders() {
                 className={`${styles.btn_tab} ${tab === 2 && styles.activetab}`}
                 onClick={() => setTab(2)}
               >
-                بارنامه
+                وضعیت ارسالها
               </button>
             </div>
             {tab === 1 ? (
@@ -217,7 +219,7 @@ export default function Orders() {
                   tab === 2 && styles.tab2_style
                 }`}
               >
-                <p className={styles.bill_title}>لیست بارنامه ها</p>
+                <p className={styles.bill_title}>لیست وضعیت ارسالها ها</p>
                 <p className="mt-4">وضعیت ارسال ها :</p>
                 <div
                   style={{ height: "calc(100dvh - 250px)", overflow: "auto" }}
@@ -242,7 +244,7 @@ export default function Orders() {
                                   <FaAngleDown />
                                 )}
                               </div>
-                              <span>بارنامه : </span>
+                              <span>وضعیت ارسالها : </span>
                               <span>{convertToPersianNumbers(item?.bill)}</span>
                             </div>
                             <div className={styles.wrap_date_detail}>

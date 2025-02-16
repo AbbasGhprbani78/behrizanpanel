@@ -133,11 +133,13 @@ export default function TrackOrders() {
       });
 
       if (response.status === 200) {
-        setFilterValue((prev) =>
-          page === 1
-            ? response.data.results
-            : [...prev, ...response.data.results]
-        );
+       const newResults =
+         Array.isArray(response.data) && response.data.length === 0
+           ? []
+           : response.data?.results || [];
+       setFilterValue((prev) =>
+         page === 1 ? newResults : [...prev, ...newResults]
+       );
 
         if (response.data.results.length < page_size) {
           setHasMore(false);
