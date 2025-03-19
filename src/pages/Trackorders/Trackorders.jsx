@@ -133,13 +133,13 @@ export default function TrackOrders() {
       });
 
       if (response.status === 200) {
-       const newResults =
-         Array.isArray(response.data) && response.data.length === 0
-           ? []
-           : response.data?.results || [];
-       setFilterValue((prev) =>
-         page === 1 ? newResults : [...prev, ...newResults]
-       );
+        const newResults =
+          Array.isArray(response.data) && response.data.length === 0
+            ? []
+            : response.data?.results || [];
+        setFilterValue((prev) =>
+          page === 1 ? newResults : [...prev, ...newResults]
+        );
 
         if (response.data.results.length < page_size) {
           setHasMore(false);
@@ -154,7 +154,7 @@ export default function TrackOrders() {
       if (firstLoad) setFirstLoad(false);
     }
   };
-  
+
   const resetOrders = () => {
     setFilterValue(allOrders);
     setPage(1);
@@ -188,7 +188,7 @@ export default function TrackOrders() {
     <div className={styles.wrapperpage}>
       <SideBar />
       <div className={styles.pagecontent}>
-        <Header title={"پیگیری سفارشات"} />
+        <Header title={"پیگیری درخواست"} />
         <div className={styles.ordercontent}>
           {loading ? (
             <Loading />
@@ -215,21 +215,20 @@ export default function TrackOrders() {
                     >
                       <div className={styles.wrapp_orders} id="wrapp_orders">
                         {filterValue?.length > 0 ? (
-                          filterValue
-                            .map((order, index) =>
-                              selectedOrderId === order.id ||
-                              selectedOrderId === null ? (
-                                <OrderTrackItem
-                                  key={order.id}
-                                  order={order}
-                                  number={index}
-                                  setSelectedOrderId={setSelectedOrderId}
-                                  onDetailsClick={() =>
-                                    setSelectedOrderId(order.id)
-                                  }
-                                />
-                              ) : null
-                            )
+                          filterValue.map((order, index) =>
+                            selectedOrderId === order.id ||
+                            selectedOrderId === null ? (
+                              <OrderTrackItem
+                                key={order.id}
+                                order={order}
+                                number={index}
+                                setSelectedOrderId={setSelectedOrderId}
+                                onDetailsClick={() =>
+                                  setSelectedOrderId(order.id)
+                                }
+                              />
+                            ) : null
+                          )
                         ) : (
                           <NoneSearch />
                         )}

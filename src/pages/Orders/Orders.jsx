@@ -151,13 +151,13 @@ export default function Orders() {
     }
   }, [tab, orderDetails]);
 
-  console.log(orderDetails)
+  console.log(orderDetails);
 
   return (
     <div className={styles.wrapperpage}>
       <SideBar />
       <div className={styles.pagecontent}>
-        <Header title={"سفارشات"} />
+        <Header title={"درخواست ها"} />
         {isLoading ? (
           <Loading />
         ) : orderDetails.length > 0 ? (
@@ -167,7 +167,7 @@ export default function Orders() {
                 className={`${styles.btn_tab} ${tab === 1 && styles.activetab}`}
                 onClick={() => setTab(1)}
               >
-                سفارشات
+                درخواست ها
               </button>
               <button
                 className={`${styles.btn_tab} ${tab === 2 && styles.activetab}`}

@@ -37,7 +37,7 @@ export default function Products() {
   const gotocart = () => {
     navigate("/cart");
   };
-  
+
   const addToCartHandler = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -53,7 +53,7 @@ export default function Products() {
         });
         localStorage.setItem("cart", JSON.stringify(cart));
         swal({
-          title: "به سبد سفارش اضافه شد",
+          title: "به سبد درخواست اضافه شد",
           icon: "success",
           button: "باشه",
         });
@@ -70,7 +70,7 @@ export default function Products() {
         localStorage.setItem("cart", JSON.stringify(cart));
         setValue(1);
         swal({
-          title: "به سبد سفارش اضافه شد",
+          title: "به سبد درخواست اضافه شد",
           icon: "success",
           buttons: "باشه",
         });
@@ -87,7 +87,7 @@ export default function Products() {
       cart.push(cartItem);
       localStorage.setItem("cart", JSON.stringify(cart));
       swal({
-        title: "به سبد سفارش اضافه شد",
+        title: "به سبد درخواست اضافه شد",
         icon: "success",
         buttons: "باشه",
       });
@@ -232,15 +232,14 @@ export default function Products() {
                     >
                       <div className={styles.ProductsBox} id="ProductsBox">
                         {filterProduct?.length > 0 ? (
-                          filterProduct
-                            .map((product) => (
-                              <ProductItem
-                                product={product}
-                                key={product.item_code}
-                                setShowModalBuy={setShowModalBuy}
-                                setMainProduct={setMainProduct}
-                              />
-                            ))
+                          filterProduct.map((product) => (
+                            <ProductItem
+                              product={product}
+                              key={product.item_code}
+                              setShowModalBuy={setShowModalBuy}
+                              setMainProduct={setMainProduct}
+                            />
+                          ))
                         ) : (
                           <NoneSearch />
                         )}

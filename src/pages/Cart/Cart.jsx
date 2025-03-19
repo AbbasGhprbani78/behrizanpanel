@@ -53,7 +53,7 @@ export default function Cart() {
         setLoading(false);
         localStorage.removeItem("cart");
         swal({
-          title: "سفارش با موفقیت ثبت شد",
+          title: "درخواست با موفقیت ثبت شد",
           icon: "success",
           button: "باشه",
         }).then(() => {

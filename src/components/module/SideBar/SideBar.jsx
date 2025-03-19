@@ -64,7 +64,7 @@ export default function SideBar() {
               >
                 <div>
                   <FaBoxArchive className={styles.iconsidebar} />
-                  <span className={styles.listitemtext}>سفارشات</span>
+                  <span className={styles.listitemtext}>درخواست ها</span>
                 </div>
                 {isSubMenuOpen ? <FaAngleUp /> : <FaAngleDown />}
               </div>
@@ -76,7 +76,7 @@ export default function SideBar() {
                     }`}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Link to={"/products"}>ثبت سفارش جدید</Link>
+                    <Link to={"/products"}>ثبت درخواست جدید</Link>
                   </li>
                   <li
                     onClick={(e) => e.stopPropagation()}
@@ -84,7 +84,7 @@ export default function SideBar() {
                       pathname === "/trackorders" ? styles.active : ""
                     }`}
                   >
-                    <Link to={"/trackorders"}>پیگیری سفارشات</Link>
+                    <Link to={"/trackorders"}>پیگیری درخواست</Link>
                   </li>
                 </ul>
               )}

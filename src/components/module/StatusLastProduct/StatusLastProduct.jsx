@@ -7,10 +7,7 @@ import {
 } from "../../../utils/helper";
 
 export default function StatusLastProduct({ product }) {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("fa-IR");
-  };
+ 
 
   function getFieldByStatus(product) {
     let fieldValue = "فیلد نامعتبر";
@@ -25,10 +22,10 @@ export default function StatusLastProduct({ product }) {
         fieldValue = product.final_confirm_date;
         break;
       case "4":
-        fieldValue = product?.deliever_date_max;
+        fieldValue = product?.deliver_date_max;
         break;
       case "5":
-        fieldValue = product?.deliever_date_max;
+        fieldValue = product?.deliver_date_max;
         break;
       case "7":
         fieldValue = product?.request_date;
