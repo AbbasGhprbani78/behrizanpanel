@@ -192,7 +192,7 @@ export default function Cart() {
             setShowDeleteModal={setShowDeleteModal}
             handleDelete={handleDelete}
           />
-          <Header title={"سبد سفارش"} />
+          <Header title={"سبد درخواست"} />
           <div className={styles.maincontent}>
             {windowWidth < 600 ? (
               <>

@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { useState } from "react";
 import styles from "./Offcanvas.module.css";
 import { IoCloseSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { MdWindow } from "react-icons/md";
 import { FaBoxArchive } from "react-icons/fa6";
-import { FaBookmark } from "react-icons/fa";
 import { FaHeadphones } from "react-icons/fa6";
 import { FiLogOut } from "react-icons/fi";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
@@ -117,7 +116,7 @@ export default function OffcanvasMenu({ setShowSideBar, showSideBar }) {
             }`}
           >
             <FaShoppingCart className={styles.iconsidebar} />
-            <span className={styles.listitemtext}>سبد سفارش</span>
+            <span className={styles.listitemtext}>سبد درخواست</span>
           </Link>
           {/* <Link to={"/report"} className={`${styles.listitem}  ${pathname === "/cart" ? styles.active : ""}`}>
                         <FaBookmark className={styles.iconsidebar} />

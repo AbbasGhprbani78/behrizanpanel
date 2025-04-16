@@ -1,28 +1,35 @@
-import styles from './Massage.module.css';
-import { BsFillFileEarmarkArrowDownFill } from 'react-icons/bs';
+import styles from "./Massage.module.css";
+import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
+import { MdOutlineEdit } from "react-icons/md";
 
-export default function Massage({ tikectmsg }) {
-    const formatTime = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        });
-    };
+export default function Massage({
+  tikectmsg,
+  setTextInput,
+  setIsEditMessage,
+  setTicketId,
+}) {
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  };
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
 
-    return (
-      <div
-        className={`${
-          tikectmsg?.is_admin
-            ? styles.message_wrapper_snder
-            : styles.message_wrapper_receiver
-        }`}
-      >
-        {tikectmsg?.message && (
+  return (
+    <div
+      className={`${
+        tikectmsg?.is_admin
+          ? styles.message_wrapper_snder
+          : styles.message_wrapper_receiver
+      }`}
+    >
+      {tikectmsg?.message && (
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <div
             className={`${styles.message_content} mb-4 ${
               tikectmsg?.temp ? styles.sending : ""
@@ -47,43 +54,59 @@ export default function Massage({ tikectmsg }) {
               {formatTime(tikectmsg?.date)}
             </span>
           </div>
-        )}
-        {tikectmsg?.file && (
-          <div
-            className={`${styles.message_content} ${
-              tikectmsg?.is_admin ? styles.file_sender : ""
-            } mb-4`}
+          {!tikectmsg?.is_admin && !tikectmsg.is_read && (
+            <MdOutlineEdit
+              onClick={() => {
+                if (!tikectmsg?.is_admin && !tikectmsg.is_read) {
+                  setTextInput(tikectmsg?.message);
+                  setIsEditMessage(true);
+                  setTicketId(tikectmsg?.id);
+                }
+              }}
+              style={{
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                marginBottom: "40px",
+              }}
+            />
+          )}
+        </div>
+      )}
+
+      {tikectmsg?.file && (
+        <div
+          className={`${styles.message_content} ${
+            tikectmsg?.is_admin ? styles.file_sender : ""
+          } mb-4`}
+        >
+          <a
+            className="place"
+            href={
+              tikectmsg?.file.startsWith("blob:")
+                ? tikectmsg?.file
+                : `${apiUrl}${tikectmsg?.file}`
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            download
           >
-            <a
-              className="place"
-              href={
-                tikectmsg?.file.startsWith("blob:")
-                  ? tikectmsg?.file
-                  : `${apiUrl}${tikectmsg?.file}`
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-            >
-              <BsFillFileEarmarkArrowDownFill
-                className={`${
-                  tikectmsg?.is_admin
-                    ? styles.fileIcon
-                    : styles.fileIcon_receiver
-                }`}
-              />
-            </a>
-            <span
+            <BsFillFileEarmarkArrowDownFill
               className={`${
-                tikectmsg?.is_admin
-                  ? styles.date_message_snder
-                  : styles.date_message_receiver
+                tikectmsg?.is_admin ? styles.fileIcon : styles.fileIcon_receiver
               }`}
-            >
-              {formatTime(tikectmsg?.date)}
-            </span>
-          </div>
-        )}
-      </div>
-    );
+            />
+          </a>
+          <span
+            className={`${
+              tikectmsg?.is_admin
+                ? styles.date_message_snder
+                : styles.date_message_receiver
+            }`}
+          >
+            {formatTime(tikectmsg?.date)}
+          </span>
+        </div>
+      )}
+    </div>
+  );
 }

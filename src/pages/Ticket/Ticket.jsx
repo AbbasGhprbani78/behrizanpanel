@@ -20,6 +20,10 @@ import { goToLogin } from "../../utils/helper";
 import useSWR from "swr";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import InfiniteScroll from "react-infinite-scroll-component";
+import SearchBox from "../../components/module/SearchBox/SearchBox";
+import Filter from "../../components/module/Filter/Filter";
+import ModalFilter from "../../components/module/ModalFilter/ModalFilter";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const fetcher = async (url) => {
@@ -44,12 +48,21 @@ export default function Ticket() {
   const [openTicket, setOpenTicket] = useState(0);
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [textInput, setTextInput] = useState("");
+  const [isEditMessage, setIsEditMessage] = useState(false);
+  const [ticketid, setTicketId] = useState("");
   const [ticket, setTicket] = useState("");
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [userType, setUserType] = useState([]);
   const [typeTicket, setTypeTicket] = useState("");
   const messageEndRef = useRef(null);
   const [showfile, setShowFile] = useState(false);
+  const [openModal, setOpenmodal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const isFetched = useRef(false);
+  const [isSearch, setIsSearch] = useState(false);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const {
     data: allTickets,
@@ -80,11 +93,11 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     }
   };
 
@@ -148,11 +161,11 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
       SetDisable(false);
     }
   };
@@ -198,11 +211,9 @@ export default function Ticket() {
             is_admin: false,
           };
 
-         setSelectedTicket((prevMessages) =>
-           prevMessages.map(
-             (msg) => (msg.temp ? newMessage : msg) 
-           )
-         );
+          setSelectedTicket((prevMessages) =>
+            prevMessages.map((msg) => (msg.temp ? newMessage : msg))
+          );
 
           swal({
             title: "تیکت با موفقیت ارسال  شد",
@@ -218,11 +229,11 @@ export default function Ticket() {
           localStorage.removeItem("access");
           goToLogin();
         }
-        if(e.response?.status ===500){
-                toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                  position: "top-left",
-                });
-               }
+        if (e.response?.status === 500) {
+          toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+            position: "top-left",
+          });
+        }
       }
     }
   };
@@ -286,18 +297,65 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    }
+  };
+
+  const handleEditMessage = async () => {
+    const access = localStorage.getItem("access");
+    const headers = {
+      Authorization: `Bearer ${access}`,
+    };
+    try {
+      const formData = new FormData();
+      formData.append("message", textInput);
+      const res = await axios.put(
+        `${apiUrl}/chat/tickets-edit/${ticketid}`,
+        formData,
+        {
+          headers,
+        }
+      );
+
+      if (res.status === 200) {
+        setIsEditMessage(false);
+        setSelectedTicket((prev) =>
+          prev.map((msg) =>
+            msg.id === ticketid ? { ...msg, message: textInput } : msg
+          )
+        );
+        swal({
+          title: "تیکت با موفقیت ویرایش شد",
+          icon: "success",
+          button: {
+            text: "باشه",
+          },
+        });
+        setTextInput("");
+      }
+    } catch (e) {
+      if (e.response?.status === 401) {
+        localStorage.removeItem("access");
+        goToLogin();
+      }
+      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftkey) {
       event.preventDefault();
-      sendmessage();
+      if (isEditMessage) {
+        handleEditMessage();
+      } else {
+        sendmessage();
+      }
     }
   };
 
@@ -367,39 +425,64 @@ export default function Ticket() {
                   </div>
 
                   {tab === 1 && (
-                    <div className={styles.allTickets}>
-                      {allTickets?.length > 0 ? (
-                        <div className={styles.TicketListBox}>
-                          <div className={styles.text}>
-                            <span>تعداد کل تیکت‌ها: {allTickets.length} </span>
-                            <span>تیکت‌های باز: {openTicket}</span>
+                    <>
+                      <div className={styles.topsec}>
+                        <SearchBox
+                          value={search}
+                          onChange={setSearch}
+                          placeholder={"جستوجو براساس اسم"}
+                        />
+                        <Filter
+                          setOpenmodal={""}
+                          all={""}
+                          filters={[
+                            {
+                              label: "وضعیت",
+                              onClick: () => console.log("filter by status"),
+                            },
+                            {
+                              label: "نوع تیکت",
+                              onClick: () => console.log("filter by status"),
+                            },
+                          ]}
+                        />
+                      </div>
+                      <div className={styles.allTickets}>
+                        {allTickets?.length > 0 ? (
+                          <div className={styles.TicketListBox}>
+                            <div className={styles.text}>
+                              <span>
+                                تعداد کل تیکت‌ها: {allTickets.length} 
+                              </span>
+                              <span>تیکت‌های باز: {openTicket}</span>
+                            </div>
+                            <div className={styles.TicketItemBox}>
+                              {allTickets
+                                .slice()
+                                .reverse()
+                                .map((ticket) => (
+                                  <TicketItem
+                                    onClick={() => getSelectedTicket(ticket)}
+                                    key={ticket.ticket_id}
+                                    ticket={ticket}
+                                  />
+                                ))}
+                            </div>
                           </div>
-                          <div className={styles.TicketItemBox}>
-                            {allTickets
-                              .slice()
-                              .reverse()
-                              .map((ticket) => (
-                                <TicketItem
-                                  onClick={() => getSelectedTicket(ticket)}
-                                  key={ticket.ticket_id}
-                                  ticket={ticket}
-                                />
-                              ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className={styles.none_ticket}>
-                            <SlSocialDropbox
-                              className={styles.icon_ticket_none}
-                            />
-                            <p className={styles.ticket_text_none}>
-                              موردی یافت نشد
-                            </p>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                        ) : (
+                          <>
+                            <div className={styles.none_ticket}>
+                              <SlSocialDropbox
+                                className={styles.icon_ticket_none}
+                              />
+                              <p className={styles.ticket_text_none}>
+                                موردی یافت نشد
+                              </p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </>
                   )}
 
                   <div
@@ -513,7 +596,13 @@ export default function Ticket() {
                     <div className={styles.MassageBox}>
                       {selectedTicket.length > 0 &&
                         selectedTicket.map((ticket) => (
-                          <Massage key={ticket?.ticket_id} tikectmsg={ticket} />
+                          <Massage
+                            key={ticket?.id}
+                            tikectmsg={ticket}
+                            setTextInput={setTextInput}
+                            setIsEditMessage={setIsEditMessage}
+                            setTicketId={setTicketId}
+                          />
                         ))}
                       {showfile && (
                         <div
@@ -589,7 +678,13 @@ export default function Ticket() {
                             />
                             <IoSend
                               className={styles.iconsend}
-                              onClick={sendmessage}
+                              onClick={() => {
+                                if (isEditMessage) {
+                                  handleEditMessage();
+                                } else {
+                                  sendmessage();
+                                }
+                              }}
                             />
                           </div>
                         </div>
@@ -614,7 +709,13 @@ export default function Ticket() {
                             />
                             <IoSend
                               className={styles.iconsend}
-                              onClick={sendmessage}
+                              onClick={() => {
+                                if (isEditMessage) {
+                                  handleEditMessage();
+                                } else {
+                                  sendmessage();
+                                }
+                              }}
                             />
                           </div>
                         </div>
@@ -650,37 +751,60 @@ export default function Ticket() {
                     </div>
                   </div>
                   {tab === 1 && (
-                    <div>
-                      {allTickets?.length > 0 ? (
-                        <div className={styles.TicketListBox}>
-                          <div className={styles.text}>
-                            <span>تعداد کل تیکت‌ها: {allTickets.length}</span>
-                            <span>تیکت‌های باز: {openTicket}</span>
+                    <>
+                      <div className={styles.topsec}>
+                        <SearchBox
+                          value={search}
+                          onChange={setSearch}
+                          placeholder={"جستوجو براساس اسم"}
+                        />
+                        <Filter
+                          setOpenmodal={""}
+                          all={""}
+                          filters={[
+                            {
+                              label: "وضعیت",
+                              onClick: () => console.log("filter by status"),
+                            },
+                            {
+                              label: "نوع تیکت",
+                              onClick: () => console.log("filter by status"),
+                            },
+                          ]}
+                        />
+                      </div>
+                      <div>
+                        {allTickets?.length > 0 ? (
+                          <div className={styles.TicketListBox}>
+                            <div className={styles.text}>
+                              <span>تعداد کل تیکت‌ها: {allTickets.length}</span>
+                              <span>تیکت‌های باز: {openTicket}</span>
+                            </div>
+                            <div className={styles.TicketItemBox}>
+                              {allTickets
+                                .slice()
+                                .reverse()
+                                .map((ticket) => (
+                                  <TicketItem
+                                    onClick={() => getSelectedTicket(ticket)}
+                                    key={ticket.ticket_id}
+                                    ticket={ticket}
+                                  />
+                                ))}
+                            </div>
                           </div>
-                          <div className={styles.TicketItemBox}>
-                            {allTickets
-                              .slice()
-                              .reverse()
-                              .map((ticket) => (
-                                <TicketItem
-                                  onClick={() => getSelectedTicket(ticket)}
-                                  key={ticket.ticket_id}
-                                  ticket={ticket}
-                                />
-                              ))}
+                        ) : (
+                          <div className={styles.none_ticket}>
+                            <SlSocialDropbox
+                              className={styles.icon_ticket_none}
+                            />
+                            <p className={styles.ticket_text_none}>
+                              موردی یافت نشد
+                            </p>
                           </div>
-                        </div>
-                      ) : (
-                        <div className={styles.none_ticket}>
-                          <SlSocialDropbox
-                            className={styles.icon_ticket_none}
-                          />
-                          <p className={styles.ticket_text_none}>
-                            موردی یافت نشد
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    </>
                   )}
                   <div
                     className={`${
@@ -793,7 +917,13 @@ export default function Ticket() {
                     <div className={styles.MassageBox}>
                       {selectedTicket.length > 0 &&
                         selectedTicket.map((ticket) => (
-                          <Massage key={ticket?.ticket_id} tikectmsg={ticket} />
+                          <Massage
+                            key={ticket?.id}
+                            tikectmsg={ticket}
+                            setTextInput={setTextInput}
+                            setIsEditMessage={setIsEditMessage}
+                            setTicketId={setTicketId}
+                          />
                         ))}
                       {showfile && (
                         <div
@@ -870,7 +1000,13 @@ export default function Ticket() {
                             />
                             <IoSend
                               className={styles.iconsend}
-                              onClick={sendmessage}
+                              onClick={() => {
+                                if (isEditMessage) {
+                                  handleEditMessage();
+                                } else {
+                                  sendmessage();
+                                }
+                              }}
                             />
                           </div>
                         </div>
@@ -883,7 +1019,175 @@ export default function Ticket() {
           )}
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
+      <ModalFilter
+        openModal={openModal}
+        setOpenmodal={setOpenmodal}
+        filterOrdersByDate={""}
+      />
     </div>
   );
 }
+
+// const getAllTickets = async (page = 1, page_size = 25) => {
+//   if (page === 1 && firstLoad) setLoading(true);
+
+//   const access = localStorage.getItem("access");
+//   const headers = { Authorization: `Bearer ${access}` };
+
+//   try {
+//     const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+//       headers,
+//       params: { page, page_size },
+//     });
+
+//     if (response.status === 200) {
+//       setAllTickets((prev) =>
+//         page === 1 ? response.data.results : [...prev, ...response.data.results]
+//       );
+//       setFilterValue((prev) =>
+//         page === 1 ? response.data.results : [...prev, ...response.data.results]
+//       );
+
+//       if (response.data.results.length < page_size) {
+//         setHasMore(false);
+//       } else {
+//         setPage(page + 1);
+//       }
+//     }
+//   } catch (e) {
+//     if (e.response?.status === 401) {
+//       localStorage.removeItem("access");
+//       goToLogin();
+//     }
+//     if (e.response?.status === 500) {
+//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+//         position: "top-left",
+//       });
+//     }
+//   } finally {
+//     setLoading(false);
+//     if (firstLoad) setFirstLoad(false);
+//   }
+// };
+
+// const filterTicketsByDate = async (
+//   startDate,
+//   endDate,
+//   page = 1,
+//   page_size = 10
+// ) => {
+//   const convertToEnglishDigits = (str) =>
+//     str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+//   const formatDate = (date) => convertToEnglishDigits(date).replace(/\//g, "");
+//   const startDateFormatted = formatDate(startDate);
+//   const endDateFormatted = formatDate(endDate);
+//   const access = localStorage.getItem("access");
+//   const headers = { Authorization: `Bearer ${access}` };
+
+//   if (page === 1) setIsSearch(true);
+
+//   try {
+//     const response = await axios.get(`${apiUrl}/app/get-cart-detail/`, {
+//       params: {
+//         page,
+//         page_size,
+//         start_date: startDateFormatted,
+//         end_date: endDateFormatted,
+//       },
+//       headers,
+//     });
+
+//     setSearch("");
+
+//     if (response.status === 200) {
+//       setFilterValue((prev) =>
+//         page === 1 ? response.data.results : [...prev, ...response.data.results]
+//       );
+
+//       if (response.data.results.length < page_size) {
+//         setHasMore(false);
+//       } else {
+//         setPage(page + 1);
+//       }
+//     }
+//   } catch (error) {
+//     if (e.response?.status === 500) {
+//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+//         position: "top-left",
+//       });
+//     }
+//   } finally {
+//     setIsSearch(false);
+//   }
+// };
+
+// const searchTickets = async (query, page = 1, page_size = 25) => {
+//   if (!query.trim()) return;
+
+//   const access = localStorage.getItem("access");
+//   const headers = { Authorization: `Bearer ${access}` };
+
+//   if (page === 1) setIsSearch(true);
+
+//   try {
+//     const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+//       params: { query, page, page_size },
+//       headers,
+//     });
+
+//     if (response.status === 200) {
+//       const newResults =
+//         Array.isArray(response.data) && response.data.length === 0
+//           ? []
+//           : response.data?.results || [];
+//       setFilterValue((prev) =>
+//         page === 1 ? newResults : [...prev, ...newResults]
+//       );
+
+//       if (response.data.results.length < page_size) {
+//         setHasMore(false);
+//       } else {
+//         setPage(page + 1);
+//       }
+//     }
+//   } catch (error) {
+//     if (e.response?.status === 500) {
+//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+//         position: "top-left",
+//       });
+//     }
+//   } finally {
+//     setIsSearch(false);
+//     if (firstLoad) setFirstLoad(false);
+//   }
+// };
+
+// const resetTickets = () => {
+//   setFilterValue(allTickets);
+//   setPage(1);
+//   setHasMore(true);
+// };
+
+// useEffect(() => {
+//   if (!isFetched.current) {
+//     getAllTickets();
+//     isFetched.current = true;
+//   }
+// }, []);
+
+// useEffect(() => {
+//   if (search.trim() === "") {
+//     setFilterValue(allOrders);
+//     setPage(1);
+//     setHasMore(true);
+//     return;
+//   }
+//   setPage(1);
+//   setHasMore(true);
+//   const delayDebounceFn = setTimeout(() => {
+//     searchTickets(search.trim(), 1);
+//   }, 1500);
+
+//   return () => clearTimeout(delayDebounceFn);
+// }, [search]);

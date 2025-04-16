@@ -42,7 +42,7 @@ export default function StatusLastProduct({ product }) {
 
   return (
     <div className={styles.statusproduct}>
-      <p className={styles.statustext}>وضعیت آخرین سفارش</p>
+      <p className={styles.statustext}>وضعیت آخرین درخواست</p>
       <StatusProduct status={product?.status} />
       <div className={styles.statusproductbottom}>
         <div className={styles.orderdeatil}>

@@ -64,11 +64,11 @@ export default function TrackOrders() {
         localStorage.removeItem("access");
         goToLogin();
       }
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     } finally {
       setLoading(false);
       if (firstLoad) setFirstLoad(false);
@@ -119,11 +119,11 @@ export default function TrackOrders() {
         }
       }
     } catch (error) {
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     } finally {
       setIsSearch(false);
     }
@@ -159,11 +159,11 @@ export default function TrackOrders() {
         }
       }
     } catch (error) {
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
@@ -215,7 +215,11 @@ export default function TrackOrders() {
                   onChange={setSearch}
                   placeholder={"جستوجو براساس شماره درخواست , تعداد اقلام"}
                 />
-                <Filter setOpenmodal={setOpenmodal} all={resetOrders} />
+                <Filter
+                  setOpenmodal={setOpenmodal}
+                  all={resetOrders}
+                  filters={[]}
+                />
               </div>
               {allOrders?.length > 0 ? (
                 <>
@@ -265,7 +269,7 @@ export default function TrackOrders() {
           filterOrdersByDate={filterOrdersByDate}
         />
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import { FiTruck } from "react-icons/fi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { BsBox2 } from "react-icons/bs";
 import { FaWpforms } from "react-icons/fa6";
-import { AiOutlineFileDone } from "react-icons/ai";
 
 export default function StatusProduct({ style, status }) {
   const [currentStep, setCurrentStep] = useState(1);

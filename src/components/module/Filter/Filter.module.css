@@ -1,65 +1,70 @@
 .filterwrapper {
-    width: max-content;
-    box-shadow: 0px 2px 4px 0px #BDBDBD;
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 7px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    position: relative;
-    transition: all .3s ease-in;
-}
-
-.filterwrapper:hover .item_filter,
-.item_filter:hover {
-    opacity: 1;
-    visibility: visible;
-}
-
-.filterwrapper:hover .arrow_icon {
-    transform: rotate(180deg);
+  width: max-content;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease-in;
 }
 
 .arrow_icon {
-    transition: all .3s ease-in;
-    margin-right: 7px;
+  transition: all 0.3s ease-in;
+  margin-right: 7px;
 }
 
 .item_filter {
-    background-color: #fff;
-    box-shadow: 0px 2px 4px 0px #BDBDBD;
-    padding: 7px 10px;
-    border-radius: 10px;
-    min-width: 130px;
-    opacity: 0;
-    visibility: hidden;
-    transition: all .3s ease-in;
-    position: absolute;
-    right: 0;
-    z-index: 2;
-    transition: all .3 ease;
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  min-width: 130px;
+  transition: all 0.3s ease-in;
+  right: 0;
+  z-index: 2;
+  transition: all 0.3 ease;
+  margin-top: 0.5rem;
 }
 
-
-
-.item_first {
-    top: 130%;
+.wrap_items_filter {
+  background-color: #fff;
+  box-shadow: 0px 2px 4px 0px #bdbdbd;
+  padding: 7px 10px;
+  border-radius: 10px;
+  min-width: 130px;
+  transition: all 0.3s ease-in;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+  transition: all 0.3 ease;
+  top: 3rem;
+  opacity: 0;
+  visibility: hidden;
 }
-
-.item_second {
-    top: 250%;
-}
-
 
 .active {
-    background-color: var(--color-3);
-    color: #ffff;
+  background-color: var(--color-3);
+  color: #ffff;
 }
 
-@media (max-width:600px) {
-    .filterwrapper {
-        margin-top: 1rem;
-    }
+.filterwrapper:hover .wrap_items_filter {
+  opacity: 1;
+  visibility: visible;
+}
+
+.item_filter:hover {
+  background-color: var(--color-3);
+  color: #ffff;
+}
+
+.filterwrapper:hover .arrow_icon {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  .filterwrapper {
+    margin-top: 1rem;
+  }
 }

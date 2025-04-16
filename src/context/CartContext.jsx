@@ -2,7 +2,6 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 export const CountContext = createContext();
 
 export function CountProvaider({ children }) {
@@ -19,17 +18,15 @@ export function CountProvaider({ children }) {
   useEffect(() => {
     const validateUser = async () => {
       const refresh = localStorage.getItem("refresh");
-
       if (refresh) {
         const body = {
-          refresh_token: refresh,
+          refresh: refresh,
         };
-
         try {
           const response = await axios.post(`${apiUrl}/user/refresh/`, body);
 
           if (response.status === 200) {
-            localStorage.setItem("refresh", response.data.refresh_token);
+            localStorage.setItem("access", response.data.access);
           }
         } catch (e) {
           if (e.response?.status === 401) {
@@ -37,7 +34,6 @@ export function CountProvaider({ children }) {
             localStorage.removeItem("refresh");
             navigate("/login");
           }
-          
         }
       } else {
         navigate("/login");
