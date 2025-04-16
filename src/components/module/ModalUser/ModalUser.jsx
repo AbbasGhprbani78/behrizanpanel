@@ -11,6 +11,8 @@ import { FiEdit2 } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
 import { goToLogin } from "../../../utils/helper";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const tabs = ["اطلاعات من", "آدرس‌ها"];
 export default function ModalUser({ setShowModal, showModal, userInfo }) {
@@ -69,6 +71,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     }
   };
 
@@ -108,6 +115,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
           goToLogin();
         }
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     } finally {
       setIsDisable(false);
     }
@@ -202,6 +214,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     }
   };
 
@@ -254,7 +271,6 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
-      console.log(e)
       if (e.response?.status === 401) {
         localStorage.removeItem("access");
         goToLogin();
@@ -267,6 +283,12 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
           icon: "error",
           button: "باشه",
         });}
+
+        if(e.response?.status ===500){
+          toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+            position: "top-left",
+          });
+         }
     } finally {
       setLoading(false);
     }
@@ -308,6 +330,12 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         localStorage.removeItem("access");
         goToLogin();
       }
+
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     } finally {
       setLoading(false);
     }
@@ -343,6 +371,12 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         localStorage.removeItem("access");
         goToLogin();
       }
+
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     } finally {
       setLoading(false);
     }
@@ -373,6 +407,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     } finally {
       setLoading(false);
     }
@@ -694,6 +733,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 }

@@ -16,6 +16,8 @@ import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import EmptyProduct from "../../components/module/EmptyProduct/EmptyProduct";
 import { useNavigate } from "react-router-dom";
 import { goToLogin } from "../../utils/helper";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Cart() {
   const [showModalBuy, setShowModalBuy] = useState(false);
@@ -65,10 +67,17 @@ export default function Cart() {
         setCountProduct(null);
       }
     } catch (e) {
+       if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
+    
       if (e.response?.status === 401) {
         localStorage.removeItem("access");
         goToLogin();
       }
+      
       setLoading(false);
     }
   };
@@ -299,6 +308,7 @@ export default function Cart() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

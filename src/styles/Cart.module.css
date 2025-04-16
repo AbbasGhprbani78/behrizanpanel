@@ -223,6 +223,12 @@
     cursor: not-allowed;
 }
 
+@media (min-width:1676px) {
+.pagecontent{
+    margin-right: 10px;
+}
+}
+
 @media (max-width:1025px) {
     .pagecontent {
         width: 100%;

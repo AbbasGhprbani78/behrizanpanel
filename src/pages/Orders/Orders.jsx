@@ -25,6 +25,9 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { styled } from "@mui/system";
 import useSWR from "swr";
 const StyledTableContainer = styled(TableContainer)({
@@ -85,6 +88,11 @@ export default function Orders() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     } finally {
       // setLoading(false);
     }
@@ -406,6 +414,7 @@ export default function Orders() {
           </>
         )}
       </div>
+      <ToastContainer/>
     </div>
   );
 }

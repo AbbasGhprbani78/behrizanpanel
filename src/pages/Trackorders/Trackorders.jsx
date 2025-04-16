@@ -12,6 +12,8 @@ import ModalFilter from "../../components/module/ModalFilter/ModalFilter";
 import Loading from "../../components/module/Loading/Loading";
 import { goToLogin } from "../../utils/helper";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function TrackOrders() {
   const [search, setSearch] = useState("");
@@ -62,6 +64,11 @@ export default function TrackOrders() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     } finally {
       setLoading(false);
       if (firstLoad) setFirstLoad(false);
@@ -112,7 +119,11 @@ export default function TrackOrders() {
         }
       }
     } catch (error) {
-      console.error("خطا در دریافت محصولات فیلتر شده:", error);
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     } finally {
       setIsSearch(false);
     }
@@ -148,7 +159,11 @@ export default function TrackOrders() {
         }
       }
     } catch (error) {
-      console.error("خطا در دریافت محصولات فیلتر شده:", error);
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
@@ -250,6 +265,7 @@ export default function TrackOrders() {
           filterOrdersByDate={filterOrdersByDate}
         />
       </div>
+      <ToastContainer/>
     </div>
   );
 }

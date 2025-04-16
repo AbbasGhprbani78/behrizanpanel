@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 import {goToLogin} from "../../utils/helper";
 
+
 export default function showInformation() {
   const [initialValues, setInitialValues] = useState({
     full_name: "",
@@ -62,6 +63,11 @@ export default function showInformation() {
      if (e.response?.status === 401) {
        localStorage.removeItem("access");
        goToLogin();
+     }
+     if(e.response?.status ===500){
+      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
      }
     }
   };

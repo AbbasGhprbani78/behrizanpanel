@@ -4,7 +4,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// پلاگین سفارشی برای اضافه کردن نوشته در مرکز
 const centerTextPlugin = {
     id: 'centerText',
     beforeDraw: (chart) => {
@@ -53,7 +52,7 @@ const DoughnutChart = () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            centerText: {} // فعال کردن پلاگین سفارشی
+            centerText: {} 
         }
     };
 

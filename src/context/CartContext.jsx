@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { goToLogin } from "../utils/helper";
+
 
 export const CountContext = createContext();
 
@@ -35,7 +35,9 @@ export function CountProvaider({ children }) {
           if (e.response?.status === 401) {
             localStorage.removeItem("access");
             localStorage.removeItem("refresh");
+            navigate("/login");
           }
+          
         }
       } else {
         navigate("/login");

@@ -5,6 +5,8 @@ import ChatMessage from "../../module/ChatMesaage/ChatMessage";
 import axios from "axios";
 import { IoCloseSharp } from "react-icons/io5";
 import { goToLogin } from "../../../utils/helper";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -74,6 +76,11 @@ export default function Chat() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+       }
     }
   };
 
@@ -253,6 +260,7 @@ export default function Chat() {
           </svg>
         )}
       </div>
+      <ToastContainer/>
     </>
   );
 }

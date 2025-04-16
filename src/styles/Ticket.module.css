@@ -234,6 +234,15 @@
     width: 100%;
 }
 
+
+
+@media (min-width:1676px) {
+    .pagecontent{
+        margin-right: 10px;
+    }
+}
+
+
 @media (min-width:1025px) {
 
     .input_message_p {

@@ -13,11 +13,9 @@ let routes = [
   { path: "/", element: <Home /> },
   { path: "/showInformation", element: <ShowInformation /> },
   { path: "/login", element: <Login /> },
-
   { path: "/products", element: <Products /> },
   { path: "/cart", element: <Cart /> },
   { path: "/orders/:id", element: <Orders /> },
-
   { path: "/trackorders", element: <Trackorders /> },
   { path: "/ticket", element: <Ticket /> },
   // { path: "/report", element: <Report /> },

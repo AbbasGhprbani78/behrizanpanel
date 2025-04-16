@@ -32,24 +32,6 @@ export default function Login() {
     setIsPerivate((e) => !e);
   };
 
-  // const sendCodeAgainToEmail = async () => {
-  //   const email = localStorage.getItem("email");
-  //   if (email) {
-  //     const body = { email };
-  //     try {
-  //       const response = await axios.post(
-  //         `${apiUrl}/user/password-reset-email/`,
-  //         body
-  //       );
-  //     } catch (error) {
-  //       toast.error(error.response?.data?.message || "An error occurred", {
-  //         position: "top-left",
-  //       });
-  //       console.log(error);
-  //     }
-  //   }
-  // };
-
   const sendCodeAgainToNumber = async () => {
     const phone_number = localStorage.getItem("phone");
     if (phone_number) {
@@ -60,7 +42,6 @@ export default function Login() {
         toast.error(error.response?.data?.message || "An error occurred", {
           position: "top-left",
         });
-        console.log(error);
       }
     }
   };
@@ -75,7 +56,6 @@ export default function Login() {
         toast.error(error.response?.data?.message || "An error occurred", {
           position: "top-left",
         });
-        console.log(error);
       }
     }
   };
@@ -756,7 +736,6 @@ export default function Login() {
                         toast.error(error.response.data.message, {
                           position: "top-left",
                         });
-                        console.log(error);
                         setSubmitting(false);
                       }
                     }}
@@ -1985,3 +1964,22 @@ export default function Login() {
     </>
   );
 }
+
+
+  // const sendCodeAgainToEmail = async () => {
+  //   const email = localStorage.getItem("email");
+  //   if (email) {
+  //     const body = { email };
+  //     try {
+  //       const response = await axios.post(
+  //         `${apiUrl}/user/password-reset-email/`,
+  //         body
+  //       );
+  //     } catch (error) {
+  //       toast.error(error.response?.data?.message || "An error occurred", {
+  //         position: "top-left",
+  //       });
+  //       console.log(error);
+  //     }
+  //   }
+  // };

@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/module/Loading/Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { goToLogin } from "../../utils/helper";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -130,6 +132,11 @@ export default function Products() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     } finally {
       setLoading(false);
       if (firstLoad) setFirstLoad(false);
@@ -155,7 +162,11 @@ export default function Products() {
         setPage((prev) => prev + 1);
       }
     } catch (error) {
-      console.error("خطا در دریافت محصولات فیلتر شده:", error);
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
@@ -258,6 +269,7 @@ export default function Products() {
           )}
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 }

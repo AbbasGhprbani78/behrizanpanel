@@ -18,6 +18,8 @@ import Loading from "../../components/module/Loading/Loading";
 import { CiLock } from "react-icons/ci";
 import { goToLogin } from "../../utils/helper";
 import useSWR from "swr";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const fetcher = async (url) => {
@@ -78,6 +80,11 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     }
   };
 
@@ -141,6 +148,11 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
       SetDisable(false);
     }
   };
@@ -206,6 +218,11 @@ export default function Ticket() {
           localStorage.removeItem("access");
           goToLogin();
         }
+        if(e.response?.status ===500){
+                toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                  position: "top-left",
+                });
+               }
       }
     }
   };
@@ -269,6 +286,11 @@ export default function Ticket() {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if(e.response?.status ===500){
+              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+                position: "top-left",
+              });
+             }
     }
   };
 
@@ -861,6 +883,7 @@ export default function Ticket() {
           )}
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 }
