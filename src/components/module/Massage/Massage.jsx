@@ -7,6 +7,7 @@ export default function Massage({
   setTextInput,
   setIsEditMessage,
   setTicketId,
+  inputRef,
 }) {
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -61,6 +62,7 @@ export default function Massage({
                   setTextInput(tikectmsg?.message);
                   setIsEditMessage(true);
                   setTicketId(tikectmsg?.id);
+                  inputRef.current?.focus();
                 }
               }}
               style={{

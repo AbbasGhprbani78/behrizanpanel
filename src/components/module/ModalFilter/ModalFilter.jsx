@@ -10,6 +10,7 @@ export default function ModalFilter({
   setOpenmodal,
   openModal,
   filterOrdersByDate,
+  isenglish,
 }) {
   const [selectedDayRange, setSelectedDayRange] = useState([null, null]);
   const [shamsiRange, setShamsiRange] = useState(["", ""]);
@@ -18,10 +19,24 @@ export default function ModalFilter({
     setSelectedDayRange(dates);
 
     if (dates[0] && dates[1]) {
-      setShamsiRange([
-        new DateObject(dates[0]).convert(persian).format("YYYY/MM/DD"),
-        new DateObject(dates[1]).convert(persian).format("YYYY/MM/DD"),
-      ]);
+      const shamsiStart = new DateObject(dates[0]).convert(persian);
+      const shamsiEnd = new DateObject(dates[1]).convert(persian);
+
+      let startDate = shamsiStart.format("YYYY/MM/DD");
+      let endDate = shamsiEnd.format("YYYY/MM/DD");
+
+      if (isenglish) {
+        const gregorianStart = new Date(
+          new DateObject(dates[0]).convert(persian).toDate()
+        );
+        const gregorianEnd = new Date(
+          new DateObject(dates[1]).convert(persian).toDate()
+        );
+        startDate = gregorianStart.toISOString().split("T")[0];
+        endDate = gregorianEnd.toISOString().split("T")[0];
+      }
+
+      setShamsiRange([startDate, endDate]);
     } else {
       setShamsiRange(["", ""]);
     }

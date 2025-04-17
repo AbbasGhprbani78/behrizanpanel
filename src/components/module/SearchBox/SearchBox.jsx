@@ -3,10 +3,9 @@ import styles from "./SearchBox.module.css";
 import { RiSearch2Line } from "react-icons/ri";
 import { convertToPersianNumbers } from "../../../utils/helper";
 
-export default function SearchBox({ value, onChange, placeholder }) {
+export default function SearchBox({ value, onChange, placeholder, type }) {
   const [displayValue, setDisplayValue] = useState("");
 
-  
   function handleInputChange(event) {
     const englishValue = event.target.value.replace(/[۰-۹]/g, (char) =>
       "۰۱۲۳۴۵۶۷۸۹".indexOf(char)
@@ -25,6 +24,7 @@ export default function SearchBox({ value, onChange, placeholder }) {
           onChange={handleInputChange}
           placeholder={placeholder}
           autoComplete="off"
+          type={type}
         />
         <div className={styles.searhiconwrapper}>
           <RiSearch2Line className={styles.searchicon} />

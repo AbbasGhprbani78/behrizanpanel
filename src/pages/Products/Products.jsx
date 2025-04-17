@@ -5,7 +5,6 @@ import Header from "../../components/module/Header/Header";
 import SearchBox from "../../components/module/SearchBox/SearchBox";
 import { IoIosArrowBack } from "react-icons/io";
 import ProductItem from "../../components/module/ProductItem/ProductItem";
-import axios from "axios";
 import ModalBuy from "../../components/module/ModalBuy/ModalBuy";
 import { CountContext } from "../../context/CartContext";
 import swal from "sweetalert";
@@ -13,9 +12,9 @@ import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/module/Loading/Loading";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { goToLogin } from "../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import apiClient from "../../config/axiosConfig";
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -103,12 +102,8 @@ export default function Products() {
   const getAllProducts = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
 
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
-
     try {
-      const response = await axios.get(`${apiUrl}/app/get-products/`, {
-        headers,
+      const response = await apiClient.get(`/app/get-products/`, {
         params: { page, page_size },
       });
 
@@ -128,15 +123,11 @@ export default function Products() {
         setPage((prev) => prev + 1);
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
       }
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
     } finally {
       setLoading(false);
       if (firstLoad) setFirstLoad(false);
@@ -147,7 +138,7 @@ export default function Products() {
     if (page === 1) setIsSearch(true);
 
     try {
-      const response = await axios.get(`${apiUrl}/app/search/`, {
+      const response = await apiClient.get(`${apiUrl}/app/search/`, {
         params: { query, page, page_size },
       });
 
@@ -161,12 +152,12 @@ export default function Products() {
         setHasMore(response.data.results.length === page_size);
         setPage((prev) => prev + 1);
       }
-    } catch (error) {
-      if(e.response?.status ===500){
-              toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-                position: "top-left",
-              });
-             }
+    } catch (e) {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
@@ -269,7 +260,80 @@ export default function Products() {
           )}
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 }
+
+// const getAllProducts = async (page = 1, page_size = 25) => {
+//   if (page === 1 && firstLoad) setLoading(true);
+
+//   const access = localStorage.getItem("access");
+//   const headers = { Authorization: `Bearer ${access}` };
+
+//   try {
+//     const response = await axios.get(`${apiUrl}/app/get-products/`, {
+//       headers,
+//       params: { page, page_size },
+//     });
+
+//     if (response.status === 200) {
+//       setProducts((prev) =>
+//         page === 1
+//           ? response.data.results
+//           : [...prev, ...response.data.results]
+//       );
+//       setFilterProduct((prev) =>
+//         page === 1
+//           ? response.data.results
+//           : [...prev, ...response.data.results]
+//       );
+
+//       setHasMore(response.data.results.length === page_size);
+//       setPage((prev) => prev + 1);
+//     }
+//   } catch (e) {
+//     if (e.response?.status === 401) {
+//       localStorage.removeItem("access");
+//       goToLogin();
+//     }
+//     if (e.response?.status === 500) {
+//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+//         position: "top-left",
+//       });
+//     }
+//   } finally {
+//     setLoading(false);
+//     if (firstLoad) setFirstLoad(false);
+//   }
+// };
+
+// const fetchFilteredProducts = async (query, page = 1, page_size = 25) => {
+//   if (page === 1) setIsSearch(true);
+
+//   try {
+//     const response = await axios.get(`${apiUrl}/app/search/`, {
+//       params: { query, page, page_size },
+//     });
+
+//     if (response.status === 200) {
+//       setFilterProduct((prev) =>
+//         page === 1
+//           ? response.data.results
+//           : [...prev, ...response.data.results]
+//       );
+
+//       setHasMore(response.data.results.length === page_size);
+//       setPage((prev) => prev + 1);
+//     }
+//   } catch (e) {
+//     if (e.response?.status === 500) {
+//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+//         position: "top-left",
+//       });
+//     }
+//   } finally {
+//     setIsSearch(false);
+//     if (firstLoad) setFirstLoad(false);
+//   }
+// };

@@ -5,14 +5,13 @@ import { MdEmail } from "react-icons/md";
 import { FaPhone } from "react-icons/fa6";
 import Input from "../Input/Input";
 import Texteara from "../Texteara/Texteara";
-import axios from "axios";
 import swal from "sweetalert";
 import { FiEdit2 } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdDeleteOutline } from "react-icons/md";
-import { goToLogin } from "../../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import apiClient from "../../../config/axiosConfig";
 
 const tabs = ["اطلاعات من", "آدرس‌ها"];
 export default function ModalUser({ setShowModal, showModal, userInfo }) {
@@ -48,51 +47,36 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
     address: "",
   });
   const [idAdress, setIdAddress] = useState("");
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const getSecurityCode = async () => {
     setStatusBtn(2);
     setTimer(59);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
+
     try {
-      const response = await axios.post(
-        `${apiUrl}/user/send-code/`,
-        {},
-        { headers }
-      );
+      const response = await apiClient.post("/user/send-code/", {});
+
       if (response.status === 200) {
         setStatusBtn(4);
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     }
   };
 
   const chackSecurityCode = async () => {
-    const access = localStorage.getItem("access");
     setIsDisable(true);
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     const body = {
       code,
     };
+
     try {
-      const response = await axios.post(`${apiUrl}/user/verify-code/`, body, {
-        headers,
-      });
+      const response = await apiClient.post("/user/verify-code/", body);
+
       if (response.status === 200) {
         setIsDisableNumber(false);
         setStatusBtn(5);
@@ -103,23 +87,19 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
-      if (e.response && e.response.status === 400) {
+      if (e.response?.status === 400) {
         swal({
           title: "کد وارد شده نادرست است و یا منقضی شده",
           icon: "error",
           button: "باشه",
         });
-
-        if (e.response?.status === 401) {
-          localStorage.removeItem("access");
-          goToLogin();
-        }
       }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     } finally {
       setIsDisable(false);
     }
@@ -198,27 +178,18 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
   };
 
   const getAddress = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-    const response = await axios.get(`${apiUrl}/user/get-user-informations/`, {
-      headers,
-    });
     try {
+      const response = await apiClient.get("/user/get-user-informations/");
+
       if (response.status === 200) {
         setAllAddress(response.data[0].user_details);
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     }
   };
 
@@ -238,22 +209,22 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
     if (!validateInputsProfile()) {
       return;
     }
+
     setLoading(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     const updatedProfileInfo = {
       ...profileInfo,
-      ...(isDisableNumber === false && { code, old_password:oldPassword, new_password:newPassword }),
+      ...(isDisableNumber === false && {
+        code,
+        old_password: oldPassword,
+        new_password: newPassword,
+      }),
     };
 
     try {
-      const response = await axios.put(
-        `${apiUrl}/user/complete-user-informations/`,
-        updatedProfileInfo,
-        { headers }
+      const response = await apiClient.put(
+        "/user/complete-user-informations/",
+        updatedProfileInfo
       );
 
       if (response.status === 200) {
@@ -271,24 +242,19 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-
-       if (e.response && e.response.status === 400) {
-        
+      if (e.response?.status === 400) {
         swal({
           title: e.response.data.old_password,
           icon: "error",
           button: "باشه",
-        });}
+        });
+      }
 
-        if(e.response?.status ===500){
-          toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-            position: "top-left",
-          });
-         }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -298,27 +264,20 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
     if (!validateInputsAddress()) {
       return;
     }
+
     setLoading(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     try {
-      const response = await axios.post(
-        `${apiUrl}/user/user-detail/`,
-        address,
-        { headers }
-      );
+      const response = await apiClient.post("/user/user-detail/", address);
 
       if (response.status === 201) {
         getAddress();
-        setAddress(() => ({
+        setAddress({
           zipcode: "",
           phone1: "",
           phone2: "",
           address: "",
-        }));
+        });
         swal({
           title: "آدرس با موفقیت اضافه شد",
           icon: "success",
@@ -326,16 +285,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     } finally {
       setLoading(false);
     }
@@ -345,17 +299,13 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
     if (!validateInputsAddress()) {
       return;
     }
+
     setLoading(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     try {
-      const response = await axios.put(
-        `${apiUrl}/user/user-detail/${idAdress}`,
-        address,
-        { headers }
+      const response = await apiClient.put(
+        `/user/user-detail/${idAdress}`,
+        address
       );
 
       if (response.status === 200) {
@@ -367,31 +317,21 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         });
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     } finally {
       setLoading(false);
     }
   };
+
   const deleteAddress = async (id) => {
     setLoading(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     try {
-      const response = await axios.delete(`${apiUrl}/user/user-detail/${id}`, {
-        headers,
-      });
+      const response = await apiClient.delete(`/user/user-detail/${id}`);
 
       if (response.status === 200) {
         getAddress();
@@ -403,15 +343,11 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
         setActiveTab("آدرس‌ها");
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     } finally {
       setLoading(false);
     }
@@ -733,7 +669,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }

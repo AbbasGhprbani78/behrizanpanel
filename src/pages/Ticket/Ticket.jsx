@@ -9,7 +9,6 @@ import TicketItem from "../../components/module/TicketItem/TicketItem";
 import Massage from "../../components/module/Massage/Massage";
 import { FaFileAlt } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
-import axios from "axios";
 import swal from "sweetalert";
 import { MdAttachFile } from "react-icons/md";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -17,25 +16,16 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import Loading from "../../components/module/Loading/Loading";
 import { CiLock } from "react-icons/ci";
 import { goToLogin } from "../../utils/helper";
-import useSWR from "swr";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InfiniteScroll from "react-infinite-scroll-component";
 import SearchBox from "../../components/module/SearchBox/SearchBox";
 import Filter from "../../components/module/Filter/Filter";
 import ModalFilter from "../../components/module/ModalFilter/ModalFilter";
+import apiClient from "../../config/axiosConfig";
+import axios from "axios";
+import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 const apiUrl = import.meta.env.VITE_API_URL;
-
-const fetcher = async (url) => {
-  const access = localStorage.getItem("access");
-  const headers = {
-    Authorization: `Bearer ${access}`,
-  };
-  const response = await axios.get(url, { headers });
-  if (response.status === 200) {
-    return response.data;
-  }
-};
 
 export default function Ticket() {
   const [tab, setTab] = useState(1);
@@ -56,43 +46,282 @@ export default function Ticket() {
   const [typeTicket, setTypeTicket] = useState("");
   const messageEndRef = useRef(null);
   const [showfile, setShowFile] = useState(false);
+  const inputRef = useRef(null);
+  const [allTickets, setAllTickets] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const isFetched = useRef(false);
   const [openModal, setOpenmodal] = useState(false);
   const [search, setSearch] = useState("");
+  const [filterValue, setFilterValue] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const isFetched = useRef(false);
   const [isSearch, setIsSearch] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
 
-  const {
-    data: allTickets,
-    error,
-    mutate,
-    isLoading,
-  } = useSWR(`${apiUrl}/chat/get-ticket/`, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 15 * 60 * 1000,
-  });
+  const getAllTickets = async (page = 1, page_size = 5) => {
+    if (page === 1 && firstLoad) setLoading(true);
 
-  const getUserType = async () => {
     const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
+    const headers = { Authorization: `Bearer ${access}` };
 
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-user-type/`, {
+      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
         headers,
+        params: { page, page_size },
       });
 
       if (response.status === 200) {
-        setUserType(response?.data);
+        setAllTickets((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+        setFilterValue((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        } else {
+          setPage(page + 1);
+        }
       }
     } catch (e) {
       if (e.response?.status === 401) {
         localStorage.removeItem("access");
         goToLogin();
       }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    } finally {
+      setLoading(false);
+      if (firstLoad) setFirstLoad(false);
+    }
+  };
+
+  const filterTicketsByDate = async (
+    startDate,
+    endDate,
+    page = 1,
+    page_size = 5
+  ) => {
+    const convertToEnglishDigits = (str) =>
+      str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+    const formatDate = (date) =>
+      convertToEnglishDigits(date).replace(/\//g, "").replace(/-/g, "");
+    const startDateFormatted = formatDate(startDate);
+    const endDateFormatted = formatDate(endDate);
+    const access = localStorage.getItem("access");
+    const headers = { Authorization: `Bearer ${access}` };
+
+    if (page === 1) setIsSearch(true);
+    try {
+      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+        params: {
+          page,
+          page_size,
+          start_date: startDateFormatted,
+          end_date: endDateFormatted,
+        },
+        headers,
+      });
+
+      setSearch("");
+
+      if (response.status === 200) {
+        console.log(response.data);
+        setFilterValue((prev) =>
+          page === 1
+            ? response.data.results
+            : [...prev, ...response.data.results]
+        );
+
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        } else {
+          setPage(page + 1);
+        }
+      }
+    } catch (e) {
+      if (e.response?.status === 500) {
+        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    } finally {
+      setIsSearch(false);
+    }
+  };
+
+  const filterTicketsByStatus = async (status, page = 1, page_size = 5) => {
+    const access = localStorage.getItem("access");
+    const headers = { Authorization: `Bearer ${access}` };
+    if (page === 1) setIsSearch(true);
+    try {
+      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+        params: {
+          page,
+          page_size,
+          close: status,
+        },
+        headers,
+      });
+
+      setSearch("");
+      if (response.status === 200) {
+        console.log(response.data.results);
+        setFilterValue((prev) =>
+          page === 1
+            ? response.data?.results
+            : [...prev, ...response.data.results]
+        );
+
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        } else {
+          setPage(page + 1);
+        }
+      }
+    } catch (e) {
+      if (e.response?.status === 500) {
+        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    } finally {
+      setIsSearch(false);
+    }
+  };
+
+  const filterTicketsByCategory = async (category, page = 1, page_size = 5) => {
+    const access = localStorage.getItem("access");
+    const headers = { Authorization: `Bearer ${access}` };
+    if (page === 1) setIsSearch(true);
+    try {
+      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+        params: {
+          page,
+          page_size,
+          category,
+        },
+        headers,
+      });
+
+      setSearch("");
+      if (response.status === 200) {
+        console.log(response.data.results);
+        setFilterValue((prev) =>
+          page === 1
+            ? response.data?.results
+            : [...prev, ...response.data.results]
+        );
+
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        } else {
+          setPage(page + 1);
+        }
+      }
+    } catch (e) {
+      if (e.response?.status === 500) {
+        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    } finally {
+      setIsSearch(false);
+    }
+  };
+
+  const searchTickets = async (query, page = 1, page_size = 5) => {
+    if (!query.trim()) return;
+
+    const access = localStorage.getItem("access");
+    const headers = { Authorization: `Bearer ${access}` };
+
+    if (page === 1) setIsSearch(true);
+
+    try {
+      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+        params: { ticket_id: query, page, page_size },
+        headers,
+      });
+
+      if (response.status === 200) {
+        const newResults =
+          Array.isArray(response.data) && response.data.length === 0
+            ? []
+            : response.data?.results || [];
+        setFilterValue((prev) =>
+          page === 1 ? newResults : [...prev, ...newResults]
+        );
+
+        if (response.data.results.length < page_size) {
+          setHasMore(false);
+        } else {
+          setPage(page + 1);
+        }
+      }
+    } catch (e) {
+      if (e.response?.status === 400) {
+        toast.error(e.response?.data?.error || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
+    } finally {
+      setIsSearch(false);
+      if (firstLoad) setFirstLoad(false);
+    }
+  };
+
+  const resetTickets = () => {
+    setFilterValue(allTickets);
+    setPage(1);
+    setHasMore(true);
+  };
+
+  useEffect(() => {
+    if (!isFetched.current) {
+      getAllTickets();
+      isFetched.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilterValue(allTickets);
+      setPage(1);
+      setHasMore(true);
+      return;
+    }
+    setPage(1);
+    setHasMore(true);
+    const delayDebounceFn = setTimeout(() => {
+      searchTickets(search.trim(), 1);
+    }, 1500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search]);
+
+  const getUserType = async () => {
+    try {
+      const response = await apiClient.get("/chat/get-user-type/");
+
+      if (response.status === 200) {
+        setUserType(response?.data);
+      }
+    } catch (e) {
       if (e.response?.status === 500) {
         toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
           position: "top-left",
@@ -112,10 +341,6 @@ export default function Ticket() {
     }
 
     SetDisable(true);
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
 
     const formData = new FormData();
     formData.append("title", title);
@@ -130,13 +355,7 @@ export default function Ticket() {
     }
 
     try {
-      const response = await axios.post(
-        `${apiUrl}/chat/send-ticket/`,
-        formData,
-        {
-          headers,
-        }
-      );
+      const response = await apiClient.post("/chat/send-ticket/", formData);
 
       if (response.status === 201) {
         swal({
@@ -157,10 +376,6 @@ export default function Ticket() {
         mutate();
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
       if (e.response?.status === 500) {
         toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
           position: "top-left",
@@ -178,11 +393,6 @@ export default function Ticket() {
 
   const sendmessage = async () => {
     if (textInput.trim()) {
-      const access = localStorage.getItem("access");
-      const headers = {
-        Authorization: `Bearer ${access}`,
-      };
-
       const formData = new FormData();
       formData.append("message", textInput);
       formData.append("ticket_id", ticket.ticket_id);
@@ -195,14 +405,9 @@ export default function Ticket() {
       };
 
       setSelectedTicket((prevMessages) => [...prevMessages, tempMessage]);
+
       try {
-        const response = await axios.post(
-          `${apiUrl}/chat/send-ticket/`,
-          formData,
-          {
-            headers,
-          }
-        );
+        const response = await apiClient.post("/chat/send-ticket/", formData);
 
         if (response.status === 201) {
           const newMessage = {
@@ -216,7 +421,7 @@ export default function Ticket() {
           );
 
           swal({
-            title: "تیکت با موفقیت ارسال  شد",
+            title: "تیکت با موفقیت ارسال شد",
             icon: "success",
             button: {
               text: "باشه",
@@ -225,10 +430,6 @@ export default function Ticket() {
           setTextInput("");
         }
       } catch (e) {
-        if (e.response?.status === 401) {
-          localStorage.removeItem("access");
-          goToLogin();
-        }
         if (e.response?.status === 500) {
           toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
             position: "top-left",
@@ -240,8 +441,8 @@ export default function Ticket() {
 
   const sendFile = async (e) => {
     const maxSize = 1 * 1024 * 1024;
-    const access = localStorage.getItem("access");
     const fileMessage = e.target.files[0];
+
     if (fileMessage.size > maxSize) {
       swal(
         "حجم فایل زیاد است!",
@@ -251,29 +452,21 @@ export default function Ticket() {
       e.target.value = "";
       return;
     }
+
     setShowFile(true);
     const formData = new FormData();
     formData.append("ticket_id", ticket.ticket_id);
     formData.append("file", fileMessage);
 
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-
     try {
-      const response = await axios.post(
-        `${apiUrl}/chat/send-ticket/`,
-        formData,
-        {
-          headers,
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadPercentage(progress);
-          },
-        }
-      );
+      const response = await apiClient.post("/chat/send-ticket/", formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadPercentage(progress);
+        },
+      });
 
       if (response.status === 201) {
         setShowFile(false);
@@ -284,8 +477,9 @@ export default function Ticket() {
         };
 
         setSelectedTicket((prevMessages) => [...prevMessages, newMessage]);
+
         swal({
-          title: "تیکت با موفقیت ارسال  شد",
+          title: "تیکت با موفقیت ارسال شد",
           icon: "success",
           button: {
             text: "باشه",
@@ -293,10 +487,6 @@ export default function Ticket() {
         });
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
       if (e.response?.status === 500) {
         toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
           position: "top-left",
@@ -306,28 +496,23 @@ export default function Ticket() {
   };
 
   const handleEditMessage = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
+    setSelectedTicket((prev) =>
+      prev.map((msg) =>
+        msg.id === ticketid ? { ...msg, message: textInput } : msg
+      )
+    );
+    setTextInput("");
+    setIsEditMessage(false);
     try {
       const formData = new FormData();
       formData.append("message", textInput);
-      const res = await axios.put(
-        `${apiUrl}/chat/tickets-edit/${ticketid}`,
-        formData,
-        {
-          headers,
-        }
+
+      const res = await apiClient.put(
+        `/chat/tickets-edit/${ticketid}`,
+        formData
       );
 
       if (res.status === 200) {
-        setIsEditMessage(false);
-        setSelectedTicket((prev) =>
-          prev.map((msg) =>
-            msg.id === ticketid ? { ...msg, message: textInput } : msg
-          )
-        );
         swal({
           title: "تیکت با موفقیت ویرایش شد",
           icon: "success",
@@ -335,16 +520,13 @@ export default function Ticket() {
             text: "باشه",
           },
         });
-        setTextInput("");
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
       }
-      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-        position: "top-left",
-      });
     }
   };
 
@@ -377,20 +559,16 @@ export default function Ticket() {
   }, []);
 
   useEffect(() => {
-    const allOpenTicket = allTickets?.filter((ticket) => ticket.close == false);
+    const allOpenTicket = allTickets?.filter(
+      (ticket) => ticket.close === false
+    );
+
     setOpenTicket(allOpenTicket?.length);
   }, [allTickets]);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [selectedTicket]);
-
-  useEffect(() => {
-    if (error?.response?.status === 401) {
-      localStorage.removeItem("access");
-      goToLogin();
-    }
-  }, [error]);
 
   return (
     <div className={styles.wrapperpage}>
@@ -400,7 +578,7 @@ export default function Ticket() {
         <div className={styles.maincontent}>
           {windowWidth < 1025 ? (
             <>
-              {isLoading ? (
+              {loading ? (
                 <Loading />
               ) : (
                 <>
@@ -430,7 +608,7 @@ export default function Ticket() {
                         <SearchBox
                           value={search}
                           onChange={setSearch}
-                          placeholder={"جستوجو براساس اسم"}
+                          placeholder={"جستوجو براساس شماره تیکت"}
                         />
                         <Filter
                           setOpenmodal={""}
@@ -439,10 +617,30 @@ export default function Ticket() {
                             {
                               label: "وضعیت",
                               onClick: () => console.log("filter by status"),
+                              submenuItems: [
+                                {
+                                  label: "موبایل",
+                                  onClick: () => console.log("موبایل"),
+                                },
+                                {
+                                  label: "لپ‌تاپ",
+                                  onClick: () => console.log("لپ‌تاپ"),
+                                },
+                              ],
                             },
                             {
                               label: "نوع تیکت",
                               onClick: () => console.log("filter by status"),
+                              submenuItems: [
+                                {
+                                  label: "فعال",
+                                  onClick: () => console.log("فعال"),
+                                },
+                                {
+                                  label: "غیرفعال",
+                                  onClick: () => console.log("غیرفعال"),
+                                },
+                              ],
                             },
                           ]}
                         />
@@ -456,18 +654,38 @@ export default function Ticket() {
                               </span>
                               <span>تیکت‌های باز: {openTicket}</span>
                             </div>
-                            <div className={styles.TicketItemBox}>
-                              {allTickets
-                                .slice()
-                                .reverse()
-                                .map((ticket) => (
-                                  <TicketItem
-                                    onClick={() => getSelectedTicket(ticket)}
-                                    key={ticket.ticket_id}
-                                    ticket={ticket}
-                                  />
-                                ))}
-                            </div>
+                            {isSearch ? (
+                              <p className="text-search">در حال جستوجو ...</p>
+                            ) : (
+                              <>
+                                <InfiniteScroll
+                                  dataLength={
+                                    filterValue?.length > 0 ? filterValue : []
+                                  }
+                                  next={() => getAllTickets(page)}
+                                  hasMore={hasMore}
+                                  scrollableTarget="wrapp_orders"
+                                >
+                                  <div className={styles.TicketItemBox}>
+                                    {filterValue?.length > 0 ? (
+                                      <>
+                                        {filterValue.slice().map((ticket) => (
+                                          <TicketItem
+                                            onClick={() =>
+                                              getSelectedTicket(ticket)
+                                            }
+                                            key={ticket.ticket_id}
+                                            ticket={ticket}
+                                          />
+                                        ))}
+                                      </>
+                                    ) : (
+                                      <NoneSearch />
+                                    )}
+                                  </div>
+                                </InfiniteScroll>
+                              </>
+                            )}
                           </div>
                         ) : (
                           <>
@@ -484,7 +702,6 @@ export default function Ticket() {
                       </div>
                     </>
                   )}
-
                   <div
                     className={`${
                       tab === 2 ? styles.InputBox : styles.noneBox
@@ -525,6 +742,7 @@ export default function Ticket() {
                             value={title}
                             onChange={(e) => SetTitle(e.target.value)}
                             style={{ width: "100%" }}
+                            maxLength={100}
                           />
                         </div>
                         <div className={styles.InputText}>
@@ -533,6 +751,7 @@ export default function Ticket() {
                             <textarea
                               value={text}
                               onChange={(e) => setText(e.target.value)}
+                              maxLength={3000}
                             />
                           </div>
                           <div className={styles.OptionButton}>
@@ -587,7 +806,6 @@ export default function Ticket() {
                       </div>
                     </div>
                   </div>
-
                   <div
                     className={`${
                       tab === 3 ? styles.TicketMassageBox : styles.noneBox
@@ -602,6 +820,7 @@ export default function Ticket() {
                             setTextInput={setTextInput}
                             setIsEditMessage={setIsEditMessage}
                             setTicketId={setTicketId}
+                            inputRef={inputRef}
                           />
                         ))}
                       {showfile && (
@@ -675,6 +894,7 @@ export default function Ticket() {
                               type="text"
                               value={textInput}
                               onChange={(e) => setTextInput(e.target.value)}
+                              maxLength={2000}
                             />
                             <IoSend
                               className={styles.iconsend}
@@ -727,7 +947,7 @@ export default function Ticket() {
             </>
           ) : (
             <>
-              {isLoading ? (
+              {loading ? (
                 <Loading />
               ) : (
                 <>
@@ -756,19 +976,34 @@ export default function Ticket() {
                         <SearchBox
                           value={search}
                           onChange={setSearch}
-                          placeholder={"جستوجو براساس اسم"}
+                          placeholder={"جستوجو براساس شماره تیکت"}
                         />
                         <Filter
-                          setOpenmodal={""}
-                          all={""}
+                          setOpenmodal={setOpenmodal}
+                          all={resetTickets}
                           filters={[
                             {
                               label: "وضعیت",
-                              onClick: () => console.log("filter by status"),
+
+                              submenuItems: [
+                                {
+                                  label: "باز",
+                                  onClick: () => filterTicketsByStatus(false),
+                                },
+                                {
+                                  label: "بسته",
+                                  onClick: () => filterTicketsByStatus(true),
+                                },
+                              ],
                             },
                             {
                               label: "نوع تیکت",
                               onClick: () => console.log("filter by status"),
+                              submenuItems: userType.map((item) => ({
+                                label: item.name,
+                                onClick: () =>
+                                  filterTicketsByCategory(item?.id),
+                              })),
                             },
                           ]}
                         />
@@ -780,18 +1015,41 @@ export default function Ticket() {
                               <span>تعداد کل تیکت‌ها: {allTickets.length}</span>
                               <span>تیکت‌های باز: {openTicket}</span>
                             </div>
-                            <div className={styles.TicketItemBox}>
-                              {allTickets
-                                .slice()
-                                .reverse()
-                                .map((ticket) => (
-                                  <TicketItem
-                                    onClick={() => getSelectedTicket(ticket)}
-                                    key={ticket.ticket_id}
-                                    ticket={ticket}
-                                  />
-                                ))}
-                            </div>
+                            {isSearch ? (
+                              <p className="text-search">در حال جستوجو ...</p>
+                            ) : (
+                              <>
+                                <InfiniteScroll
+                                  dataLength={
+                                    filterValue?.length > 0 ? filterValue : []
+                                  }
+                                  next={() => getAllTickets(page)}
+                                  hasMore={hasMore}
+                                  scrollableTarget="wrapp_orders"
+                                >
+                                  <div
+                                    className={styles.TicketItemBox}
+                                    id="wrapp_orders"
+                                  >
+                                    {filterValue?.length > 0 ? (
+                                      <>
+                                        {filterValue.slice().map((ticket) => (
+                                          <TicketItem
+                                            onClick={() =>
+                                              getSelectedTicket(ticket)
+                                            }
+                                            key={ticket.ticket_id}
+                                            ticket={ticket}
+                                          />
+                                        ))}
+                                      </>
+                                    ) : (
+                                      <NoneSearch />
+                                    )}
+                                  </div>
+                                </InfiniteScroll>
+                              </>
+                            )}
                           </div>
                         ) : (
                           <div className={styles.none_ticket}>
@@ -923,6 +1181,7 @@ export default function Ticket() {
                             setTextInput={setTextInput}
                             setIsEditMessage={setIsEditMessage}
                             setTicketId={setTicketId}
+                            inputRef={inputRef}
                           />
                         ))}
                       {showfile && (
@@ -997,6 +1256,8 @@ export default function Ticket() {
                               type="text"
                               value={textInput}
                               onChange={(e) => setTextInput(e.target.value)}
+                              ref={inputRef}
+                              maxLength={2000}
                             />
                             <IoSend
                               className={styles.iconsend}
@@ -1023,171 +1284,12 @@ export default function Ticket() {
       <ModalFilter
         openModal={openModal}
         setOpenmodal={setOpenmodal}
-        filterOrdersByDate={""}
+        filterOrdersByDate={filterTicketsByDate}
+        isenglish={true}
       />
     </div>
   );
 }
 
-// const getAllTickets = async (page = 1, page_size = 25) => {
-//   if (page === 1 && firstLoad) setLoading(true);
-
-//   const access = localStorage.getItem("access");
-//   const headers = { Authorization: `Bearer ${access}` };
-
-//   try {
-//     const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
-//       headers,
-//       params: { page, page_size },
-//     });
-
-//     if (response.status === 200) {
-//       setAllTickets((prev) =>
-//         page === 1 ? response.data.results : [...prev, ...response.data.results]
-//       );
-//       setFilterValue((prev) =>
-//         page === 1 ? response.data.results : [...prev, ...response.data.results]
-//       );
-
-//       if (response.data.results.length < page_size) {
-//         setHasMore(false);
-//       } else {
-//         setPage(page + 1);
-//       }
-//     }
-//   } catch (e) {
-//     if (e.response?.status === 401) {
-//       localStorage.removeItem("access");
-//       goToLogin();
-//     }
-//     if (e.response?.status === 500) {
-//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-//         position: "top-left",
-//       });
-//     }
-//   } finally {
-//     setLoading(false);
-//     if (firstLoad) setFirstLoad(false);
-//   }
-// };
-
-// const filterTicketsByDate = async (
-//   startDate,
-//   endDate,
-//   page = 1,
-//   page_size = 10
-// ) => {
-//   const convertToEnglishDigits = (str) =>
-//     str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
-//   const formatDate = (date) => convertToEnglishDigits(date).replace(/\//g, "");
-//   const startDateFormatted = formatDate(startDate);
-//   const endDateFormatted = formatDate(endDate);
-//   const access = localStorage.getItem("access");
-//   const headers = { Authorization: `Bearer ${access}` };
-
-//   if (page === 1) setIsSearch(true);
-
-//   try {
-//     const response = await axios.get(`${apiUrl}/app/get-cart-detail/`, {
-//       params: {
-//         page,
-//         page_size,
-//         start_date: startDateFormatted,
-//         end_date: endDateFormatted,
-//       },
-//       headers,
-//     });
-
-//     setSearch("");
-
-//     if (response.status === 200) {
-//       setFilterValue((prev) =>
-//         page === 1 ? response.data.results : [...prev, ...response.data.results]
-//       );
-
-//       if (response.data.results.length < page_size) {
-//         setHasMore(false);
-//       } else {
-//         setPage(page + 1);
-//       }
-//     }
-//   } catch (error) {
-//     if (e.response?.status === 500) {
-//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-//         position: "top-left",
-//       });
-//     }
-//   } finally {
-//     setIsSearch(false);
-//   }
-// };
-
-// const searchTickets = async (query, page = 1, page_size = 25) => {
-//   if (!query.trim()) return;
-
-//   const access = localStorage.getItem("access");
-//   const headers = { Authorization: `Bearer ${access}` };
-
-//   if (page === 1) setIsSearch(true);
-
-//   try {
-//     const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
-//       params: { query, page, page_size },
-//       headers,
-//     });
-
-//     if (response.status === 200) {
-//       const newResults =
-//         Array.isArray(response.data) && response.data.length === 0
-//           ? []
-//           : response.data?.results || [];
-//       setFilterValue((prev) =>
-//         page === 1 ? newResults : [...prev, ...newResults]
-//       );
-
-//       if (response.data.results.length < page_size) {
-//         setHasMore(false);
-//       } else {
-//         setPage(page + 1);
-//       }
-//     }
-//   } catch (error) {
-//     if (e.response?.status === 500) {
-//       toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-//         position: "top-left",
-//       });
-//     }
-//   } finally {
-//     setIsSearch(false);
-//     if (firstLoad) setFirstLoad(false);
-//   }
-// };
-
-// const resetTickets = () => {
-//   setFilterValue(allTickets);
-//   setPage(1);
-//   setHasMore(true);
-// };
-
-// useEffect(() => {
-//   if (!isFetched.current) {
-//     getAllTickets();
-//     isFetched.current = true;
-//   }
-// }, []);
-
-// useEffect(() => {
-//   if (search.trim() === "") {
-//     setFilterValue(allOrders);
-//     setPage(1);
-//     setHasMore(true);
-//     return;
-//   }
-//   setPage(1);
-//   setHasMore(true);
-//   const delayDebounceFn = setTimeout(() => {
-//     searchTickets(search.trim(), 1);
-//   }, 1500);
-
-//   return () => clearTimeout(delayDebounceFn);
-// }, [search]);
+// close : true ,false
+// category"  id=>

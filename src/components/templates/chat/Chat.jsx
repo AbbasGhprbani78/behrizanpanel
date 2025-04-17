@@ -2,13 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import styles from "../../../styles/Chat.module.css";
 import { IoSend } from "react-icons/io5";
 import ChatMessage from "../../module/ChatMesaage/ChatMessage";
-import axios from "axios";
 import { IoCloseSharp } from "react-icons/io5";
-import { goToLogin } from "../../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import apiClient from "../../../config/axiosConfig";
 
 export default function Chat() {
   const messageEndRef = useRef(null);
@@ -59,28 +56,18 @@ export default function Chat() {
   }, [socketUrl]);
 
   const getMessages = async () => {
-    const headers = {
-      Authorization: `Bearer ${access_token}`,
-    };
-
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-message/`, {
-        headers,
-      });
+      const response = await apiClient.get("/chat/get-message/");
 
       if (response.status === 200) {
         setMessages(response.data);
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
+      }
     }
   };
 
@@ -260,7 +247,7 @@ export default function Chat() {
           </svg>
         )}
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 }

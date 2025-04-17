@@ -8,15 +8,13 @@ import { IoEyeSharp } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import Input from "../../components/module/Input/Input";
 import { Formik } from "formik";
-import Texteara from "../../components/module/Texteara/Texteara";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
-import {goToLogin} from "../../utils/helper";
-
+import apiClient from "../../config/axiosConfig";
 
 export default function showInformation() {
   const [initialValues, setInitialValues] = useState({
@@ -38,19 +36,10 @@ export default function showInformation() {
   };
 
   const getInformation = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
     try {
-      const response = await axios.get(
-        `${apiUrl}/user/get-user-informations/`,
-        {
-          headers,
-        }
-      );
+      const response = await apiClient.get("/user/get-user-informations/");
+
       if (response.status === 200) {
-        console.log(response.data);
         setInitialValues((prev) => ({
           ...prev,
           full_name: response.data[0]?.full_name || "",
@@ -60,15 +49,11 @@ export default function showInformation() {
         }));
       }
     } catch (e) {
-     if (e.response?.status === 401) {
-       localStorage.removeItem("access");
-       goToLogin();
-     }
-     if(e.response?.status ===500){
-      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-        position: "top-left",
-      });
-     }
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     }
   };
 

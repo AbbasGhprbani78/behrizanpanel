@@ -5,19 +5,17 @@ import Header from "../../components/module/Header/Header";
 import SearchBox from "../../components/module/SearchBox/SearchBox";
 import CartItem from "../../components/module/CartItem/CartItem";
 import { MdOutlineDone } from "react-icons/md";
-
 import CartItemM from "../../components/module/CartItemM/CartItemM";
 import ModalDelete from "../../components/module/ModalDelete/ModalDelete";
 import ModalBuy from "../../components/module/ModalBuy/ModalBuy";
 import { CountContext } from "../../context/CartContext";
-import axios from "axios";
 import swal from "sweetalert";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import EmptyProduct from "../../components/module/EmptyProduct/EmptyProduct";
 import { useNavigate } from "react-router-dom";
-import { goToLogin } from "../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import apiClient from "../../config/axiosConfig";
 
 export default function Cart() {
   const [showModalBuy, setShowModalBuy] = useState(false);
@@ -36,20 +34,14 @@ export default function Cart() {
   const [filterProduct, setFilterProduct] = useState([]);
   const [errorSelect, setErrorSelect] = useState(false);
   const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
 
   const sendProduct = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-
     setLoading(true);
+
     try {
-      const response = await axios.post(`${apiUrl}/app/add-product/`, cart, {
-        headers,
-      });
+      const response = await apiClient.post("/app/add-product/", cart);
 
       if (response.status === 201) {
         setLoading(false);
@@ -67,17 +59,12 @@ export default function Cart() {
         setCountProduct(null);
       }
     } catch (e) {
-       if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
-    
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
       }
-      
+
       setLoading(false);
     }
   };

@@ -4,15 +4,10 @@ import SideBar from "../../components/module/SideBar/SideBar";
 import Header from "../../components/module/Header/Header";
 import OrderItem from "../../components/module/OrderItem/OrderItem";
 import SearchBox from "../../components/module/SearchBox/SearchBox";
-import axios from "axios";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import EmptyProduct from "../../components/module/EmptyProduct/EmptyProduct";
 import { useParams } from "react-router-dom";
-import {
-  addSlashesToDate,
-  convertToPersianNumbers,
-  goToLogin,
-} from "../../utils/helper";
+import { addSlashesToDate, convertToPersianNumbers } from "../../utils/helper";
 import Loading from "../../components/module/Loading/Loading";
 import { FaAngleDown } from "react-icons/fa6";
 import { FaAngleUp } from "react-icons/fa6";
@@ -30,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { styled } from "@mui/system";
 import useSWR from "swr";
+import apiClient from "../../config/axiosConfig";
 const StyledTableContainer = styled(TableContainer)({
   maxHeight: 400,
   "&::-webkit-scrollbar": {
@@ -69,44 +65,32 @@ export default function Orders() {
   };
 
   const getDetails = async () => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
     try {
-      const response = await axios.get(
-        `${apiUrl}/app/order-detail-bill-code/${id}`,
-        {
-          headers,
-        }
-      );
+      const response = await apiClient.get(`/app/order-detail-bill-code/${id}`);
+
       if (response.status === 200) {
         setDetailProduct(response.data);
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
-      if(e.response?.status ===500){
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
-       }
-    } finally {
-      // setLoading(false);
+      }
     }
   };
 
   const fetcher = async (url) => {
-    const access = localStorage.getItem("access");
-    const headers = {
-      Authorization: `Bearer ${access}`,
-    };
-    const response = await axios.get(url, { headers });
-    if (response.status === 200) {
+    try {
+      const response = await apiClient.get(url);
       setFilterProduct(response.data);
       return response.data;
+    } catch (e) {
+      if (e.response?.status === 500) {
+        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+          position: "top-left",
+        });
+      }
     }
   };
 
@@ -142,13 +126,6 @@ export default function Orders() {
   );
 
   useEffect(() => {
-    if (error?.response?.status === 401) {
-      localStorage.removeItem("access");
-      goToLogin();
-    }
-  }, [error]);
-
-  useEffect(() => {
     getDetails();
   }, []);
 
@@ -159,8 +136,6 @@ export default function Orders() {
     }
   }, [tab, orderDetails]);
 
-  console.log(orderDetails);
-
   return (
     <div className={styles.wrapperpage}>
       <SideBar />
@@ -168,7 +143,7 @@ export default function Orders() {
         <Header title={"درخواست ها"} />
         {isLoading ? (
           <Loading />
-        ) : orderDetails.length > 0 ? (
+        ) : orderDetails?.length > 0 ? (
           <>
             <div className={styles.wrap_tabs_btns}>
               <button
@@ -414,7 +389,7 @@ export default function Orders() {
           </>
         )}
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }
