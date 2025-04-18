@@ -13,6 +13,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiClient from "../../config/axiosConfig";
+import LoadingInfity from "../../components/module/Loading/LoadingInfinity";
 
 export default function TrackOrders() {
   const [search, setSearch] = useState("");
@@ -26,9 +27,11 @@ export default function TrackOrders() {
   const isFetched = useRef(false);
   const [isSearch, setIsSearch] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const getAllOrders = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get("/app/get-cart-detail/", {
@@ -61,6 +64,7 @@ export default function TrackOrders() {
       }
     } finally {
       setLoading(false);
+      setIsFetchingMore(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
@@ -234,6 +238,11 @@ export default function TrackOrders() {
                           )
                         ) : (
                           <NoneSearch />
+                        )}
+                        {isFetchingMore && (
+                          <div className={styles.loadingContainer}>
+                            <LoadingInfity />
+                          </div>
                         )}
                       </div>
                     </InfiniteScroll>

@@ -15,6 +15,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiClient from "../../config/axiosConfig";
+import LoadingInfity from "../../components/module/Loading/LoadingInfinity";
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -34,6 +35,7 @@ export default function Products() {
   const [hasMore, setHasMore] = useState(true);
   const [firstLoad, setFirstLoad] = useState(true);
   const [isSearch, setIsSearch] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const gotocart = () => {
     navigate("/cart");
@@ -101,6 +103,7 @@ export default function Products() {
 
   const getAllProducts = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get(`/app/get-products/`, {
@@ -130,6 +133,7 @@ export default function Products() {
       }
     } finally {
       setLoading(false);
+      setIsFetchingMore(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
@@ -221,6 +225,7 @@ export default function Products() {
                 ) : (
                   <>
                     <InfiniteScroll
+                      className="hide-scrollbar"
                       dataLength={filterProduct?.length}
                       next={() => {
                         if (search.trim()) {
@@ -244,6 +249,11 @@ export default function Products() {
                           ))
                         ) : (
                           <NoneSearch />
+                        )}
+                        {isFetchingMore && (
+                          <div className={styles.loadingContainer}>
+                            <LoadingInfity />
+                          </div>
                         )}
                       </div>
                     </InfiniteScroll>

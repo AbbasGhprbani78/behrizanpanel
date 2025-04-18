@@ -25,6 +25,7 @@ import ModalFilter from "../../components/module/ModalFilter/ModalFilter";
 import apiClient from "../../config/axiosConfig";
 import axios from "axios";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
+import LoadingInfity from "../../components/module/Loading/LoadingInfinity";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function Ticket() {
@@ -58,9 +59,11 @@ export default function Ticket() {
   const [page, setPage] = useState(1);
   const [isSearch, setIsSearch] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const getAllTickets = async (page = 1, page_size = 5) => {
     if (page === 1 && firstLoad) setLoading(true);
+    if (page > 1) setIsFetchingMore(true);
 
     const access = localStorage.getItem("access");
     const headers = { Authorization: `Bearer ${access}` };
@@ -101,6 +104,7 @@ export default function Ticket() {
       }
     } finally {
       setLoading(false);
+      setIsFetchingMore(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
@@ -682,6 +686,11 @@ export default function Ticket() {
                                     ) : (
                                       <NoneSearch />
                                     )}
+                                    {isFetchingMore && (
+                                      <div className={styles.loadingContainer}>
+                                        <LoadingInfity />
+                                      </div>
+                                    )}
                                   </div>
                                 </InfiniteScroll>
                               </>
@@ -1045,6 +1054,11 @@ export default function Ticket() {
                                       </>
                                     ) : (
                                       <NoneSearch />
+                                    )}
+                                    {isFetchingMore && (
+                                      <div className={styles.loadingContainer}>
+                                        <LoadingInfity />
+                                      </div>
                                     )}
                                   </div>
                                 </InfiniteScroll>
