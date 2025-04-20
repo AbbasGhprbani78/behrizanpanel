@@ -62,17 +62,13 @@ export default function OrderItem({ item }) {
                 </span>
               </div>
               <div className={styles.cartinfoitem}>
-                <span className={styles.infoitem}>تعداد</span>
-                <span>{convertToPersianNumbers(item?.qty)}</span>
-              </div>
-              {/* <div className={styles.cartinfoitem}>
-                <span className={styles.infoitem}>گنجایش</span>
-                <span> {convertToPersianNumbers(item?.box_cap)}</span>
+                <span className={styles.infoitem}>مقدار درخواست</span>
+                <span>{convertToPersianNumbers(item?.request_qty)}</span>
               </div>
               <div className={styles.cartinfoitem}>
-                <span className={styles.infoitem}>مقدار کل</span>
-                <span>{convertToPersianNumbers(item?.qty)}</span>
-              </div> */}
+                <span className={styles.infoitem}>مقدار سفارش</span>
+                <span> {convertToPersianNumbers(item?.order_qty)}</span>
+              </div>
             </div>
           </div>
         </>
@@ -121,9 +117,9 @@ export default function OrderItem({ item }) {
                           fontWeight: "bold",
                         }}
                       >
-                        تعداد
+                        مقدار درخواست
                       </TableCell>
-                      {/* <TableCell
+                      <TableCell
                         align="center"
                         style={{
                           position: "sticky",
@@ -133,20 +129,9 @@ export default function OrderItem({ item }) {
                           fontWeight: "bold",
                         }}
                       >
-                        گنجایش
-                      </TableCell> */}
-                      {/* <TableCell
-                        align="center"
-                        style={{
-                          position: "sticky",
-                          top: 0,
-                          backgroundColor: "#fff",
-                          fontFamily: "iranYekan",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        مقدار کل
-                      </TableCell> */}
+                        مقدار سفارش
+                      </TableCell>
+
                       <TableCell
                         align="center"
                         style={{
@@ -187,20 +172,15 @@ export default function OrderItem({ item }) {
                         align="center"
                         sx={{ fontFamily: "iranYekan", fontWeight: "bold" }}
                       >
-                        {convertToPersianNumbers(item?.qty)}
+                        {convertToPersianNumbers(item?.request_qty)}
                       </TableCell>
-                      {/* <TableCell
+                      <TableCell
                         align="center"
                         sx={{ fontFamily: "iranYekan", fontWeight: "bold" }}
                       >
-                        {convertToPersianNumbers(item?.box_cap)}
-                      </TableCell> */}
-                      {/* <TableCell
-                        align="center"
-                        sx={{ fontFamily: "iranYekan", fontWeight: "bold" }}
-                      >
-                        {convertToPersianNumbers(item?.qty)}
-                      </TableCell> */}
+                        {convertToPersianNumbers(item?.order_qty)}
+                      </TableCell>
+
                       <TableCell
                         align="center"
                         sx={{ fontFamily: "iranYekan", fontWeight: "bold" }}

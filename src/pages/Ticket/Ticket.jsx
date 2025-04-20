@@ -15,7 +15,6 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import Loading from "../../components/module/Loading/Loading";
 import { CiLock } from "react-icons/ci";
-import { goToLogin } from "../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -23,10 +22,8 @@ import SearchBox from "../../components/module/SearchBox/SearchBox";
 import Filter from "../../components/module/Filter/Filter";
 import ModalFilter from "../../components/module/ModalFilter/ModalFilter";
 import apiClient from "../../config/axiosConfig";
-import axios from "axios";
 import NoneSearch from "../../components/module/NoneSearch/NoneSearch";
 import LoadingInfity from "../../components/module/Loading/LoadingInfinity";
-const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function Ticket() {
   const [tab, setTab] = useState(1);
@@ -50,7 +47,6 @@ export default function Ticket() {
   const inputRef = useRef(null);
   const [allTickets, setAllTickets] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const isFetched = useRef(false);
   const [openModal, setOpenmodal] = useState(false);
   const [search, setSearch] = useState("");
@@ -65,12 +61,8 @@ export default function Ticket() {
     if (page === 1 && firstLoad) setLoading(true);
     if (page > 1) setIsFetchingMore(true);
 
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
-
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
-        headers,
+      const response = await apiClient.get("/chat/get-ticket/", {
         params: { page, page_size },
       });
 
@@ -93,10 +85,6 @@ export default function Ticket() {
         }
       }
     } catch (e) {
-      if (e.response?.status === 401) {
-        localStorage.removeItem("access");
-        goToLogin();
-      }
       if (e.response?.status === 500) {
         toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
           position: "top-left",
@@ -117,29 +105,30 @@ export default function Ticket() {
   ) => {
     const convertToEnglishDigits = (str) =>
       str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+
     const formatDate = (date) =>
       convertToEnglishDigits(date).replace(/\//g, "").replace(/-/g, "");
+
     const startDateFormatted = formatDate(startDate);
     const endDateFormatted = formatDate(endDate);
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
 
     if (page === 1) setIsSearch(true);
+
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+      const response = await apiClient.get("/chat/get-ticket/", {
         params: {
           page,
           page_size,
           start_date: startDateFormatted,
           end_date: endDateFormatted,
         },
-        headers,
       });
 
       setSearch("");
 
       if (response.status === 200) {
         console.log(response.data);
+
         setFilterValue((prev) =>
           page === 1
             ? response.data.results
@@ -154,7 +143,7 @@ export default function Ticket() {
       }
     } catch (e) {
       if (e.response?.status === 500) {
-        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
           position: "top-left",
         });
       }
@@ -164,22 +153,22 @@ export default function Ticket() {
   };
 
   const filterTicketsByStatus = async (status, page = 1, page_size = 5) => {
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
     if (page === 1) setIsSearch(true);
+
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+      const response = await apiClient.get("/chat/get-ticket/", {
         params: {
           page,
           page_size,
           close: status,
         },
-        headers,
       });
 
       setSearch("");
+
       if (response.status === 200) {
         console.log(response.data.results);
+
         setFilterValue((prev) =>
           page === 1
             ? response.data?.results
@@ -193,33 +182,27 @@ export default function Ticket() {
         }
       }
     } catch (e) {
-      if (e.response?.status === 500) {
-        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-          position: "top-left",
-        });
-      }
+      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
     } finally {
       setIsSearch(false);
     }
   };
 
   const filterTicketsByCategory = async (category, page = 1, page_size = 5) => {
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
     if (page === 1) setIsSearch(true);
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+      const response = await apiClient.get("/chat/get-ticket/", {
         params: {
           page,
           page_size,
           category,
         },
-        headers,
       });
 
       setSearch("");
       if (response.status === 200) {
-        console.log(response.data.results);
         setFilterValue((prev) =>
           page === 1
             ? response.data?.results
@@ -233,11 +216,9 @@ export default function Ticket() {
         }
       }
     } catch (e) {
-      if (e.response?.status === 500) {
-        toast.e(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-          position: "top-left",
-        });
-      }
+      toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
     } finally {
       setIsSearch(false);
     }
@@ -246,15 +227,11 @@ export default function Ticket() {
   const searchTickets = async (query, page = 1, page_size = 5) => {
     if (!query.trim()) return;
 
-    const access = localStorage.getItem("access");
-    const headers = { Authorization: `Bearer ${access}` };
-
     if (page === 1) setIsSearch(true);
 
     try {
-      const response = await axios.get(`${apiUrl}/chat/get-ticket/`, {
+      const response = await apiClient.get("/chat/get-ticket/", {
         params: { ticket_id: query, page, page_size },
-        headers,
       });
 
       if (response.status === 200) {
@@ -262,6 +239,7 @@ export default function Ticket() {
           Array.isArray(response.data) && response.data.length === 0
             ? []
             : response.data?.results || [];
+
         setFilterValue((prev) =>
           page === 1 ? newResults : [...prev, ...newResults]
         );
@@ -273,16 +251,10 @@ export default function Ticket() {
         }
       }
     } catch (e) {
-      if (e.response?.status === 400) {
-        toast.error(e.response?.data?.error || " مشکلی سمت سرور پیش آمده", {
-          position: "top-left",
-        });
-      }
-      if (e.response?.status === 500) {
-        toast.error(e.response?.data?.message || " مشکلی سمت سرور پیش آمده", {
-          position: "top-left",
-        });
-      }
+      console.log(e);
+      toast.error(e.response?.data?.erorr, {
+        position: "top-left",
+      });
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
@@ -377,7 +349,6 @@ export default function Ticket() {
         setFile("");
         setCheck(0);
         SetDisable(false);
-        mutate();
       }
     } catch (e) {
       if (e.response?.status === 500) {

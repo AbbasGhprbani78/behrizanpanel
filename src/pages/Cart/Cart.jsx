@@ -78,7 +78,7 @@ export default function Cart() {
       product.item_code === mainCode
         ? {
             ...product,
-            count: value,
+            request_qty: value,
           }
         : product
     );
@@ -87,7 +87,7 @@ export default function Cart() {
       product.item_code === mainCode
         ? {
             ...product,
-            count: value,
+            request_qty: value,
           }
         : product
     );
@@ -128,7 +128,7 @@ export default function Cart() {
       (product) =>
         product.item_code.includes(searchTerm) ||
         product.descriptions.toLowerCase().includes(searchTerm) ||
-        product.count.toString().includes(searchTerm) ||
+        product.request_qty.toString().includes(searchTerm) ||
         product.unitdesc.includes(searchTerm)
     );
 
@@ -191,7 +191,7 @@ export default function Cart() {
                           value={search}
                           onChange={searchHandler}
                           placeholder={
-                            "جستوجو براساس کد کالا , شرح , تعداد , واحد"
+                            "جستوجو براساس کد کالا , شرح , مقدار درخواست , واحد"
                           }
                         />
                       </div>
@@ -247,7 +247,7 @@ export default function Cart() {
                           value={search}
                           onChange={searchHandler}
                           placeholder={
-                            "جستوجو براساس کد کالا , شرح , تعداد , واحد"
+                            "جستوجو براساس کد کالا , شرح , مقدار درخواست , واحد"
                           }
                         />
                       </div>

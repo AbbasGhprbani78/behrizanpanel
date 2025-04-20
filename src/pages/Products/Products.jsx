@@ -51,7 +51,7 @@ export default function Products() {
       if (isInCart) {
         cart.forEach((item) => {
           if (item.item_code == mainProduct.item_code) {
-            item.count = Number(item.count) + Number(value);
+            item.request_qty = Number(item.request_qty) + Number(value);
           }
         });
         localStorage.setItem("cart", JSON.stringify(cart));
@@ -63,7 +63,7 @@ export default function Products() {
       } else {
         const cartItem = {
           item_code: mainProduct.item_code,
-          count: Number(value),
+          request_qty: Number(value),
           descriptions: mainProduct.descriptions,
           img: mainProduct.image,
           unitdesc: mainProduct.unitdesc,
@@ -81,7 +81,7 @@ export default function Products() {
     } else {
       const cartItem = {
         item_code: mainProduct.item_code,
-        count: Number(value),
+        request_qty: Number(value),
         descriptions: mainProduct.descriptions,
         img: mainProduct.image,
         unitdesc: mainProduct.unitdesc,

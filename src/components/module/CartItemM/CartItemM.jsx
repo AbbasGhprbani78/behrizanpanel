@@ -49,8 +49,8 @@ export default function CartItemM({
         <div
           className={`${styles.cartinfoitem} align-items-center justify-content-between  mb-4`}
         >
-          <span className={styles.infoitem}>تعداد</span>
-          <div>{convertToPersianNumbers(prodcut.count)}</div>
+          <span className={styles.infoitem}>مقدار درخواست</span>
+          <div>{convertToPersianNumbers(prodcut.request_qty)}</div>
         </div>
         <div className="d-flex align-items-center justify-content-between">
           <span className={styles.infoitem}>واحد</span>
@@ -62,7 +62,7 @@ export default function CartItemM({
         <button
           className={styles.add_btn}
           onClick={() => {
-            setValue(prodcut.count);
+            setValue(prodcut.request_qty);
             setMainCode(prodcut.item_code);
             setMainProduct(prodcut);
             setShowModalBuy(true);

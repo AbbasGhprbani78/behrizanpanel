@@ -1,27 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./InfoUser.module.css";
 import { CiUser } from "react-icons/ci";
 import ModalUser from "../ModalUser/ModalUser";
-import axios from "axios";
 import Loading from "../Loading/Loading";
 import useSWR from "swr";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const fetcher = async (url) => {
-  const access = localStorage.getItem("access");
-
-  const headers = {
-    Authorization: `Bearer ${access}`,
-  };
-  const response = await axios.get(url, {
-    headers,
-  });
-  if (response.status === 200) {
-    return response.data[0];
-  }
+  const response = await apiClient.get(url);
+  return response.data[0];
 };
 
-import { convertToPersianNumbers, goToLogin } from "../../../utils/helper";
+import { convertToPersianNumbers } from "../../../utils/helper";
+import apiClient from "../../../config/axiosConfig";
 export default function Infouser() {
   const [showModal, setShowModal] = useState(false);
 
@@ -34,20 +25,12 @@ export default function Infouser() {
     dedupingInterval: 15 * 60 * 1000,
   });
 
-  useEffect(() => {
-    if (error?.response?.status === 401) {
-      localStorage.removeItem("access");
-      goToLogin();
-    }
-  }, [error]);
-
   return (
     <>
       <ModalUser
         setShowModal={setShowModal}
         showModal={showModal}
         userInfo={userInfo}
-        
       />
       <div className={styles.infouserwrapper}>
         <div className={styles.infousertop}>

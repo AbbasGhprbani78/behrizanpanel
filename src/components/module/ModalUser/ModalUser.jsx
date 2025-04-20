@@ -182,6 +182,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
       const response = await apiClient.get("/user/get-user-informations/");
 
       if (response.status === 200) {
+        console.log(response.data);
         setAllAddress(response.data[0].user_details);
       }
     } catch (e) {
@@ -278,7 +279,7 @@ export default function ModalUser({ setShowModal, showModal, userInfo }) {
           phone2: "",
           address: "",
         });
-        swal({
+        ({
           title: "آدرس با موفقیت اضافه شد",
           icon: "success",
           button: "باشه",

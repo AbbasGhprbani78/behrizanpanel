@@ -29,9 +29,9 @@ export default function CartItem({
             </th>
             <th className={styles.itemhead}>کد کالا</th>
             <th className={styles.itemhead}>شرح محصول</th>
-            <th className={styles.itemhead}>تعداد</th>
+            <th className={styles.itemhead}>مقدار درخواست</th>
             <th className={styles.itemhead}>واحد</th>
-            <th sclassName={styles.itemhead}>تصویر</th>
+            <th className={styles.itemhead}>تصویر</th>
           </tr>
         </thead>
         <tbody className={styles.bodytable}>
@@ -40,7 +40,7 @@ export default function CartItem({
               <MdModeEditOutline
                 className={styles.editicon}
                 onClick={() => {
-                  setValue(prodcut.count);
+                  setValue(prodcut.request_qty);
                   setMainCode(prodcut.item_code);
                   setMainProduct(prodcut);
                   setShowModalBuy(true);
@@ -54,7 +54,7 @@ export default function CartItem({
               {convertToPersianNumbers(prodcut.descriptions)}
             </td>
             <td className={styles.bodyitem}>
-              {convertToPersianNumbers(prodcut.count)}
+              {convertToPersianNumbers(prodcut.request_qty)}
             </td>
             <td className={styles.bodyitem}>{prodcut.unitdesc}</td>
             <td className={styles.bodyitemimage}>

@@ -26,8 +26,10 @@ export function CountProvaider({ children }) {
           if (response.status === 200) {
             localStorage.setItem("access", response.data.access);
           }
-        } catch (e) {
-          console.log(e);
+        } catch (error) {
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          navigate("/login");
         }
       } else {
         navigate("/login");

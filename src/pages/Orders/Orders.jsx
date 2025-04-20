@@ -117,7 +117,7 @@ export default function Orders() {
             item?.product?.descriptions
               ?.toLowerCase()
               .includes(value.toLowerCase()) ||
-            String(item?.qty).includes(value)
+            String(item?.request_qty).includes(value)
         );
         setFilterProduct(filterSearch);
       }
@@ -173,7 +173,7 @@ export default function Orders() {
                   <SearchBox
                     value={search}
                     onChange={searchHandler}
-                    placeholder={"جستوجو براساس کد کالا , شرح , تعداد"}
+                    placeholder={"جستوجو براساس کد کالا , شرح , مقدار درخواست"}
                   />
                 </div>
                 <div className={`${styles.maincontent}`}>
@@ -280,7 +280,7 @@ export default function Orders() {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      تعداد
+                                      مقدار درخواست
                                     </TableCell>
                                     <TableCell
                                       align="center"
@@ -292,19 +292,7 @@ export default function Orders() {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      گنجایش واحد
-                                    </TableCell>
-                                    <TableCell
-                                      align="center"
-                                      style={{
-                                        position: "sticky",
-                                        top: 0,
-                                        backgroundColor: "#fff",
-                                        fontFamily: "iranYekan",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      مقدار کل
+                                      مقدار سفارش
                                     </TableCell>
                                   </TableRow>
                                 </TableHead>
@@ -341,7 +329,7 @@ export default function Orders() {
                                         }}
                                       >
                                         {convertToPersianNumbers(
-                                          rowDetail?.box_qty
+                                          rowDetail?.request_qty
                                         )}
                                       </TableCell>
                                       <TableCell
@@ -352,18 +340,7 @@ export default function Orders() {
                                         }}
                                       >
                                         {convertToPersianNumbers(
-                                          rowDetail?.box_cap
-                                        )}
-                                      </TableCell>
-                                      <TableCell
-                                        align="center"
-                                        sx={{
-                                          fontFamily: "iranYekan",
-                                          fontWeight: "bold",
-                                        }}
-                                      >
-                                        {convertToPersianNumbers(
-                                          rowDetail?.qty
+                                          rowDetail?.order_qty
                                         )}
                                       </TableCell>
                                     </TableRow>

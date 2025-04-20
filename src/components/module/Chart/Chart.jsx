@@ -12,21 +12,13 @@ import axios from "axios";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import { convertToPersianNumbers, goToLogin } from "../../../utils/helper";
-import useSWR from "swr"; 
+import useSWR from "swr";
+import apiClient from "../../../config/axiosConfig";
 
 dayjs.extend(jalaliday);
 
-function convertToPersianDate(date) {
-  return dayjs(date).calendar("jalali").format("YYYY/MM");
-}
-
-// fetcher function
 const fetcher = async (url) => {
-  const access = localStorage.getItem("access");
-  const headers = {
-    Authorization: `Bearer ${access}`,
-  };
-  const response = await axios.get(url, { headers });
+  const response = await apiClient.get(url);
   return response.data;
 };
 
@@ -38,20 +30,14 @@ export default function Chart() {
     dedupingInterval: 15 * 60 * 1000,
   });
 
-  useEffect(() => {
-    if (error?.response?.status === 401) {
-      localStorage.removeItem("access");
-      goToLogin();
-    }
-  }, [error]);
-
   const formattedData = data
     ? data.map((item) => ({
         ...item,
-        month: convertToPersianDate(item.month),
+        month: item.month,
       }))
     : [];
 
+  console.log(data);
   return (
     <div className={styles.chartcontainer}>
       <p className={styles.titlesole}>فروش در هر ماه</p>
