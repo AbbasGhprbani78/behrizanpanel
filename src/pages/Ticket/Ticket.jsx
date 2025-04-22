@@ -271,7 +271,9 @@ export default function Ticket() {
   };
 
   const resetTickets = () => {
-    setFilterValue(allTickets);
+    setFilterValue([]);
+    getAllTickets(1);
+    setIsSearch(true);
     setPage(1);
     setHasMore(true);
   };

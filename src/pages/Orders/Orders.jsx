@@ -11,8 +11,6 @@ import { addSlashesToDate, convertToPersianNumbers } from "../../utils/helper";
 import Loading from "../../components/module/Loading/Loading";
 import { FaAngleDown } from "react-icons/fa6";
 import { FaAngleUp } from "react-icons/fa6";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -54,12 +52,12 @@ export default function Orders() {
   const [isSearch, setIsSearch] = useState(false);
   const [openTableIndex, setOpenTableIndex] = useState(null);
   const [detailProduct, setDetailProduct] = useState([]);
-  const naviagte = useNavigate();
   const { id } = useParams();
 
   const toggleTable = (index) => {
     setOpenTableIndex((prevIndex) => (prevIndex === index ? null : index));
   };
+
   const getDetails = async () => {
     try {
       const response = await apiClient.get(`/app/order-detail-bill-code/${id}`);
@@ -158,12 +156,6 @@ export default function Orders() {
                   وضعیت ارسالها
                 </button>
               </div>
-              {/* <span
-                className={styles.arrow_icon}
-                onClick={() => naviagte("/orders")}
-              >
-                <FaArrowLeftLong />
-              </span> */}
             </div>
             {tab === 1 ? (
               <>
@@ -426,35 +418,3 @@ export default function Orders() {
     </div>
   );
 }
-
-// const fetchFilteredProducts = async (query) => {
-//   setIsSearch(true);
-//   const access = localStorage.getItem("access");
-//   const headers = { Authorization: `Bearer ${access}` };
-//   try {
-//     const response = await axios.get(`${apiUrl}/app/order-search/`, {
-//       params: { query },
-//       headers,
-//     });
-
-//     if (response.status === 200) {
-//       setFilterProduct(response.data);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   } finally {
-//     setIsSearch(false);
-//   }
-// };
-
-// useEffect(() => {
-//   if (search.trim() === "") {
-//     setFilterProduct(orderDetails);
-//     return;
-//   }
-//   const delayDebounceFn = setTimeout(() => {
-//     fetchFilteredProducts(search.trim());
-//   }, 1500);
-
-//   return () => clearTimeout(delayDebounceFn);
-// }, [search]);

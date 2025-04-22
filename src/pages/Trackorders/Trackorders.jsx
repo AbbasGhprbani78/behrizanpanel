@@ -164,7 +164,10 @@ export default function TrackOrders() {
   };
 
   const resetOrders = () => {
-    setFilterValue(allOrders);
+    setFilterValue([]);
+    setIsSearch(true);
+    getAllOrders(1);
+    setIsSearch(true);
     setPage(1);
     setHasMore(true);
   };
