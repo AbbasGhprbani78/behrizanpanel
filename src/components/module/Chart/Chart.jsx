@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -8,24 +7,29 @@ import {
   YAxis,
 } from "recharts";
 import styles from "./Chart.module.css";
-import axios from "axios";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
-import { convertToPersianNumbers, goToLogin } from "../../../utils/helper";
+import { convertToPersianNumbers } from "../../../utils/helper";
 import useSWR from "swr";
 import apiClient from "../../../config/axiosConfig";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 dayjs.extend(jalaliday);
-
 const fetcher = async (url) => {
-  const response = await apiClient.get(url);
-  return response.data;
+  try {
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (e) {
+    if (e.response?.status === 500) {
+      toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
+    }
+  }
 };
 
 export default function Chart() {
-  const apiUrl = import.meta.env.VITE_API_URL;
-
-  const { data, error } = useSWR(`${apiUrl}/app/orders-per-month/`, fetcher, {
+  const { data } = useSWR(`/app/orders-per-month/`, fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 15 * 60 * 1000,
   });
@@ -37,7 +41,6 @@ export default function Chart() {
       }))
     : [];
 
-  console.log(data);
   return (
     <div className={styles.chartcontainer}>
       <p className={styles.titlesole}>فروش در هر ماه</p>
@@ -58,6 +61,7 @@ export default function Chart() {
           />
         </BarChart>
       </ResponsiveContainer>
+      <ToastContainer />
     </div>
   );
 }

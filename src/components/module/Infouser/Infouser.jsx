@@ -4,26 +4,33 @@ import { CiUser } from "react-icons/ci";
 import ModalUser from "../ModalUser/ModalUser";
 import Loading from "../Loading/Loading";
 import useSWR from "swr";
-const apiUrl = import.meta.env.VITE_API_URL;
-
-const fetcher = async (url) => {
-  const response = await apiClient.get(url);
-  return response.data[0];
-};
-
 import { convertToPersianNumbers } from "../../../utils/helper";
 import apiClient from "../../../config/axiosConfig";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const fetcher = async (url) => {
+  try {
+    const response = await apiClient.get(url);
+    return response.data[0];
+  } catch (e) {
+    if (e.response?.status === 500) {
+      toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
+    }
+  }
+};
 export default function Infouser() {
   const [showModal, setShowModal] = useState(false);
 
-  const {
-    data: userInfo,
-    error,
-    isLoading,
-  } = useSWR(`${apiUrl}/user/get-user-informations/`, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 15 * 60 * 1000,
-  });
+  const { data: userInfo, isLoading } = useSWR(
+    `/user/get-user-informations/`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 15 * 60 * 1000,
+    }
+  );
 
   return (
     <>
@@ -68,8 +75,8 @@ export default function Infouser() {
           </button>
         </div>
       </div>
-
       {isLoading && <Loading />}
+      <ToastContainer />
     </>
   );
 }

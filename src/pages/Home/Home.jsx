@@ -6,26 +6,29 @@ import Infouser from "../../components/module/Infouser/Infouser";
 import Notifications from "../../components/module/Notifications/Notifications";
 import Chart from "../../components/module/Chart/Chart";
 import StatusLastProduct from "../../components/module/StatusLastProduct/StatusLastProduct";
-import axios from "axios";
 import Chat from "../../components/templates/chat/Chat";
 import { goToLogin } from "../../utils/helper";
 import useSWR from "swr";
-const apiUrl = import.meta.env.VITE_API_URL;
-
+import apiClient from "../../config/axiosConfig";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const fetcher = async (url) => {
-  const access = localStorage.getItem("access");
-  const headers = {
-    Authorization: `Bearer ${access}`,
-  };
-  const response = await axios.get(url, { headers });
-  if (response.status === 200) {
-    return response.data;
+  try {
+    const response = await apiClient.get(url);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (e) {
+    if (e.response?.status === 500) {
+      toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
+    }
   }
 };
-
 export default function Home() {
   const { data: product, error } = useSWR(
-    `${apiUrl}/app/get-single-order-detail/`,
+    `/app/get-single-order-detail/`,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -67,6 +70,7 @@ export default function Home() {
         </div>
       </div>
       <Chat />
+      <ToastContainer />
     </>
   );
 }

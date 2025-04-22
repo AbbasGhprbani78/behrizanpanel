@@ -11,6 +11,8 @@ import { addSlashesToDate, convertToPersianNumbers } from "../../utils/helper";
 import Loading from "../../components/module/Loading/Loading";
 import { FaAngleDown } from "react-icons/fa6";
 import { FaAngleUp } from "react-icons/fa6";
+import { FaArrowLeftLong } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -52,18 +54,12 @@ export default function Orders() {
   const [isSearch, setIsSearch] = useState(false);
   const [openTableIndex, setOpenTableIndex] = useState(null);
   const [detailProduct, setDetailProduct] = useState([]);
+  const naviagte = useNavigate();
   const { id } = useParams();
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const toggleTable = (index) => {
     setOpenTableIndex((prevIndex) => (prevIndex === index ? null : index));
   };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("fa-IR");
-  };
-
   const getDetails = async () => {
     try {
       const response = await apiClient.get(`/app/order-detail-bill-code/${id}`);
@@ -87,21 +83,19 @@ export default function Orders() {
       return response.data;
     } catch (e) {
       if (e.response?.status === 500) {
-        toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
-          position: "top-left",
-        });
+        alert("مشکلی سمت سرور پیش امده");
       }
     }
   };
 
-  const {
-    data: orderDetails,
-    error,
-    isLoading,
-  } = useSWR(`${apiUrl}/app/get-product/${id}`, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 15 * 60 * 1000,
-  });
+  const { data: orderDetails, isLoading } = useSWR(
+    `/app/get-product/${id}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 15 * 60 * 1000,
+    }
+  );
 
   const searchHandler = useCallback(
     (value) => {
@@ -146,18 +140,30 @@ export default function Orders() {
         ) : orderDetails?.length > 0 ? (
           <>
             <div className={styles.wrap_tabs_btns}>
-              <button
-                className={`${styles.btn_tab} ${tab === 1 && styles.activetab}`}
-                onClick={() => setTab(1)}
+              <div className="d-flex align-items-center gap-3">
+                <button
+                  className={`${styles.btn_tab} ${
+                    tab === 1 && styles.activetab
+                  }`}
+                  onClick={() => setTab(1)}
+                >
+                  سفارشات
+                </button>
+                <button
+                  className={`${styles.btn_tab} ${
+                    tab === 2 && styles.activetab
+                  }`}
+                  onClick={() => setTab(2)}
+                >
+                  وضعیت ارسالها
+                </button>
+              </div>
+              {/* <span
+                className={styles.arrow_icon}
+                onClick={() => naviagte("/orders")}
               >
-                درخواست ها
-              </button>
-              <button
-                className={`${styles.btn_tab} ${tab === 2 && styles.activetab}`}
-                onClick={() => setTab(2)}
-              >
-                وضعیت ارسالها
-              </button>
+                <FaArrowLeftLong />
+              </span> */}
             </div>
             {tab === 1 ? (
               <>
@@ -203,16 +209,12 @@ export default function Orders() {
                 }`}
               >
                 <p className={styles.bill_title}>لیست وضعیت ارسالها ها</p>
-                <p className="mt-4">وضعیت ارسال ها :</p>
                 <div
                   style={{ height: "calc(100dvh - 250px)", overflow: "auto" }}
                 >
                   {detailProduct?.length > 0 &&
                     detailProduct.map((item, i) => (
-                      <div
-                        className={styles.detail_orders_wrap}
-                        key={item.bill}
-                      >
+                      <div className={styles.detail_orders_wrap} key={i}>
                         <div className={styles.status_send}>
                           <div className={styles.bilLading_date_wrap}>
                             <div
@@ -227,12 +229,89 @@ export default function Orders() {
                                   <FaAngleDown />
                                 )}
                               </div>
-                              <span>وضعیت ارسالها : </span>
+                              <span>بارنامه : </span>
                               <span>{convertToPersianNumbers(item?.bill)}</span>
                             </div>
+                            <div>
+                              <span>شماره تراکنش : </span>
+                              <span>{item?.trans_doc_no}</span>
+                            </div>
+                            <div>
+                              <span> نوع : </span>
+                              <span
+                                className={`${
+                                  item?.trans_type === "33"
+                                    ? styles.green_trans
+                                    : styles.red_trans
+                                }`}
+                              >
+                                {item?.trans_type === "33"
+                                  ? "ارسال شده"
+                                  : "برگشتی"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.wrap_date_detail}>
+                            <span> تاریخ : </span>
+                            <p
+                              style={{
+                                direction: "ltr",
+                                marginBottom: "0",
+                                marginRight: "5px",
+                              }}
+                            >
+                              {convertToPersianNumbers(item?.trans_doc_date)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.status_send_m}>
+                          <div className={styles.status_detail_m}>
+                            <div>
+                              <span> نوع : </span>
+                              <span
+                                className={`${
+                                  item?.trans_type === "33"
+                                    ? styles.green_trans
+                                    : styles.red_trans
+                                }`}
+                              >
+                                {item?.trans_type === "33"
+                                  ? "ارسال شده"
+                                  : "برگشتی"}
+                              </span>
+                            </div>
                             <div className={styles.wrap_date_detail}>
-                              <span>تاریخ : </span>
-                              <span>{formatDate(item?.deliver_date)}</span>
+                              <span> تاریخ : </span>
+                              <p
+                                style={{
+                                  direction: "ltr",
+                                  marginBottom: "0",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                {convertToPersianNumbers(item?.trans_doc_date)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className={styles.status_detail_m}>
+                            <div
+                              style={{ cursor: "pointer" }}
+                              className="d-flex align-items-center gap-2 cursour"
+                              onClick={() => toggleTable(i)}
+                            >
+                              <div className={styles.wrap_icon}>
+                                {openTableIndex === i ? (
+                                  <FaAngleUp />
+                                ) : (
+                                  <FaAngleDown />
+                                )}
+                              </div>
+                              <span>بارنامه : </span>
+                              <span>{convertToPersianNumbers(item?.bill)}</span>
+                            </div>
+                            <div>
+                              <span>شماره تراکنش : </span>
+                              <span>{item?.trans_doc_no}</span>
                             </div>
                           </div>
                         </div>
@@ -280,19 +359,7 @@ export default function Orders() {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      مقدار درخواست
-                                    </TableCell>
-                                    <TableCell
-                                      align="center"
-                                      style={{
-                                        position: "sticky",
-                                        top: 0,
-                                        backgroundColor: "#fff",
-                                        fontFamily: "iranYekan",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      مقدار سفارش
+                                      مقدار
                                     </TableCell>
                                   </TableRow>
                                 </TableHead>
@@ -329,18 +396,7 @@ export default function Orders() {
                                         }}
                                       >
                                         {convertToPersianNumbers(
-                                          rowDetail?.request_qty
-                                        )}
-                                      </TableCell>
-                                      <TableCell
-                                        align="center"
-                                        sx={{
-                                          fontFamily: "iranYekan",
-                                          fontWeight: "bold",
-                                        }}
-                                      >
-                                        {convertToPersianNumbers(
-                                          rowDetail?.order_qty
+                                          rowDetail?.trans_qty
                                         )}
                                       </TableCell>
                                     </TableRow>

@@ -65,6 +65,7 @@ export default function TrackOrders() {
     } finally {
       setLoading(false);
       setIsFetchingMore(false);
+      setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
@@ -73,7 +74,7 @@ export default function TrackOrders() {
     startDate,
     endDate,
     page = 1,
-    page_size = 10
+    page_size = 25
   ) => {
     const convertToEnglishDigits = (str) =>
       str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
@@ -83,6 +84,7 @@ export default function TrackOrders() {
     const endDateFormatted = formatDate(endDate);
 
     if (page === 1) setIsSearch(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get(`/app/get-cart-detail/`, {
@@ -117,6 +119,7 @@ export default function TrackOrders() {
       }
     } finally {
       setIsSearch(false);
+      setIsFetchingMore(false);
     }
   };
 
@@ -124,6 +127,7 @@ export default function TrackOrders() {
     if (!query.trim()) return;
 
     if (page === 1) setIsSearch(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get(`/app/get-cart-detail/`, {
@@ -155,6 +159,7 @@ export default function TrackOrders() {
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
+      setIsFetchingMore(false);
     }
   };
 
@@ -172,14 +177,16 @@ export default function TrackOrders() {
   }, []);
 
   useEffect(() => {
-    if (search.trim() === "") {
-      setFilterValue(allOrders);
-      setPage(1);
-      setHasMore(true);
-      return;
-    }
     setPage(1);
     setHasMore(true);
+
+    if (search.trim() === "") {
+      setFilterValue([]);
+      getAllOrders(1);
+      setIsSearch(true);
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
       searchOrders(search.trim(), 1);
     }, 1500);

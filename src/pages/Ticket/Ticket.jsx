@@ -57,7 +57,7 @@ export default function Ticket() {
   const [firstLoad, setFirstLoad] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const getAllTickets = async (page = 1, page_size = 5) => {
+  const getAllTickets = async (page = 1, page_size = 10) => {
     if (page === 1 && firstLoad) setLoading(true);
     if (page > 1) setIsFetchingMore(true);
 
@@ -92,6 +92,7 @@ export default function Ticket() {
       }
     } finally {
       setLoading(false);
+      setIsSearch(false);
       setIsFetchingMore(false);
       if (firstLoad) setFirstLoad(false);
     }
@@ -101,7 +102,7 @@ export default function Ticket() {
     startDate,
     endDate,
     page = 1,
-    page_size = 5
+    page_size = 10
   ) => {
     const convertToEnglishDigits = (str) =>
       str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
@@ -113,6 +114,7 @@ export default function Ticket() {
     const endDateFormatted = formatDate(endDate);
 
     if (page === 1) setIsSearch(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get("/chat/get-ticket/", {
@@ -149,12 +151,13 @@ export default function Ticket() {
       }
     } finally {
       setIsSearch(false);
+      setIsFetchingMore(false);
     }
   };
 
-  const filterTicketsByStatus = async (status, page = 1, page_size = 5) => {
+  const filterTicketsByStatus = async (status, page = 1, page_size = 10) => {
     if (page === 1) setIsSearch(true);
-
+    if (page > 1) setIsFetchingMore(true);
     try {
       const response = await apiClient.get("/chat/get-ticket/", {
         params: {
@@ -167,8 +170,6 @@ export default function Ticket() {
       setSearch("");
 
       if (response.status === 200) {
-        console.log(response.data.results);
-
         setFilterValue((prev) =>
           page === 1
             ? response.data?.results
@@ -187,11 +188,17 @@ export default function Ticket() {
       });
     } finally {
       setIsSearch(false);
+      setIsFetchingMore(false);
     }
   };
 
-  const filterTicketsByCategory = async (category, page = 1, page_size = 5) => {
+  const filterTicketsByCategory = async (
+    category,
+    page = 1,
+    page_size = 10
+  ) => {
     if (page === 1) setIsSearch(true);
+    if (page > 1) setIsFetchingMore(true);
     try {
       const response = await apiClient.get("/chat/get-ticket/", {
         params: {
@@ -221,6 +228,7 @@ export default function Ticket() {
       });
     } finally {
       setIsSearch(false);
+      setIsFetchingMore(false);
     }
   };
 
@@ -228,7 +236,7 @@ export default function Ticket() {
     if (!query.trim()) return;
 
     if (page === 1) setIsSearch(true);
-
+    if (page > 1) setIsFetchingMore(true);
     try {
       const response = await apiClient.get("/chat/get-ticket/", {
         params: { ticket_id: query, page, page_size },
@@ -258,6 +266,7 @@ export default function Ticket() {
     } finally {
       setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
+      setIsFetchingMore(false);
     }
   };
 
@@ -275,14 +284,15 @@ export default function Ticket() {
   }, []);
 
   useEffect(() => {
-    if (search.trim() === "") {
-      setFilterValue(allTickets);
-      setPage(1);
-      setHasMore(true);
-      return;
-    }
     setPage(1);
     setHasMore(true);
+
+    if (search.trim() === "") {
+      setFilterValue([]);
+      getAllTickets(1);
+      setIsSearch(true);
+      return;
+    }
     const delayDebounceFn = setTimeout(() => {
       searchTickets(search.trim(), 1);
     }, 1500);
@@ -586,36 +596,31 @@ export default function Ticket() {
                           placeholder={"جستوجو براساس شماره تیکت"}
                         />
                         <Filter
-                          setOpenmodal={""}
-                          all={""}
+                          setOpenmodal={setOpenmodal}
+                          all={resetTickets}
                           filters={[
                             {
                               label: "وضعیت",
-                              onClick: () => console.log("filter by status"),
+
                               submenuItems: [
                                 {
-                                  label: "موبایل",
-                                  onClick: () => console.log("موبایل"),
+                                  label: "باز",
+                                  onClick: () => filterTicketsByStatus(false),
                                 },
                                 {
-                                  label: "لپ‌تاپ",
-                                  onClick: () => console.log("لپ‌تاپ"),
+                                  label: "بسته",
+                                  onClick: () => filterTicketsByStatus(true),
                                 },
                               ],
                             },
                             {
                               label: "نوع تیکت",
                               onClick: () => console.log("filter by status"),
-                              submenuItems: [
-                                {
-                                  label: "فعال",
-                                  onClick: () => console.log("فعال"),
-                                },
-                                {
-                                  label: "غیرفعال",
-                                  onClick: () => console.log("غیرفعال"),
-                                },
-                              ],
+                              submenuItems: userType.map((item) => ({
+                                label: item.name,
+                                onClick: () =>
+                                  filterTicketsByCategory(item?.id),
+                              })),
                             },
                           ]}
                         />
@@ -998,42 +1003,40 @@ export default function Ticket() {
                             {isSearch ? (
                               <p className="text-search">در حال جستوجو ...</p>
                             ) : (
-                              <>
-                                <InfiniteScroll
-                                  dataLength={
-                                    filterValue?.length > 0 ? filterValue : []
-                                  }
-                                  next={() => getAllTickets(page)}
-                                  hasMore={hasMore}
-                                  scrollableTarget="wrapp_orders"
+                              <InfiniteScroll
+                                dataLength={
+                                  filterValue?.length > 0 ? filterValue : []
+                                }
+                                next={() => getAllTickets(page)}
+                                hasMore={hasMore}
+                                scrollableTarget="wrapp_orders"
+                              >
+                                <div
+                                  className={styles.TicketItemBox}
+                                  id="wrapp_orders"
                                 >
-                                  <div
-                                    className={styles.TicketItemBox}
-                                    id="wrapp_orders"
-                                  >
-                                    {filterValue?.length > 0 ? (
-                                      <>
-                                        {filterValue.slice().map((ticket) => (
-                                          <TicketItem
-                                            onClick={() =>
-                                              getSelectedTicket(ticket)
-                                            }
-                                            key={ticket.ticket_id}
-                                            ticket={ticket}
-                                          />
-                                        ))}
-                                      </>
-                                    ) : (
-                                      <NoneSearch />
-                                    )}
-                                    {isFetchingMore && (
-                                      <div className={styles.loadingContainer}>
-                                        <LoadingInfity />
-                                      </div>
-                                    )}
-                                  </div>
-                                </InfiniteScroll>
-                              </>
+                                  {filterValue?.length > 0 ? (
+                                    <>
+                                      {filterValue.slice().map((ticket) => (
+                                        <TicketItem
+                                          onClick={() =>
+                                            getSelectedTicket(ticket)
+                                          }
+                                          key={ticket.ticket_id}
+                                          ticket={ticket}
+                                        />
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <NoneSearch />
+                                  )}
+                                  {isFetchingMore && (
+                                    <div className={styles.loadingContainer}>
+                                      <LoadingInfity />
+                                    </div>
+                                  )}
+                                </div>
+                              </InfiniteScroll>
                             )}
                           </div>
                         ) : (

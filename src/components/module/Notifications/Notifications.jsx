@@ -3,23 +3,26 @@ import NotifItem from "../NotifItem/NotifItem";
 import { FaBell } from "react-icons/fa";
 import useSWR from "swr";
 import apiClient from "../../../config/axiosConfig";
-import { useState } from "react";
-const apiUrl = import.meta.env.VITE_API_URL;
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const fetcher = async (url) => {
-  const response = await apiClient.get(url);
-  return response.data;
+  try {
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (e) {
+    if (e.response?.status === 500) {
+      toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+        position: "top-left",
+      });
+    }
+  }
 };
 
 export default function Notifications() {
-  const { data: notifications, error } = useSWR(
-    `${apiUrl}/app/get-notif/`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 15 * 60 * 1000,
-    }
-  );
+  const { data: notifications } = useSWR(`/app/get-notif/`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 15 * 60 * 1000,
+  });
   return (
     <div className={styles.notificationwrapper}>
       <div className={styles.notificationheader}>
@@ -37,6 +40,7 @@ export default function Notifications() {
           </p>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 }

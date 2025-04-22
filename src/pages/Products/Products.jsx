@@ -134,12 +134,14 @@ export default function Products() {
     } finally {
       setLoading(false);
       setIsFetchingMore(false);
+      setIsSearch(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
 
   const fetchFilteredProducts = async (query, page = 1, page_size = 25) => {
     if (page === 1) setIsSearch(true);
+    if (page > 1) setIsFetchingMore(true);
 
     try {
       const response = await apiClient.get(`${apiUrl}/app/search/`, {
@@ -164,20 +166,21 @@ export default function Products() {
       }
     } finally {
       setIsSearch(false);
+      setIsFetchingMore(false);
       if (firstLoad) setFirstLoad(false);
     }
   };
 
   useEffect(() => {
-    if (search.trim() === "") {
-      setFilterProduct(products);
-      setPage(1);
-      setHasMore(true);
-      return;
-    }
-
     setPage(1);
     setHasMore(true);
+
+    if (search.trim() === "") {
+      setFilterProduct([]);
+      getAllProducts(1);
+      setIsSearch(true);
+      return;
+    }
 
     const delayDebounceFn = setTimeout(() => {
       fetchFilteredProducts(search.trim(), 1);
