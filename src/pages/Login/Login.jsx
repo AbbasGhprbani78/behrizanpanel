@@ -126,8 +126,11 @@ export default function Login() {
                         values
                       );
                       if (response.status === 200) {
-                        localStorage.setItem("refresh", response.data.refresh);
-                        localStorage.setItem(
+                        sessionStorage.setItem(
+                          "refresh",
+                          response.data.refresh
+                        );
+                        sessionStorage.setItem(
                           "access",
                           response.data.access_token
                         );
@@ -596,7 +599,6 @@ export default function Login() {
                           setStep(1);
                         }
                       } catch (error) {
-                       
                         toast.error(error.response.data.non_field_errors[0], {
                           position: "top-left",
                         });
@@ -799,11 +801,11 @@ export default function Login() {
                         values
                       );
                       if (response.status === 200) {
-                        localStorage.setItem(
+                        sessionStorage.setItem(
                           "refresh",
                           response.data.refresh_token
                         );
-                        localStorage.setItem(
+                        sessionStorage.setItem(
                           "access",
                           response.data.access_token
                         );
@@ -885,7 +887,6 @@ export default function Login() {
                           values
                         );
                         if (response.status === 200) {
-                          console.log(response.data);
                           setStep(8);
                         }
                       } catch (error) {
@@ -957,12 +958,11 @@ export default function Login() {
                           values
                         );
                         if (response.status === 200) {
-                          console.log(response.data);
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "refresh",
                             response.data.refresh_token
                           );
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "access",
                             response.data.access_token
                           );
@@ -1048,11 +1048,11 @@ export default function Login() {
                           values
                         );
                         if (response.status === 200) {
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "refresh",
                             response.data.refresh
                           );
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "access",
                             response.data.access_token
                           );
@@ -1527,7 +1527,6 @@ export default function Login() {
                             setStep(1);
                           }
                         } catch (error) {
-                         
                           toast.error(error.response.data.non_field_errors[0], {
                             position: "top-left",
                           });
@@ -1734,11 +1733,11 @@ export default function Login() {
                         );
                         if (response.status === 200) {
                           console.log(response.data);
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "refresh",
                             response.data.refresh_token
                           );
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             "access",
                             response.data.access_token
                           );
@@ -1893,11 +1892,11 @@ export default function Login() {
                           );
                           if (response.status === 200) {
                             console.log(response.data);
-                            localStorage.setItem(
+                            sessionStorage.setItem(
                               "refresh",
                               response.data.refresh_token
                             );
-                            localStorage.setItem(
+                            sessionStorage.setItem(
                               "access",
                               response.data.access_token
                             );
@@ -1965,21 +1964,20 @@ export default function Login() {
   );
 }
 
-
-  // const sendCodeAgainToEmail = async () => {
-  //   const email = localStorage.getItem("email");
-  //   if (email) {
-  //     const body = { email };
-  //     try {
-  //       const response = await axios.post(
-  //         `${apiUrl}/user/password-reset-email/`,
-  //         body
-  //       );
-  //     } catch (error) {
-  //       toast.error(error.response?.data?.message || "An error occurred", {
-  //         position: "top-left",
-  //       });
-  //       console.log(error);
-  //     }
-  //   }
-  // };
+// const sendCodeAgainToEmail = async () => {
+//   const email = localStorage.getItem("email");
+//   if (email) {
+//     const body = { email };
+//     try {
+//       const response = await axios.post(
+//         `${apiUrl}/user/password-reset-email/`,
+//         body
+//       );
+//     } catch (error) {
+//       toast.error(error.response?.data?.message || "An error occurred", {
+//         position: "top-left",
+//       });
+//       console.log(error);
+//     }
+//   }
+// };

@@ -13,7 +13,7 @@ export default function Chat() {
   const [step, setStep] = useState(1);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const access_token = localStorage.getItem("access");
+  const access_token = sessionStorage.getItem("access");
   const [loading, setIsLoading] = useState(false);
   const socketRef = useRef(null);
 

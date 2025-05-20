@@ -38,7 +38,7 @@ export default function Home() {
 
   useEffect(() => {
     if (error?.response?.status === 401) {
-      localStorage.removeItem("access");
+      sessionStorage.removeItem("access");
       goToLogin();
     }
   }, [error]);

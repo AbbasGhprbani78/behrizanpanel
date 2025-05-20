@@ -98,6 +98,8 @@ export default function Ticket() {
     }
   };
 
+  console.log(allTickets);
+
   const filterTicketsByDate = async (
     startDate,
     endDate,
@@ -808,6 +810,7 @@ export default function Ticket() {
                             setIsEditMessage={setIsEditMessage}
                             setTicketId={setTicketId}
                             inputRef={inputRef}
+                            ticket={ticket}
                           />
                         ))}
                       {showfile && (
@@ -1172,6 +1175,7 @@ export default function Ticket() {
                             setIsEditMessage={setIsEditMessage}
                             setTicketId={setTicketId}
                             inputRef={inputRef}
+                            ticket={ticket}
                           />
                         ))}
                       {showfile && (

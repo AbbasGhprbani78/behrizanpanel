@@ -36,6 +36,14 @@
   font-weight: bold;
 }
 
+.wrap_date {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 15px;
+}
+
 @media (max-width: 768px) {
   .ticketicon {
     font-size: 2rem;

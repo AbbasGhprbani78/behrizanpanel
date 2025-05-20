@@ -28,6 +28,7 @@ export default function TrackOrders() {
   const [isSearch, setIsSearch] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [orderItemId, setOrderItemId] = useState(null);
 
   const getAllOrders = async (page = 1, page_size = 25) => {
     if (page === 1 && firstLoad) setLoading(true);
@@ -197,6 +198,16 @@ export default function TrackOrders() {
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
+  useEffect(() => {
+    if (orderItemId) {
+      const FiltredOrders = allOrders.filter((order) => {
+        return order.id !== orderItemId;
+      });
+      setAllorders(FiltredOrders);
+      setFilterValue(FiltredOrders);
+    }
+  }, [orderItemId]);
+
   return (
     <div className={styles.wrapperpage}>
       <SideBar />
@@ -237,6 +248,7 @@ export default function TrackOrders() {
                             selectedOrderId === null ? (
                               <OrderTrackItem
                                 key={order.id}
+                                setOrderItemId={setOrderItemId}
                                 order={order}
                                 number={index}
                                 setSelectedOrderId={setSelectedOrderId}

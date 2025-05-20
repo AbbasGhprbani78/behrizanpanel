@@ -29,10 +29,10 @@ export default function StatusProduct({ style, status }) {
         setCurrentStep(5);
         break;
       case "5":
-        setCurrentStep(6);
+        setCurrentStep(7);
         break;
       case "6":
-        setCurrentStep(7);
+        setCurrentStep(6);
         break;
     }
   }, [status]);

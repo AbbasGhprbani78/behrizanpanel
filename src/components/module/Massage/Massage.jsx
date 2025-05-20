@@ -8,6 +8,7 @@ export default function Massage({
   setIsEditMessage,
   setTicketId,
   inputRef,
+  ticket,
 }) {
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -18,7 +19,6 @@ export default function Massage({
       hour12: false,
     });
   };
-
   const apiUrl = import.meta.env.VITE_API_URL;
 
   return (
@@ -55,7 +55,7 @@ export default function Massage({
               {formatTime(tikectmsg?.date)}
             </span>
           </div>
-          {!tikectmsg?.is_admin && !tikectmsg.is_read && (
+          {!tikectmsg?.is_admin && !tikectmsg.is_read && !ticket?.close && (
             <MdOutlineEdit
               onClick={() => {
                 if (!tikectmsg?.is_admin && !tikectmsg.is_read) {

@@ -27,8 +27,8 @@ export default function SideBar() {
       buttons: ["خیر", "بله"],
     }).then((willLogout) => {
       if (willLogout) {
-        localStorage.removeItem("refresh");
-        localStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
         naviagte("/login");
       }
     });

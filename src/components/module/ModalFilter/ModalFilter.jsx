@@ -13,6 +13,7 @@ export default function ModalFilter({
   isenglish,
 }) {
   const [selectedDayRange, setSelectedDayRange] = useState([null, null]);
+  const [showData, setShowDate] = useState(["", ""]);
   const [shamsiRange, setShamsiRange] = useState(["", ""]);
 
   const handleDateChange = (dates) => {
@@ -24,6 +25,8 @@ export default function ModalFilter({
 
       let startDate = shamsiStart.format("YYYY/MM/DD");
       let endDate = shamsiEnd.format("YYYY/MM/DD");
+
+      setShowDate([startDate, endDate]);
 
       if (isenglish) {
         const gregorianStart = new Date(
@@ -74,7 +77,7 @@ export default function ModalFilter({
                   <input
                     type="text"
                     className={styles.date_input}
-                    value={shamsiRange[0]}
+                    value={showData[0]}
                     readOnly
                   />
                   <CiCalendarDate className={styles.icon_ca} />
@@ -86,7 +89,7 @@ export default function ModalFilter({
                   <input
                     type="text"
                     className={styles.date_input}
-                    value={shamsiRange[1]}
+                    value={showData[1]}
                     readOnly
                   />
                   <CiCalendarDate className={styles.icon_ca} />

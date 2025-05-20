@@ -40,15 +40,21 @@ export default function TicketItem({ onClick, ticket }) {
               </span>
               <span className="fw-bold">{ticket?.informations[0]?.title}</span>
             </div>
-            <div className="d-flex justify-content-between align-items-center">
-              <p
-                className={`fw-bold ${styles.status_ticket} ${
-                  ticket.close ? styles.closed : styles.open
-                }`}
-              >
-                {ticket.close ? "بسته" : "باز "}
-              </p>
-              <span>{formatDate(ticket?.date)}</span>
+            <div className={styles.wrap_date}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span className={styles.open} style={{ marginLeft: "5px" }}>
+                  تاریخ ایجاد تیکت
+                </span>
+                <span> : {formatDate(ticket?.date)}</span>
+              </div>
+              {ticket.close && (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span className={styles.closed} style={{ marginLeft: "5px" }}>
+                    تاریخ بسته شدن تیکت
+                  </span>
+                  <span> : {formatDate(ticket?.close_date)}</span>
+                </div>
+              )}
             </div>
           </div>
         </>
@@ -66,15 +72,21 @@ export default function TicketItem({ onClick, ticket }) {
               </span>
               <span className="fw-bold">{ticket?.informations[0]?.title}</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <p
-                className={`fw-bold ${styles.status_ticket} ${
-                  ticket.close ? styles.closed : styles.open
-                } mx-4`}
-              >
-                {ticket.close ? "تیکت بسته" : "تیکت باز "}
-              </p>
-              <span>{formatDate(ticket?.date)}</span>
+            <div className={styles.wrap_date}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span className={styles.open} style={{ marginLeft: "5px" }}>
+                  تاریخ ایجاد تیکت
+                </span>
+                <span> : {formatDate(ticket?.date)}</span>
+              </div>
+              {ticket.close && (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span className={styles.closed} style={{ marginLeft: "5px" }}>
+                    تاریخ بسته شدن تیکت
+                  </span>
+                  <span> : {formatDate(ticket?.close_date)}</span>
+                </div>
+              )}
             </div>
           </div>
         </>

@@ -7,15 +7,20 @@ import { FiTruck } from "react-icons/fi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { BsBox2 } from "react-icons/bs";
 import { FaWpforms } from "react-icons/fa6";
+import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
 import {
   addSlashesToDate,
   convertToPersianNumbers,
 } from "../../../utils/helper";
+import apiClient from "../../../config/axiosConfig";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function OrderTrackItem({ order, number }) {
+export default function OrderTrackItem({ order, number, setOrderItemId }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [latestItem, setLatestItem] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   function getFieldByStatus(order) {
@@ -31,10 +36,13 @@ export default function OrderTrackItem({ order, number }) {
         fieldValue = order.final_confirm_date;
         break;
       case "4":
-        fieldValue = order?.deliver_date_max;
+        fieldValue = order?.last_trans_doc_date;
         break;
       case "5":
-        fieldValue = order?.deliver_date_max;
+        fieldValue = order?.request_date;
+        break;
+      case "6":
+        fieldValue = order?.last_trans_doc_date;
         break;
       case "7":
         fieldValue = order?.request_date;
@@ -48,6 +56,37 @@ export default function OrderTrackItem({ order, number }) {
 
     return fieldValue;
   }
+
+  const deleteHandler = async (id) => {
+    const willDelete = await swal({
+      title: "آیا از حذف اطمینان دارید ؟",
+      icon: "warning",
+      buttons: ["خیر", "بله"],
+    });
+
+    if (willDelete) {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.delete(`/app/orders-delete/${id}`);
+        if (response.status === 200) {
+          swal({
+            title: "با موفقیت حذف شد",
+            icon: "success",
+            button: "باشه",
+          });
+          setOrderItemId(id);
+        }
+      } catch (e) {
+        if (e.response?.status === 500) {
+          toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
+            position: "top-left",
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     setLatestItem(order?.status);
@@ -71,10 +110,10 @@ export default function OrderTrackItem({ order, number }) {
         setCurrentStep(5);
         break;
       case "5":
-        setCurrentStep(6);
+        setCurrentStep(7);
         break;
       case "6":
-        setCurrentStep(7);
+        setCurrentStep(6);
         break;
     }
   }, [latestItem]);
@@ -111,11 +150,26 @@ export default function OrderTrackItem({ order, number }) {
         <div className={`${styles.mapstatus} mt-4`}>
           <div className={styles.wrap_detail_icon}>
             <button
-              className={`${styles.detailbtn}`}
+              className={`${styles.detailbtn} ${
+                isLoading && styles.detailbtn1
+              }`}
               onClick={() => navigate(`/orders/${order.id}`)}
+              disabled={isLoading}
             >
-              جزئیات محصول
+              جزئیات
             </button>
+            {order?.status == 8 && (
+              <button
+                className={`${styles.detailbtn} ${
+                  isLoading && styles.detailbtn1
+                }`}
+                style={{ background: "#b50d0d" }}
+                onClick={() => deleteHandler(order.id)}
+                disabled={isLoading}
+              >
+                حذف
+              </button>
+            )}
           </div>
           <div className={styles.wrapper} style={{ direction: "ltr" }}>
             <div className={`${styles.progressc}`}>
@@ -222,10 +276,10 @@ export default function OrderTrackItem({ order, number }) {
         >
           <div className={styles.orderdetailitem}>
             <span className={styles.orderdetailtitle}>
-              {order.status == 6 ? "علت مختومه :" : "تاریخ اخرین وضعیت : "}
+              {order.status == 5 ? "علت مختومه :" : "تاریخ اخرین وضعیت : "}
             </span>
             <span className={styles.orderdetailtext}>
-              {order.status == 6
+              {order.status == 5
                 ? order?.dismissreason
                 : order?.request_date
                 ? addSlashesToDate(
@@ -236,6 +290,7 @@ export default function OrderTrackItem({ order, number }) {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

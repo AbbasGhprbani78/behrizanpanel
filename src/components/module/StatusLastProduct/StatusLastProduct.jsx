@@ -7,8 +7,6 @@ import {
 } from "../../../utils/helper";
 
 export default function StatusLastProduct({ product }) {
- 
-
   function getFieldByStatus(product) {
     let fieldValue = "فیلد نامعتبر";
     switch (product?.status) {
@@ -22,10 +20,13 @@ export default function StatusLastProduct({ product }) {
         fieldValue = product.final_confirm_date;
         break;
       case "4":
-        fieldValue = product?.deliver_date_max;
+        fieldValue = product?.last_trans_doc_date;
         break;
       case "5":
-        fieldValue = product?.deliver_date_max;
+        fieldValue = product?.request_date;
+        break;
+      case "6":
+        fieldValue = product?.last_trans_doc_date;
         break;
       case "7":
         fieldValue = product?.request_date;
@@ -64,10 +65,10 @@ export default function StatusLastProduct({ product }) {
           </div>
           <div className={styles.orderdetailitem}>
             <span className={styles.orderdetailtitle}>
-              {product.status == 6 ? "علت مختومه :" : "تاریخ اخرین وضعیت :"}
+              {product.status == 5 ? "علت مختومه :" : "تاریخ اخرین وضعیت :"}
             </span>
             <span className={styles.orderdetailtext}>
-              {product.status == 6
+              {product.status == 5
                 ? product?.dismissreason
                 : product?.request_date
                 ? addSlashesToDate(

@@ -1,4 +1,4 @@
-import  { useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import styles from "./Offcanvas.module.css";
 import { IoCloseSharp } from "react-icons/io5";
@@ -35,8 +35,8 @@ export default function OffcanvasMenu({ setShowSideBar, showSideBar }) {
       buttons: ["خیر", "بله"],
     }).then((willLogout) => {
       if (willLogout) {
-        localStorage.removeItem("refresh");
-        localStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        sessionStorage.removeItem("access");
         naviagte("/login");
       }
     });

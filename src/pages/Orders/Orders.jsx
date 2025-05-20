@@ -50,14 +50,21 @@ export default function Orders() {
   const [search, setSearch] = useState("");
   const [filterProduct, setFilterProduct] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
-  const [openTableIndex, setOpenTableIndex] = useState(null);
+  const [openTableIndexes, setOpenTableIndexes] = useState(new Set());
   const [detailProduct, setDetailProduct] = useState([]);
   const { id } = useParams();
 
   const toggleTable = (index) => {
-    setOpenTableIndex((prevIndex) => (prevIndex === index ? null : index));
+    setOpenTableIndexes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
   };
-
   const getDetails = async () => {
     try {
       const response = await apiClient.get(`/app/order-detail-bill-code/${id}`);
@@ -207,15 +214,15 @@ export default function Orders() {
                   {detailProduct?.length > 0 &&
                     detailProduct.map((item, i) => (
                       <div className={styles.detail_orders_wrap} key={i}>
-                        <div className={styles.status_send}>
+                        <div
+                          className={styles.status_send}
+                          style={{ cursor: "pointer" }}
+                          onClick={() => toggleTable(i)}
+                        >
                           <div className={styles.bilLading_date_wrap}>
-                            <div
-                              style={{ cursor: "pointer" }}
-                              className="d-flex align-items-center gap-2 cursour"
-                              onClick={() => toggleTable(i)}
-                            >
+                            <div className="d-flex align-items-center gap-2 cursour">
                               <div className={styles.wrap_icon}>
-                                {openTableIndex === i ? (
+                                {openTableIndexes?.has(i) ? (
                                   <FaAngleUp />
                                 ) : (
                                   <FaAngleDown />
@@ -292,7 +299,7 @@ export default function Orders() {
                               onClick={() => toggleTable(i)}
                             >
                               <div className={styles.wrap_icon}>
-                                {openTableIndex === i ? (
+                                {openTableIndexes.has(i) ? (
                                   <FaAngleUp />
                                 ) : (
                                   <FaAngleDown />
@@ -307,7 +314,7 @@ export default function Orders() {
                             </div>
                           </div>
                         </div>
-                        {openTableIndex === i && (
+                        {openTableIndexes?.has(i) && (
                           <div className={styles.wrap_table}>
                             <StyledTableContainer component={Paper}>
                               <Table

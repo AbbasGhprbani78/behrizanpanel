@@ -16,7 +16,7 @@ export function CountProvaider({ children }) {
 
   useEffect(() => {
     const validateUser = async () => {
-      const refresh = localStorage.getItem("refresh");
+      const refresh = sessionStorage.getItem("refresh");
       if (refresh) {
         const body = { refresh };
 
@@ -24,11 +24,11 @@ export function CountProvaider({ children }) {
           const response = await apiClient.post("/user/refresh/", body);
 
           if (response.status === 200) {
-            localStorage.setItem("access", response.data.access);
+            sessionStorage.setItem("access", response.data.access);
           }
         } catch (error) {
-          localStorage.removeItem("access");
-          localStorage.removeItem("refresh");
+          sessionStorage.removeItem("access");
+          sessionStorage.removeItem("refresh");
           navigate("/login");
         }
       } else {
