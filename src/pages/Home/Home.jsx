@@ -12,11 +12,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
-  const [product, setProduct] = useState("");
+  const [product, setProduct] = useState(null);
   const getSingleProduct = async () => {
     try {
       const response = await apiClient.get("/app/get-single-order-detail/");
       if (response.status === 200) {
+        console.log(response.data);
         setProduct(response.data);
       }
     } catch (error) {
@@ -53,11 +54,13 @@ export default function Home() {
                 <Chart />
               </div>
             </div>
-            {product && (
-              <div className="pb-4">
-                <StatusLastProduct product={product} />
-              </div>
-            )}
+            {product &&
+              !Array.isArray(product) &&
+              Object.keys(product).length > 0 && (
+                <div className="pb-4">
+                  <StatusLastProduct product={product} />
+                </div>
+              )}
           </div>
         </div>
       </div>
