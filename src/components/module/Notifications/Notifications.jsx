@@ -21,7 +21,7 @@ const fetcher = async (url) => {
 export default function Notifications() {
   const { data: notifications } = useSWR(`/app/get-notif/`, fetcher, {
     revalidateOnFocus: false,
-    dedupingInterval: 15 * 60 * 1000,
+    dedupingInterval: 0,
   });
   return (
     <div className={styles.notificationwrapper}>

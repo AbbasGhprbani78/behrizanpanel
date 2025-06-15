@@ -361,7 +361,7 @@ export default function Ticket() {
             className: "swal-button-center",
           },
         }).then(() => {
-          setTab(1);
+          window.location.reload();
         });
         SetTitle("");
         setText("");

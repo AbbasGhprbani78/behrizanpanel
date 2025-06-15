@@ -63,7 +63,7 @@ export default function StatusLastProduct({ product }) {
                 : "N/A"}
             </span>
           </div>
-          <div className={styles.orderdetailitem}>
+          {/* <div className={styles.orderdetailitem}>
             <span className={styles.orderdetailtitle}>
               {product.status == 5 ? "علت مختومه :" : "تاریخ اخرین وضعیت :"}
             </span>
@@ -72,11 +72,11 @@ export default function StatusLastProduct({ product }) {
                 ? product?.dismissreason
                 : product?.request_date
                 ? addSlashesToDate(
-                    convertToPersianNumbers(getFieldByStatus(product))
+                    convertToPersianNumbers(product?.request_date)
                   )
                 : "N/A"}
             </span>
-          </div>
+          </div> */}
         </div>
         <Link to={`/orders/${product?.cart_id}`} className={styles.historybtn}>
           تاریخچه

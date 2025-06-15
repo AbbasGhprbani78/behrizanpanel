@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "../../styles/Home.module.css";
 import SideBar from "../../components/module/SideBar/SideBar";
 import Header from "../../components/module/Header/Header";
@@ -7,41 +7,33 @@ import Notifications from "../../components/module/Notifications/Notifications";
 import Chart from "../../components/module/Chart/Chart";
 import StatusLastProduct from "../../components/module/StatusLastProduct/StatusLastProduct";
 import Chat from "../../components/templates/chat/Chat";
-import { goToLogin } from "../../utils/helper";
-import useSWR from "swr";
 import apiClient from "../../config/axiosConfig";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const fetcher = async (url) => {
-  try {
-    const response = await apiClient.get(url);
-    if (response.status === 200) {
-      return response.data;
-    }
-  } catch (e) {
-    if (e.response?.status === 500) {
-      toast.error(e.response?.data?.message || "مشکلی سمت سرور پیش آمده", {
-        position: "top-left",
-      });
-    }
-  }
-};
+
 export default function Home() {
-  const { data: product, error } = useSWR(
-    `/app/get-single-order-detail/`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 15 * 60 * 1000,
+  const [product, setProduct] = useState("");
+  const getSingleProduct = async () => {
+    try {
+      const response = await apiClient.get("/app/get-single-order-detail/");
+      if (response.status === 200) {
+        setProduct(response.data);
+      }
+    } catch (error) {
+      if (error.response?.status === 500) {
+        toast.error(
+          error.response?.data?.message || "مشکلی سمت سرور پیش آمده",
+          {
+            position: "top-left",
+          }
+        );
+      }
     }
-  );
+  };
 
   useEffect(() => {
-    if (error?.response?.status === 401) {
-      sessionStorage.removeItem("access");
-      goToLogin();
-    }
-  }, [error]);
+    getSingleProduct();
+  }, []);
 
   return (
     <>

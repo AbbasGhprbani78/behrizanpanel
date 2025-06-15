@@ -92,6 +92,8 @@ export default function OrderTrackItem({ order, number, setOrderItemId }) {
     setLatestItem(order?.status);
   }, []);
 
+  console.log(order);
+
   useEffect(() => {
     switch (latestItem) {
       case "8":
@@ -274,7 +276,7 @@ export default function OrderTrackItem({ order, number, setOrderItemId }) {
             gap: "20px",
           }}
         >
-          <div className={styles.orderdetailitem}>
+          {/* <div className={styles.orderdetailitem}>
             <span className={styles.orderdetailtitle}>
               {order.status == 5 ? "علت مختومه :" : "تاریخ اخرین وضعیت : "}
             </span>
@@ -282,12 +284,10 @@ export default function OrderTrackItem({ order, number, setOrderItemId }) {
               {order.status == 5
                 ? order?.dismissreason
                 : order?.request_date
-                ? addSlashesToDate(
-                    convertToPersianNumbers(getFieldByStatus(order))
-                  )
+                ? addSlashesToDate(convertToPersianNumbers(order?.request_date))
                 : "N/A"}
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
       <ToastContainer />
